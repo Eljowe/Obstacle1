@@ -265,6 +265,8 @@ class AgentInterface:
             if action_value > alpha:
                 alpha = action_value
             state.undo_last_move()
+        print(bestValue)
+        print(state.current_player())
         yield best_action
 
     def __str__(self):
