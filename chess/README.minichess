@@ -1,0 +1,123 @@
+CS-E4800 Tournament
+###################
+
+Welcome to the "CS-E4800 Games Tournament 2024"!
+
+In this tournament, we will develop an agent to play a fast variant of
+Chess that is played on a limited size board and with a limited number
+of pieces.
+
+
+Requirements
+^^^^^^^^^^^^
+
+You need to install the python-chess library by writing
+
+  pip3 install chess
+
+For documentation see
+
+  https://python-chess.readthedocs.io/en/latest/
+
+NOTE: We use `python3.9` for the tournament.
+
+
+Instructions
+^^^^^^^^^^^^
+0. (Optional) Watch the game to learn and understand its rules.
+   You can watch the game played by the simplest agents
+   by running the following command:
+     `python3 main.py`
+   You can compare the performance of different agents by choosing
+   them as the players. To specify the type of players, you can modify
+   the `players` variable in `main.py`.
+
+1. Copy `agent-template.py` to `agent.py`.
+
+2. Read and understand `agent.py`.
+
+3. Take a brief look at the following agents:
+3.1. the `RandomAgent` in `random_agent.py`,
+3.2. the `MCSAgent` in `mcs_agent.py`, and
+3.3. the `MinimaxAgent` in `minimax_agent.py`,
+
+4. Complete the `info` method of the `Agent` class.
+
+5. Complete the `decide` method of the `Agent` class by developing an algorithm
+   to overcome all opponents. You are free to choose any kind of game-playing 
+   agent to implement. Some obvious approaches are the following:
+5.1 Implement alpha-beta (and investigate its potential for searching deeper
+    than what is possible with Minimax). Also, the order in which the actions
+    are tried in a given node impacts the effectiveness of alpha-beta: you
+     could investigate different ways of ordering the actions/successor states.
+5.2 Try out better heuristics.
+5.3 You could try out more advanced Monte Carlo search methods; however, we do
+    not know whether MCTS is competitive because of the high cost of the full
+    gameplay.
+5.4 You could, of course, try something completely different if you are
+    willing to invest more time.
+
+Running a full Chess game
+^^^^^^^^^^^^^^^^^^^^
+
+For simulating the game, you can use the `main.py` script. Just import
+your agent and `play` the game with an instance of your agent.
+
+
+Notes
+^^^^^
+
+Make sure that your agent returns a move in 5 seconds. If it takes
+longer to return a move, the game-playing infrastructure will
+randomly choose a move for the player. As your agent returns
+a sequence of actions with 'yield' the first move does not have
+to be a very good one, and the later moves should be increasingly
+better.
+
+The default board size is 5 X 5. This is specified in the __init__
+method of the State class in envs/game.py by having maxX=4 and
+maxY=4. This means that the columns/files are numbered 0..maxX
+and rows/ranks are numbered 0..maxY. Implement your agent
+so that it works also for other board sizes. 5 X 5 seems OK, but
+if there is some un-foreseen reason why it is bad (e.g. there is
+a simple winning strategy for one of the players from our starting
+configuration), we might be forced to switch to 5 X 6.
+
+python-chess only works with 8 X 8 boards, and the move generator
+in envs/game.py filters out those moves that end up outside
+the 0..maxX,0..maxY board. In some cases, python-chess functionality
+does not recognize a checkmate for the smaller (e.g. 5 X 5) board,
+because the King seems to have the possibility of moving outside
+the smaller board. This is then visible as the set of legal
+moves being empty.
+
+The python-chess board is accessible in the 'board' field of
+object of class State. You can use any and all python-chess
+functions e.g. for calculating heuristics. For a simple heuristic
+see the Minimax agent's heuristic functions. Other heuristics
+could for example observe the threats between pieces, which
+can be calculated with functions provided in python-chess.
+
+The progress of game-playing is shown by the __str__ function
+in envs/game.py, which is based on the python-chess function
+'unicode', which shows the different chess pieces as the
+corresponding unicode characters.
+This works OK in Linux inside a Bash shell (except that the characters
+for the file labels 'abcde' are more narrow than the characters for
+the Chess pieces), and it is unclear if Windows and Mac do this as nicely.
+We are looking at providing other visualizations of the game play.
+
+The implementation of backtracking algorithms such as Minimax or
+alpha-beta is supported by python-chess by having the Board
+store all the previous moves in the gameplay. Our interface
+to python-chess has the functions 'execute_move' for performing
+a move, and 'undo_last_move' to restore the state to the
+situation before the last move. E.g. in the minimax agent
+there is always the call sequence of performing a move, doing
+a recursive call to the minimax algorithm, and then undoing the
+last move. Your backtracking tree-search methods should do the same.
+A Monte Carlo search (MCS) agent does not backtrack, so there is
+no need to use 'undo_last_move'.
+
+
+GL HF :)
