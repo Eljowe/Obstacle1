@@ -18,53 +18,53 @@ class AgentInterface:
     #Change these values with deep learning
     #Also find the best first moves with deep learning
     #Or even create an opening theory with DL
-    bishopValueTable = [
-        -20, -10, -10, -10, -20,
-        -10, 5, 0, 5, -5,
-        -10, 3, 10, 3, -10,
-        -10, 0, 0, 0, -10,
-        -20, -10, -10, -10, -20
-    ]
-    
-    pawnValueTable = [
-        0, 0, 0, 0, 0,
-        5, 10, 10, 10, 5,
-        5, -5, 20, -5, 5,
-        50, 50, 50, 50, 50,
-        0, 0, 0, 0, 0
-    ]
-    
-    knightValueTable = [
-        -20, -10, -10, -10, -20,
-        -10, 0, 0, 0, -10,
-        -10, 0, 5, 0, -10,
-        -10, 5, 0, 5, -10,
-        -20, -10, -10, -10, -20
-    ]
-    
-    rookValueTable = [
-        0, 0, 5, 0, 0,
-        -5, 0, 0, 0, -5,
-        -5, 0, 0, 0, -5,
-        5, 10, 10, 10, 5,
-        0, 0, 0, 0, 0
-    ]
-    
-    queenValueTable = [
-        -20, -10, -10, -5, -20,
-        -10, 0, 0, 0, -10,
-        -10, 5, 5, 5, -10,
-        -5, 5, 5, 5, -5,
-        -20, -10, -10, -5, -20
-    ]
-    
-    kingValueTable = [
-        10, 20, 0, 20, 10,
-        5, 5, 0, 5, 5,
-        -10, -20, -20, -20, -10,
-        -20, -30, -30, -30, -20,
-        -30, -40, -40, -40, -30
-    ]
+        self.bishopstable = [
+            -20, -10, -10, -10, -20,
+            -10, 5, 0, 5, -5,
+            -10, 3, 10, 3, -10,
+            -10, 0, 0, 0, -10,
+            -20, -10, -10, -10, -20
+        ]
+        
+        self.pawntable = [
+            0, 0, 0, 0, 0,
+            5, 10, 10, 10, 5,
+            5, -5, 20, -5, 5,
+            50, 50, 50, 50, 50,
+            0, 0, 0, 0, 0
+        ]
+        
+        self.knightstable = [
+            -20, -10, -10, -10, -20,
+            -10, 0, 0, 0, -10,
+            -10, 0, 5, 0, -10,
+            -10, 5, 0, 5, -10,
+            -20, -10, -10, -10, -20
+        ]
+        
+        self.rookstable = [
+            0, 0, 5, 0, 0,
+            -5, 0, 0, 0, -5,
+            -5, 0, 0, 0, -5,
+            5, 10, 10, 10, 5,
+            0, 0, 0, 0, 0
+        ]
+        
+        self.queenstable = [
+            -20, -10, -10, -5, -20,
+            -10, 0, 0, 0, -10,
+            -10, 5, 5, 5, -10,
+            -5, 5, 5, 5, -5,
+            -20, -10, -10, -5, -20
+        ]
+        
+        self.kingstable = [
+            10, 20, 0, 20, 10,
+            5, 5, 0, 5, 5,
+            -10, -20, -20, -20, -10,
+            -20, -30, -30, -30, -20,
+            -30, -40, -40, -40, -30
+        ]
 
     @staticmethod
     def info():
@@ -88,7 +88,7 @@ class AgentInterface:
     
     def alphabeta(self, alpha, beta, depthleft, state):
         if depthleft <= 0:
-            return self.evaluate_board(state)
+            return self.custom_evaluate_board(state)
         bestscore = -9999
         for move in state.applicable_moves():
             state.execute_move(move)
@@ -103,7 +103,7 @@ class AgentInterface:
         return bestscore
     
     def quiesce(self, alpha, beta, state: State):
-        stand_pat = self.evaluate_board(state)
+        stand_pat = self.custom_evaluate_board(state)
         if (stand_pat >= beta):
             return beta
         if (alpha < stand_pat):
@@ -119,7 +119,82 @@ class AgentInterface:
                 if (score > alpha):
                     alpha = score
         return alpha
+    
+    def custom_evaluate_board(self, state: State):
+        id = state.current_player_id
+        if id == 0:
+            COLOR = chess.WHITE
+            otherCOLOR = chess.BLACK
+        else:
+            COLOR = chess.BLACK
+            otherCOLOR = chess.WHITE
+        
+        knights = state.board.pieces(chess.KNIGHT, COLOR)
+        bishops = state.board.pieces(chess.BISHOP, COLOR)
+        queens = state.board.pieces(chess.QUEEN, COLOR)
 
+        Oknights = state.board.pieces(chess.KNIGHT, otherCOLOR)
+        Obishops = state.board.pieces(chess.BISHOP, otherCOLOR)
+        Oqueens = state.board.pieces(chess.QUEEN, otherCOLOR)
+
+        material = 100 * (len(knights)-len(Oknights)) + 320 * (len(bishops)-len(Obishops)) + 900 * (len(queens)-len(Oqueens))
+
+        knightsq = 0
+        bishopsq = 0
+        rooksq = 0
+        queensq = 0
+        kingsq = 0
+        
+        try:
+            knightsq += sum([self.knightstable[i] for i in state.board.pieces(chess.KNIGHT, chess.WHITE)])
+        except:
+            pass
+        try:
+            knightsq += sum([-self.knightstable[chess.square_mirror(i)]
+                                    for i in state.board.pieces(chess.KNIGHT, chess.BLACK)])
+        except:
+            pass
+        try:
+            bishopsq += sum([self.bishopstable[i] for i in state.board.pieces(chess.BISHOP, chess.WHITE)])
+        except:
+            pass
+        try:
+            bishopsq += sum([-self.bishopstable[chess.square_mirror(i)]
+                                for i in state.board.pieces(chess.BISHOP, chess.BLACK)])
+        except:
+            pass
+        try:
+            rooksq += sum([self.rookstable[i] for i in state.board.pieces(chess.ROOK, chess.WHITE)])
+        except:
+            pass
+        try:
+            rooksq += sum([-self.rookstable[chess.square_mirror(i)]
+                            for i in state.board.pieces(chess.ROOK, chess.BLACK)])
+        except:
+            pass
+        try:
+            queensq += sum([self.queenstable[i] for i in state.board.pieces(chess.QUEEN, chess.WHITE)])
+        except:
+            pass
+        try:
+            queensq += sum([-self.queenstable[chess.square_mirror(i)]
+                                for i in state.board.pieces(chess.QUEEN, chess.BLACK)])
+        except:
+            pass
+        try:
+            kingsq += sum([self.kingstable[i] for i in state.board.pieces(chess.KING, chess.WHITE)])
+        except:
+            pass
+        try:
+            kingsq += sum([-self.kingstable[chess.square_mirror(i)]
+                            for i in state.board.pieces(chess.KING, chess.BLACK)])
+        except:
+            pass
+        eval = material + knightsq + bishopsq + rooksq + queensq + kingsq
+        if id == 0:
+            return eval
+        else:
+            return -eval
     def evaluate_board(self, state: State):
         id = state.current_player_id
         if id == 0:
