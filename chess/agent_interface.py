@@ -1,4 +1,7 @@
 from envs.environment import AbstractState
+import chess
+import random
+from envs.game import State, ID
 
 
 class AgentInterface:
@@ -24,6 +27,34 @@ class AgentInterface:
             "agent name": "Kumpulan_Karpov",
         }
         raise NotImplementedError
+
+    def heuristic(self, state: State):
+        id = state.current_player_id
+        if id == 0:
+            COLOR = chess.WHITE
+            otherCOLOR = chess.BLACK
+        else:
+            COLOR = chess.WHITE
+            otherCOLOR = chess.BLACK
+
+        knights = state.board.pieces(chess.KNIGHT, COLOR)
+        bishops = state.board.pieces(chess.BISHOP, COLOR)
+        queens = state.board.pieces(chess.QUEEN, otherCOLOR)
+
+        Oknights = state.board.pieces(chess.KNIGHT, otherCOLOR)
+        Obishops = state.board.pieces(chess.BISHOP, otherCOLOR)
+        Oqueens = state.board.pieces(chess.QUEEN, otherCOLOR)
+
+        score = (
+            len(knights)
+            + len(bishops)
+            + 5 * len(queens)
+            - len(Oknights)
+            - len(Obishops)
+            - 5 * len(Oqueens)
+        )
+
+        return score
 
     def decide(self, state: AbstractState):
         """
