@@ -18,7 +18,8 @@ from mcs_agent import MCSAgent
 
 def main():
     ############### Set the players ###############
-    players = [MinimaxAgent, MinimaxAgent]
+    players = [AgentInterface, MinimaxAgent]
+    #players = [MinimaxAgent, MinimaxAgent]
     #players = [MinimaxAgent, MCSAgent]
     #players = [RandomAgent, MCSAgent]
     #players = [RandomAgent, MinimaxAgent]
@@ -34,7 +35,7 @@ def main():
     ###################################################################
 
     results = [0, 0]
-    for i in range(5):
+    for i in range(0):
         initial_state = State([player_name(p) for p in players])
 
         for round in range(len(players)):
