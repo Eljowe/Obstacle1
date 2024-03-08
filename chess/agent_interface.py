@@ -122,6 +122,11 @@ class AgentInterface:
     
     def custom_evaluate_board(self, state: State):
         id = state.current_player_id
+        if state.is_winner() == 1:
+            return 9999
+        if state.is_winner() == -1:
+            return -9999
+        
         if id == 0:
             COLOR = chess.WHITE
             otherCOLOR = chess.BLACK
