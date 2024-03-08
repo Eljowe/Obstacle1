@@ -86,10 +86,10 @@ class AgentInterface:
     def check_capture(self, move):
         return False
     
-    def alphabeta(self, alpha, beta, depthleft, state: State):
+    def alphabeta(self, alpha, beta, depthleft, state):
+        if depthleft <= 0:
+            return self.evaluate_board(state)
         bestscore = -9999
-        if (depthleft == 0):
-            return self.quiesce(alpha, beta, state)
         for move in state.applicable_moves():
             state.execute_move(move)
             score = -self.alphabeta(-beta, -alpha, depthleft - 1, state)
@@ -175,17 +175,16 @@ class AgentInterface:
         moves = state.applicable_moves()
         random.shuffle(moves)
         best_action = moves[0]
-        max_value = float('-inf')
         for action in moves:
             state.execute_move(action)
-            action_value = self.alphabeta(-beta, -alpha, self.depth - 1, state)
-            state.undo_last_move()
+            action_value = -self.alphabeta(-beta, -alpha, self.depth - 1, state)
             if action_value > bestValue:
                 bestValue = action_value
                 best_action = action
                 yield best_action
             if action_value > alpha:
                 alpha = action_value
+            state.undo_last_move()
         yield best_action
 
     def __str__(self):
