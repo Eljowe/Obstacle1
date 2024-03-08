@@ -15,6 +15,7 @@ class AgentInterface:
     def __init__(self, depth: int = 4):
         self.depth = depth
         self.__player = None
+        self.side = None
     #Change these values with deep learning
     #Also find the best first moves with deep learning
     #Or even create an opening theory with DL
@@ -36,9 +37,9 @@ class AgentInterface:
         
         self.knightstable = [
             -20, -10, -10, -10, -20,
-            -10, 0, 0, 0, -10,
-            -10, 0, 5, 0, -10,
-            -10, 5, 0, 5, -10,
+            -10, 0, 10, 0, -10,
+            -10, 10, 20, 10, -10,
+            -10, 0, 10, 0, -10,
             -20, -10, -10, -10, -20
         ]
         
@@ -121,16 +122,18 @@ class AgentInterface:
         return alpha
     
     def custom_evaluate_board(self, state: State):
-        id = state.current_player_id
+        #id = state.current_player_id
+        id = state.current_player()
         if state.is_winner() == 1:
             return 9999
         if state.is_winner() == -1:
             return -9999
-        
         if id == 0:
+            self.side = "white"
             COLOR = chess.WHITE
             otherCOLOR = chess.BLACK
         else:
+            self.side = "black"
             COLOR = chess.BLACK
             otherCOLOR = chess.WHITE
         
@@ -258,6 +261,7 @@ class AgentInterface:
         for action in moves:
             state.execute_move(action)
             action_value = -self.alphabeta(-beta, -alpha, self.depth - 1, state)
+            
             if action_value > bestValue:
                 bestValue = action_value
                 best_action = action
@@ -265,8 +269,9 @@ class AgentInterface:
             if action_value > alpha:
                 alpha = action_value
             state.undo_last_move()
-        print(bestValue)
-        print(state.current_player())
+        print("best value: ", bestValue)
+        print("side: ", self.side)
+        print("best action: ", best_action)
         yield best_action
 
     def __str__(self):
