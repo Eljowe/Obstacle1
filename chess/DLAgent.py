@@ -17,6 +17,9 @@ class AgentInterface:
         self.depth = depth
         self.__player = None
         self.side = None
+        self.knightweight = 320
+        self.bishopweight = 330
+        self.queenweight = 900
     #Change these values with deep learning
     #Also find the best first moves with deep learning
     #Or even create an opening theory with DL
@@ -96,7 +99,7 @@ class AgentInterface:
         Dict[str, str]
         """
         return {
-            "agent name": "Kumpulan_Karpov",
+            "agent name": "Kumpulan_Karpov_DL_weighted",
         }
         raise NotImplementedError
     
@@ -145,14 +148,6 @@ class AgentInterface:
             return 9999
         if state.is_winner() == -1:
             return -9999
-        if id == 0:
-            self.side = "white"
-            COLOR = chess.WHITE
-            otherCOLOR = chess.BLACK
-        else:
-            self.side = "black"
-            COLOR = chess.BLACK
-            otherCOLOR = chess.WHITE
         
         wn = len(state.board.pieces(chess.KNIGHT, chess.WHITE))
         bn = len(state.board.pieces(chess.KNIGHT, chess.BLACK))
@@ -163,7 +158,7 @@ class AgentInterface:
         wk = len(state.board.pieces(chess.KING, chess.WHITE))
         bk = len(state.board.pieces(chess.KING, chess.BLACK))
 
-        material = 320 * (wn - bn) + 330 * (wb - bb) + 900 * (wq - bq)
+        material = self.knightweight * (wn - bn) + 330 * (wb - bb) + 900 * (wq - bq)
             
         
         knightsq = sum([self.knightstable[i] for i in state.board.pieces(chess.KNIGHT, chess.WHITE)])
@@ -184,32 +179,7 @@ class AgentInterface:
             return eval
         else:
             return -eval
-    def evaluate_board(self, state: State):
-        id = state.current_player_id
-        if id == 0:
-            COLOR = chess.WHITE
-            otherCOLOR = chess.BLACK
-        else:
-            COLOR = chess.WHITE
-            otherCOLOR = chess.BLACK
-        
-        knights = state.board.pieces(chess.KNIGHT, COLOR)
-        bishops = state.board.pieces(chess.BISHOP, COLOR)
-        queens = state.board.pieces(chess.QUEEN, otherCOLOR)
 
-        Oknights = state.board.pieces(chess.KNIGHT, otherCOLOR)
-        Obishops = state.board.pieces(chess.BISHOP, otherCOLOR)
-        Oqueens = state.board.pieces(chess.QUEEN, otherCOLOR)
-
-        score = (
-            len(knights)
-            + len(bishops)
-            + 5 * len(queens)
-            - len(Oknights)
-            - len(Obishops)
-            - 5 * len(Oqueens)
-        )
-        return score
 
     def decide(self, state: AbstractState):
         """
