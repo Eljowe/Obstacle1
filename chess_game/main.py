@@ -21,7 +21,8 @@ from DLAgent import DLAgent
 
 def main():
     ############### Set the players ###############
-    players = [TestingAgent, DLAgent]
+    #players = [TestingAgent, DLAgent]
+    players = [TestingAgent, CustomAgent]
     #players = [AgentInterface, RandomAgent]
     #players = [MinimaxAgent, MinimaxAgent]
     #players = [MinimaxAgent, MCSAgent]
