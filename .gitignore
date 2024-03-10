@@ -8,3 +8,8 @@ tensorboard --logdir=logs
 **/__pycache__/
 chess_game/envs
 chess_game/envs/*
+chess_game/envs/__pycache__/
+chess_game/envs/__pycache__/*
+chess_game/envs/** */
+logs/** */
+**/logs/** */
