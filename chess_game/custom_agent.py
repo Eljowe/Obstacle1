@@ -250,11 +250,11 @@ class CustomAgent:
             if action_value > alpha:
                 alpha = action_value
             state.undo_last_move()
-        print("best value: ", bestValue)
-        print("side: ", self.side)
-        print("best action: ", best_action)
-        print("custom evaluate: ", self.custom_evaluate_board(state))
-        print("evaluate: ", self.evaluate_board(state))
+        #print("best value: ", bestValue)
+        #print("side: ", self.side)
+        #print("best action: ", best_action)
+        #print("custom evaluate: ", self.custom_evaluate_board(state))
+        #print("evaluate: ", self.evaluate_board(state))
         yield best_action
 
     def __str__(self):

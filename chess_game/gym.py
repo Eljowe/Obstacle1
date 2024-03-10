@@ -3,6 +3,7 @@ import numpy as np
 from gymnasium import spaces
 import torch
 import os
+import numpy as np
 
 from typing import Type
 from random import seed
@@ -39,25 +40,28 @@ class CustomEnv(gym.Env):
 
     metadata = {"render_modes": ["human"], "render_fps": 30}
 
-    def __init__(self, board_height=5, board_width=5):
+    def __init__(self):
         super().__init__()
         
-        gym_agent  = DLAgent()
+        self.agent = DLAgent()
         
-        self.bishopstable = self.table_reshape(gym_agent.bishopstable)
-        self.knightstable = self.table_reshape(gym_agent.knightstable)
-        self.queenstable = self.table_reshape(gym_agent.queenstable)
-        self.kingstable = self.table_reshape(gym_agent.kingstable)
+        self.games_played = 0
+        
+        self.score = [0, 0]
+        
+        self.bishopstable = self.table_reshape(self.agent.bishopstable)
+        self.knightstable = self.table_reshape(self.agent.knightstable)
+        self.queenstable = self.table_reshape(self.agent.queenstable)
+        self.kingstable = self.table_reshape(self.agent.kingstable)
         
         
-        self.board_height = board_height
-        self.board_width = board_width
+
         self.score = 0
         self.action_space = spaces.Discrete(50)
         self.actions_map = {i: (i % 25, 'increment' if i < 25 else 'decrement') for i in range(50)}
         # Example for using image as input (channel-first; channel-last also works):
-        self.observation_space = spaces.Box(low=0, high=255,
-                                            shape=(board_height, board_width), dtype=np.uint8)
+        self.observation_space = spaces.Box(low=-50, high=50,
+                                            shape=(1, 25), dtype=np.uint8)
 
     def table_reshape(self, table):
         original_board_2d = [table[i:i+8] for i in range(0, len(table), 8)]
@@ -79,41 +83,56 @@ class CustomEnv(gym.Env):
 
         # Perform the operation
         if operation == 'increment':
-            self.bishopstable[index] += 1
+            self.bishopstable[index] += 5
+            print(f"incremented {index} to {self.bishopstable[index]}")
         else:  # operation == 'decrement'
-            self.bishopstable[index] -= 1
+            print(f"decremented {index} to {self.bishopstable[index]}")
+            self.bishopstable[index] -= 5
 
         # Calculate reward and termination status
         # This is just an example. You should replace this with your own logic.
         reward = self.calculate_reward()
         done = self.calculate_done()
-
+        observation = reward
+        truncated = False
+        info = {"score": self.score, "games_played": self.games_played}
         # Return the new observation, reward, termination status, and info
-        return np.array(self.bishopstable), reward, done, {}
+        return observation, reward, done, truncated, info
     
     def calculate_reward(self):
         # Play the game
-        result = self.play_game(self.agent)
+        result = self.play_game()
+        self.games_played += 1
 
         # Calculate the reward as the number of rounds won by the agent
         if result == 1:
             reward = 1
-        else:
+        elif result == -1:
             reward = -1
+        else:
+            reward = -0.3
         return reward
     
     def reset(self, seed=None, options=None):
         # Reset the environment
         self.bishopstable = self.table_reshape(DLAgent().bishopstable)
         reset_info = {}  # Add any reset information you need here
+        self.games_played = 0
+        self.score = [0, 0]
         return self.bishopstable, reset_info
     
     def close(self):
         return super().close()
     
-    def play_game(self, agent):
+    def calculate_done(self):
+        if self.games_played >= 10:
+            return True
+        return False
+    
+    def play_game(self):
         ############### Set the players ###############
-        players = [agent, MinimaxAgent]
+        opponent = CustomAgent()
+        players = [self.agent, opponent]
         #players = [AgentInterface, RandomAgent]
         #players = [MinimaxAgent, MinimaxAgent]
         #players = [MinimaxAgent, MCSAgent]
@@ -124,8 +143,12 @@ class CustomEnv(gym.Env):
 
         # players = [Agent, IDMinimaxAgent]   <-- Uncomment this to test your agent
         ###############################################
+        #table = np.array(self.table_reshape(self.agent.bishopstable))
+        table = np.array(self.bishopstable)
+        table_reshaped = table.reshape((5, 5))
 
-        RENDER = True
+        print(table_reshaped)
+        RENDER = False
 
         # The rest of the file is not important; you can skip reading it. #
         ###################################################################
@@ -140,7 +163,7 @@ class CustomEnv(gym.Env):
                 print( "########################################################")
                 print( self.player_name(players[0]) + " is playing WHITE.")
                 print( self.player_name(players[1]) + " is playing BLACK.")
-                players_instances = [p() for p in players]
+                players_instances = [p for p in players]
                 # Timeout for each move. Don't rely on the value of it. This
                 # value might be changed during the tournament.
                 timeouts = [5, 5]
@@ -169,14 +192,17 @@ class CustomEnv(gym.Env):
                 results.append(results.pop(0))
         
         if results[0] > results[1]:
+            self.score[0] += 1
             return 1
-        else:
-            return 0
+        if results[0] < results[1]:
+            self.score[1] += 1
+            return -1
+        return 0
         
 
 
-    def player_name(self, player: Type[AgentInterface]):
-        return player().info()['agent name']
+    def player_name(self, player):
+        return player.__class__.__name__
     
 
 models_dir = "models/PPO"
@@ -187,13 +213,10 @@ if not os.path.exists(models_dir):
 if __name__ == '__main__':
     dir = "models/DQN"
     dir_path = f"{dir}/DQN.zip"
-    env_lambda = lambda: CustomEnv(
-        board_height=5,
-        board_width=5
-    )
+    env_lambda = lambda: CustomEnv()
     do_train = True
     Continue = False
-    num_cpu = 1
+    num_cpu = 8
     env = VecMonitor(SubprocVecEnv([env_lambda for i in range(num_cpu)]))
 
     if Continue and do_train:
@@ -247,7 +270,7 @@ if __name__ == '__main__':
             done = False
             while not done:
                 action, _states = model.predict(obs)
-                obs, rewards, done, info = env.step(action)
+                obs, rewards, done, truncated, info = env.step(action)
                 env.render()
     #model.save(f"{models_dir}/{num_cpu}")
     #model = PPO.load(f'{models_dir}/{num_cpu}.zip', env=env)

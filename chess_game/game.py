@@ -35,7 +35,7 @@ class Game:
 
     def __play(self, state: AbstractState, output, timeout_per_turn):
         duration = None
-        output = True
+        output = False
         if(output): print("Starting game!\n")
         ROUNDS = 0
         while True:
