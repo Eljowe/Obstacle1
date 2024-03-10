@@ -7,14 +7,14 @@ import os
 from typing import Type
 from random import seed
 
-from chess_game.game import Game
-from chess_game.envs.game import State
-
-from chess_game.agent_interface import AgentInterface
-from chess_game.random_agent import RandomAgent
-from chess_game.minimax_agent import MinimaxAgent
-from chess_game.mcs_agent import MCSAgent
-from chess_game.DLAgent import AgentInterface as DLAgent
+from game import Game
+from envs.game import State
+from agent_interface import AgentInterface
+from custom_agent import CustomAgent
+from random_agent import RandomAgent
+from minimax_agent import MinimaxAgent
+from mcs_agent import MCSAgent
+from DLAgent import DLAgent
 
 from stable_baselines3 import PPO, A2C, DQN
 from stable_baselines3.common.callbacks import CheckpointCallback
@@ -39,7 +39,7 @@ class CustomEnv(gym.Env):
 
     metadata = {"render_modes": ["human"], "render_fps": 30}
 
-    def __init__(self, board_height=8, board_width=8):
+    def __init__(self, board_height=5, board_width=5):
         super().__init__()
         
         gym_agent  = DLAgent()
@@ -101,6 +101,15 @@ class CustomEnv(gym.Env):
         else:
             reward = -1
         return reward
+    
+    def reset(self, seed=None, options=None):
+        # Reset the environment
+        self.bishopstable = self.table_reshape(DLAgent().bishopstable)
+        reset_info = {}  # Add any reset information you need here
+        return self.bishopstable, reset_info
+    
+    def close(self):
+        return super().close()
     
     def play_game(self, agent):
         ############### Set the players ###############
@@ -179,12 +188,8 @@ if __name__ == '__main__':
     dir = "models/DQN"
     dir_path = f"{dir}/DQN.zip"
     env_lambda = lambda: CustomEnv(
-        screen_width=4,
-        screen_height=4,
-        chromedriver_path=os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            "chromedriver"
-        )
+        board_height=5,
+        board_width=5
     )
     do_train = True
     Continue = False

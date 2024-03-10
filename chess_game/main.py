@@ -6,6 +6,7 @@ from envs.game import State
 
 # Importing Agents
 from agent_interface import AgentInterface
+from custom_agent import CustomAgent
 from random_agent import RandomAgent
 from minimax_agent import MinimaxAgent
 from mcs_agent import MCSAgent
@@ -18,7 +19,7 @@ from mcs_agent import MCSAgent
 
 def main():
     ############### Set the players ###############
-    players = [MinimaxAgent, AgentInterface]
+    players = [MinimaxAgent, CustomAgent]
     #players = [AgentInterface, RandomAgent]
     #players = [MinimaxAgent, MinimaxAgent]
     #players = [MinimaxAgent, MCSAgent]
