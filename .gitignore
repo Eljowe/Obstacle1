@@ -2,3 +2,7 @@
 models/
 logs/
 logs/*
+chess_game/__pycache__/
+chess_game/__pycache__/*
+tensorboard --logdir=logs
+**/__pycache__/
