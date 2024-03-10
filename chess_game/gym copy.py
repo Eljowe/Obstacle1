@@ -59,7 +59,7 @@ class CustomEnv(gym.Env):
         
 
         self.score = 0
-        self.action_space = spaces.Discrete(200)
+        self.action_space = spaces.Discrete(404)
         self.actions_map = {i: (i % 50, 'increment' if i % 100 < 50 else 'decrement', i // 100) for i in range(200)}
         # Example for using image as input (channel-first; channel-last also works):
         self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(25,), dtype=np.float32)
@@ -136,13 +136,13 @@ class CustomEnv(gym.Env):
         return super().close()
     
     def calculate_done(self):
-        
+        print(f"Games played: {self.games_played}")
         if self.games_played >= 2:
             table = np.array(self.bishopstable)
             table_reshaped = table.reshape((5, 5))
             print("\n")
             print(table_reshaped)
-            print(f"Games played: {self.games_played}")
+            
             print(f"Score: {self.score}")
             print("\n")
             
