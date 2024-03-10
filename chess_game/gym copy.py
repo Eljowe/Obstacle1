@@ -136,23 +136,35 @@ class CustomEnv(gym.Env):
         return super().close()
     
     def calculate_done(self):
-        print(f"Games played: {self.games_played}")
-        print(f"Score: {self.score}")
-        if self.games_played >= 5:
+        
+        if self.games_played >= 2:
             table = np.array(self.bishopstable)
             table_reshaped = table.reshape((5, 5))
             print("\n")
             print(table_reshaped)
+            print(f"Games played: {self.games_played}")
+            print(f"Score: {self.score}")
             print("\n")
             
-            with open('tables.json', 'w') as f:
-                json.dump({
+            with open('tables.json', 'r') as f:
+                try:
+                    data = json.load(f)
+                except json.JSONDecodeError:  # If the file is empty, set data to an empty list
+                    data = []
+
+                # Append new data
+                data.append({
                     'score': self.score,
                     'bishopstable': self.bishopstable,
                     'knightstable': self.knightstable,
                     'queenstable': self.queenstable,
                     'kingstable': self.kingstable
-                }, f)
+                })
+
+                # Write everything back to the file
+                with open('tables.json', 'w') as f:
+                    json.dump(data, f)
+        
             
             return True
         return False
@@ -179,7 +191,7 @@ class CustomEnv(gym.Env):
         ###################################################################
 
         results = [0, 0]
-        for i in range(1):
+        for i in range(3):
             initial_state = State([self.player_name(p) for p in players])
 
             for round in range(len(players)):
