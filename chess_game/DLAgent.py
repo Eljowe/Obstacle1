@@ -99,7 +99,7 @@ class DLAgent():
         Dict[str, str]
         """
         return {
-            "agent name": "Kumpulan_Karpov_DL_weighted",
+            "agent name": "Mini_Karpov_DL_Weighted",
         }
         raise NotImplementedError
     
