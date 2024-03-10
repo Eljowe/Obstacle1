@@ -6,3 +6,5 @@ chess_game/__pycache__/
 chess_game/__pycache__/*
 tensorboard --logdir=logs
 **/__pycache__/
+chess_game/envs
+chess_game/envs/*
