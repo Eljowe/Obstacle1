@@ -154,7 +154,7 @@ class CustomEnv(gym.Env):
             print(f"All scores: {self.all_scores}")
             print("\n")
             
-            if self.all_scores[0] >= 9:
+            if self.all_scores[0] >= 10:
             
                 with open('tables.json', 'r') as f:
                     try:
