@@ -132,6 +132,7 @@ class CustomEnv(gym.Env):
         reset_info = {}  # Add any reset information you need here
         self.games_played = 0
         self.score = [0, 0]
+        self.all_scores = [0, 0]
         return self.bishopstable, reset_info
     
     def close(self):
@@ -140,33 +141,30 @@ class CustomEnv(gym.Env):
     def calculate_done(self):
         print(f"Games played: {self.games_played}")
         if self.games_played >= 2:
-            table = np.array(self.bishopstable)
-            table_reshaped = table.reshape((5, 5))
-            print("\n")
-            print(table_reshaped)
-            
             print(f"Score: {self.score}")
             print(f"All scores: {self.all_scores}")
             print("\n")
             
-            with open('tables.json', 'r') as f:
-                try:
-                    data = json.load(f)
-                except json.JSONDecodeError:  # If the file is empty, set data to an empty list
-                    data = []
+            if self.score[0] >= self.score[1]:
+            
+                with open('tables.json', 'r') as f:
+                    try:
+                        data = json.load(f)
+                    except json.JSONDecodeError:  # If the file is empty, set data to an empty list
+                        data = []
 
-                # Append new data
-                data.append({
-                    'score': self.score,
-                    'bishopstable': self.bishopstable,
-                    'knightstable': self.knightstable,
-                    'queenstable': self.queenstable,
-                    'kingstable': self.kingstable
-                })
+                    # Append new data
+                    data.append({
+                        'score': self.score,
+                        'bishopstable': self.bishopstable,
+                        'knightstable': self.knightstable,
+                        'queenstable': self.queenstable,
+                        'kingstable': self.kingstable
+                    })
 
-                # Write everything back to the file
-                with open('tables.json', 'w') as f:
-                    json.dump(data, f)
+                    # Write everything back to the file
+                    with open('tables.json', 'w') as f:
+                        json.dump(data, f)
         
             
             return True
