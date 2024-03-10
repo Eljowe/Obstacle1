@@ -20,6 +20,7 @@ class DLAgent():
         self.knightweight = 320
         self.bishopweight = 330
         self.queenweight = 900
+        self.kingweight = 100
     #Change these values with deep learning
     #Also find the best first moves with deep learning
     #Or even create an opening theory with DL
@@ -158,7 +159,7 @@ class DLAgent():
         wk = len(state.board.pieces(chess.KING, chess.WHITE))
         bk = len(state.board.pieces(chess.KING, chess.BLACK))
 
-        material = self.knightweight * (wn - bn) + 330 * (wb - bb) + 900 * (wq - bq)
+        material = self.knightweight * (wn - bn) + self.bishopweight * (wb - bb) + self.queenweight * (wq - bq) + self.kingweight * (wk - bk)
             
         
         knightsq = sum([self.knightstable[i] for i in state.board.pieces(chess.KNIGHT, chess.WHITE)])

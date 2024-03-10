@@ -58,11 +58,15 @@ class CustomEnv(gym.Env):
         self.queenstable = self.table_reshape(self.agent.queenstable)
         self.kingstable = self.table_reshape(self.agent.kingstable)
         
+        self.bishopweight = self.agent.bishopweight
+        self.knightweight = self.agent.knightweight
+        self.queenweight = self.agent.queenweight
+        self.kingweight = self.agent.kingweight
         
         self.num_tables = 4
         self.table_size = 25
         self.score = 0
-        self.action_space = spaces.Box(low=-50, high=50, shape=(4 * 25,), dtype=np.float32)
+        self.action_space = spaces.Box(low=-50, high=50, shape=(4 * 25 + 4,), dtype=np.float32)
 
         #self.actions_map = {i: (i % 50, 'increment' if i % 100 < 50 else 'decrement', i // 100) for i in range(200)}
         # Example for using image as input (channel-first; channel-last also works):
@@ -76,16 +80,9 @@ class CustomEnv(gym.Env):
         # Flatten the modified 2D board back to a 1D list
         modified_board = [cell for row in modified_board_2d for cell in row]
         return modified_board
-
-    def interpret_action(self, action):
-        index = action % 25  # Adjusted to match the size of your tables
-        operation = 'increment' if action % 100 < 50 else 'decrement'
-        table = action // 100
-        return index, operation, table
     
     def step(self, action):
-        # Interpret the action
-        num_cells_per_table = self.table_size  # Assuming this is defined elsewhere, like in __init__
+        num_cells_per_table = self.table_size
         for i in range(self.num_tables):
             table = None
             if i == 0:
@@ -96,21 +93,22 @@ class CustomEnv(gym.Env):
                 table = self.queenstable
             elif i == 3:
                 table = self.kingstable
-            
+
             for j in range(num_cells_per_table):
                 action_value = action[i * num_cells_per_table + j]
-                # Here you apply the action_value to the cell. This could mean directly adding the action_value
-                # to the cell's current value. Ensure that the final cell value stays within your game's valid range.
                 table[j] += action_value
-                # If you have a maximum or minimum value for cells, enforce it here
-                # Example: table[j] = max(min_value, min(table[j], max_value))
+
+        # Apply the last 4 actions to the weights
+        self.bishopweight += action[-4]
+        self.knightweight += action[-3]
+        self.queenweight += action[-2]
+        self.kingweight += action[-1]
 
         reward = self.calculate_reward()
         done = self.calculate_done()
         observation = np.zeros(25)
         truncated = False
         info = {"score": self.score, "games_played": self.games_played}
-        # Return the new observation, reward, termination status, and info
         return observation, reward, done, truncated, info
     
     def calculate_reward(self):
@@ -159,7 +157,11 @@ class CustomEnv(gym.Env):
                         'bishopstable': self.bishopstable,
                         'knightstable': self.knightstable,
                         'queenstable': self.queenstable,
-                        'kingstable': self.kingstable
+                        'kingstable': self.kingstable,
+                        'bishopweight': self.bishopweight,
+                        'knightweight': self.knightweight,
+                        'queenweight': self.queenweight,
+                        'kingweight': self.kingweight
                     })
 
                     # Write everything back to the file
@@ -230,8 +232,6 @@ class CustomEnv(gym.Env):
             return -1
         return 0
         
-
-
     def player_name(self, player):
         return player.__class__.__name__
     
