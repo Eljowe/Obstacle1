@@ -4,6 +4,7 @@ from gymnasium import spaces
 import torch
 import os
 import numpy as np
+import json
 
 from typing import Type
 from random import seed
@@ -22,6 +23,7 @@ from stable_baselines3.common.callbacks import CheckpointCallback
 from stable_baselines3.common.vec_env import SubprocVecEnv
 from stable_baselines3.common.vec_env import DummyVecEnv
 from stable_baselines3.common.vec_env import VecMonitor
+from gym import spaces
 
 MAX_STEPS = 1000
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -57,8 +59,12 @@ class CustomEnv(gym.Env):
         
 
         self.score = 0
-        self.action_space = spaces.Discrete(50)
-        self.actions_map = {i: (i % 25, 'increment' if i < 25 else 'decrement') for i in range(50)}
+        self.action_space = spaces.Tuple(*(spaces.Tuple((
+            spaces.Discrete(25),  # index
+            spaces.Discrete(4),   # table
+            spaces.Discrete(101)  # value to set, will be shifted to be between -50 and 50
+        )) for _ in range(5)))
+        self.actions_map = {i: (i % 50, 'increment' if i % 100 < 50 else 'decrement', i // 100) for i in range(200)}
         # Example for using image as input (channel-first; channel-last also works):
         self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(25,), dtype=np.float32)
         
@@ -72,21 +78,25 @@ class CustomEnv(gym.Env):
         return modified_board
 
     def interpret_action(self, action):
-        index = action % 25
-        operation = 'increment' if action < 25 else 'decrement'
-        return index, operation
+        return [(index, table, value - 50) for index, table, value in action]
     
     def step(self, action):
         # Interpret the action
-        index, operation = self.interpret_action(action)
+        actions = self.interpret_action(action)
 
-        # Perform the operation
-        if operation == 'increment':
-            self.bishopstable[index] += 5
-            print(f"incremented {index} to {self.bishopstable[index]}")
-        else:  # operation == 'decrement'
-            print(f"decremented {index} to {self.bishopstable[index]}")
-            self.bishopstable[index] -= 5
+        for index, table, value in actions:
+            # Select the correct table
+            if table == 0:
+                selected_table = self.bishopstable
+            elif table == 1:
+                selected_table = self.knightstable
+            elif table == 2:
+                selected_table = self.queenstable
+            else:  # table == 3
+                selected_table = self.kingstable
+
+            # Set the value
+            selected_table[index] = value
 
         # Calculate reward and termination status
         # This is just an example. You should replace this with your own logic.
@@ -126,12 +136,22 @@ class CustomEnv(gym.Env):
     def calculate_done(self):
         print(f"Games played: {self.games_played}")
         print(f"Score: {self.score}")
-        if self.games_played >= 10:
+        if self.games_played >= 5:
             table = np.array(self.bishopstable)
             table_reshaped = table.reshape((5, 5))
             print("\n")
             print(table_reshaped)
             print("\n")
+            
+            with open('tables.json', 'w') as f:
+                json.dump({
+                    'score': self.score,
+                    'bishopstable': self.bishopstable,
+                    'knightstable': self.knightstable,
+                    'queenstable': self.queenstable,
+                    'kingstable': self.kingstable
+                }, f)
+            
             return True
         return False
     
@@ -231,7 +251,7 @@ if __name__ == '__main__':
             save_freq= 50000,
             save_path=dir
         )
-        
+        """
         model = PPO(
             policy="MlpPolicy",
             env = env,
@@ -240,7 +260,7 @@ if __name__ == '__main__':
             n_epochs=12,
             n_steps=512,
             device='cuda'
-        )
+        )"""
         
         model = DQN(
             "MlpPolicy", 
