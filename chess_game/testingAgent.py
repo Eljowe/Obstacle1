@@ -99,7 +99,7 @@ class TestingAgent():
         Dict[str, str]
         """
         return {
-            "agent name": "Mini_Karpov_DL_Weighted",
+            "agent name": "Testing agent",
         }
         raise NotImplementedError
     
