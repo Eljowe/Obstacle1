@@ -154,7 +154,7 @@ class CustomEnv(gym.Env):
             print(f"All scores: {self.all_scores}")
             print("\n")
             
-            if self.all_scores[0] >= 10:
+            if self.all_scores[0] >= 10 | self.score[0] >= 3:
             
                 with open('delltables.json', 'r') as f:
                     try:
