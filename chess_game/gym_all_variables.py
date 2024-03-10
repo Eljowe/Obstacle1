@@ -81,6 +81,17 @@ class CustomEnv(gym.Env):
         modified_board = [cell for row in modified_board_2d for cell in row]
         return modified_board
     
+    def reverse_table_reshape(self, table):
+        # Convert the 1D list to a 2D list
+        board_2d = [table[i:i+5] for i in range(0, len(table), 5)]
+
+        # Expand the 2D list to an 8x8 board
+        original_board_2d = [row + [0]*3 for row in board_2d] + [[0]*8]*3
+
+        # Flatten the 2D board back to a 1D list
+        original_board = [cell for row in original_board_2d for cell in row]
+        return original_board
+    
     def step(self, action):
         num_cells_per_table = self.table_size
         for i in range(self.num_tables):
@@ -177,6 +188,15 @@ class CustomEnv(gym.Env):
         ############### Set the players ###############
         opponent = CustomAgent()
         players = [self.agent, opponent]
+        self.agent.bishopstable = self.reverse_table_reshape(self.bishopstable)
+        self.agent.knightstable = self.reverse_table_reshape(self.knightstable)
+        self.agent.queenstable = self.reverse_table_reshape(self.queenstable)
+        self.agent.kingstable = self.reverse_table_reshape(self.kingstable)
+        self.agent.bishopweight = self.bishopweight
+        self.agent.knightweight = self.knightweight
+        self.agent.queenweight = self.queenweight
+        self.agent.kingweight = self.kingweight
+        
         #players = [AgentInterface, RandomAgent]
         #players = [MinimaxAgent, MinimaxAgent]
         #players = [MinimaxAgent, MCSAgent]
