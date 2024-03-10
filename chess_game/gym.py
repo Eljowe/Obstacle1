@@ -60,9 +60,8 @@ class CustomEnv(gym.Env):
         self.action_space = spaces.Discrete(50)
         self.actions_map = {i: (i % 25, 'increment' if i < 25 else 'decrement') for i in range(50)}
         # Example for using image as input (channel-first; channel-last also works):
-        self.observation_space = spaces.Box(low=-50, high=50,
-                                            shape=(1, 25), dtype=np.uint8)
-
+        self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(25,), dtype=np.float32)
+        
     def table_reshape(self, table):
         original_board_2d = [table[i:i+8] for i in range(0, len(table), 8)]
 
@@ -93,7 +92,7 @@ class CustomEnv(gym.Env):
         # This is just an example. You should replace this with your own logic.
         reward = self.calculate_reward()
         done = self.calculate_done()
-        observation = reward
+        observation = np.zeros(25)
         truncated = False
         info = {"score": self.score, "games_played": self.games_played}
         # Return the new observation, reward, termination status, and info
@@ -125,7 +124,14 @@ class CustomEnv(gym.Env):
         return super().close()
     
     def calculate_done(self):
+        print(f"Games played: {self.games_played}")
+        print(f"Score: {self.score}")
         if self.games_played >= 10:
+            table = np.array(self.bishopstable)
+            table_reshaped = table.reshape((5, 5))
+            print("\n")
+            print(table_reshaped)
+            print("\n")
             return True
         return False
     
@@ -144,10 +150,7 @@ class CustomEnv(gym.Env):
         # players = [Agent, IDMinimaxAgent]   <-- Uncomment this to test your agent
         ###############################################
         #table = np.array(self.table_reshape(self.agent.bishopstable))
-        table = np.array(self.bishopstable)
-        table_reshaped = table.reshape((5, 5))
-
-        print(table_reshaped)
+        
         RENDER = False
 
         # The rest of the file is not important; you can skip reading it. #
@@ -158,11 +161,6 @@ class CustomEnv(gym.Env):
             initial_state = State([self.player_name(p) for p in players])
 
             for round in range(len(players)):
-                print( "########################################################")
-                print("#{: ^54}#".format(f"ROUND {round}"))
-                print( "########################################################")
-                print( self.player_name(players[0]) + " is playing WHITE.")
-                print( self.player_name(players[1]) + " is playing BLACK.")
                 players_instances = [p for p in players]
                 # Timeout for each move. Don't rely on the value of it. This
                 # value might be changed during the tournament.
@@ -180,11 +178,6 @@ class CustomEnv(gym.Env):
                                     timeout_per_turn=timeouts)
                 if len(winners) == 1:
                     results[winners[0]] += 1
-
-                print()
-                print(f"{i}) Result) {self.player_name(players[0])}: {results[0]} - "
-                    f"{self.player_name(players[1])}: {results[1]}")
-                print("########################################################")
 
                 # Rotating players for the next rounds
     #            initial_state.rotate_players()
@@ -238,7 +231,8 @@ if __name__ == '__main__':
             save_freq= 50000,
             save_path=dir
         )
-        """model = PPO(
+        
+        model = PPO(
             policy="MlpPolicy",
             env = env,
             verbose=1,
@@ -246,14 +240,19 @@ if __name__ == '__main__':
             n_epochs=12,
             n_steps=512,
             device='cuda'
-        )"""
+        )
+        
         model = DQN(
             "MlpPolicy", 
             env, verbose=1,
             tensorboard_log="./logs/")
+
+        
         model.learn(
-            total_timesteps=500000,           callback=[checkpoint_callback], log_interval=1
+            total_timesteps=500000,
+            callback=[checkpoint_callback], log_interval=1
         )
+        
         model.save(f"{models_dir}/{212}")
         '''TIMESTEPS = 500
         iters = 0

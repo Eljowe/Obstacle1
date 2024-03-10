@@ -25,6 +25,7 @@ class Game:
         winners = self.__play(starting_state,
                               output,
                               timeout_per_turn)
+        output = False
         if output:
             print("Game is over!")
             if len(winners) != 1:
