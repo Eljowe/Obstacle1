@@ -66,9 +66,8 @@ class CustomEnv(gym.Env):
         self.num_tables = 4
         self.table_size = 25
         self.score = 0
-        self.action_space = spaces.MultiDiscrete([101 for _ in range(4 * 25 + 4)])
-
-        self.observation_space = spaces.MultiDiscrete([np.iinfo(np.int32).max for _ in range(25)])
+        self.action_space = spaces.Box(low=-50, high=50, shape=(4 * 25 + 4,), dtype=np.float32)
+        self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(25,), dtype=np.float32)
     def table_reshape(self, table):
         original_board_2d = [table[i:i+8] for i in range(0, len(table), 8)]
 
