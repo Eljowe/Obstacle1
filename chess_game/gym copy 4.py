@@ -143,7 +143,7 @@ class CustomEnv(gym.Env):
             print(f"All scores: {self.all_scores}")
             print("\n")
             
-            if self.score[0] >= 4:
+            if self.all_scores[0] >= 8:
             
                 with open('tables.json', 'r') as f:
                     try:
@@ -154,6 +154,7 @@ class CustomEnv(gym.Env):
                     # Append new data
                     data.append({
                         'score': self.score,
+                        'all_scores': self.all_scores,
                         'bishopstable': self.bishopstable,
                         'knightstable': self.knightstable,
                         'queenstable': self.queenstable,
