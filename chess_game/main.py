@@ -10,6 +10,8 @@ from custom_agent import CustomAgent
 from random_agent import RandomAgent
 from minimax_agent import MinimaxAgent
 from mcs_agent import MCSAgent
+from testingAgent import TestingAgent
+from DLAgent import DLAgent
 # from agent import Agent    # After completing your agent, you can uncomment this line
 
 
@@ -19,7 +21,7 @@ from mcs_agent import MCSAgent
 
 def main():
     ############### Set the players ###############
-    players = [MinimaxAgent, CustomAgent]
+    players = [TestingAgent, DLAgent]
     #players = [AgentInterface, RandomAgent]
     #players = [MinimaxAgent, MinimaxAgent]
     #players = [MinimaxAgent, MCSAgent]
