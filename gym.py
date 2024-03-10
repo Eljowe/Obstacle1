@@ -1,0 +1,249 @@
+import gymnasium as gym
+import numpy as np
+from gymnasium import spaces
+import torch
+import os
+
+from typing import Type
+from random import seed
+
+from chess_game.game import Game
+from chess_game.envs.game import State
+
+from chess_game.agent_interface import AgentInterface
+from chess_game.random_agent import RandomAgent
+from chess_game.minimax_agent import MinimaxAgent
+from chess_game.mcs_agent import MCSAgent
+from chess_game.DLAgent import AgentInterface as DLAgent
+
+from stable_baselines3 import PPO, A2C, DQN
+from stable_baselines3.common.callbacks import CheckpointCallback
+from stable_baselines3.common.vec_env import SubprocVecEnv
+from stable_baselines3.common.vec_env import DummyVecEnv
+from stable_baselines3.common.vec_env import VecMonitor
+
+MAX_STEPS = 1000
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print('Using device:', device)
+
+
+if device.type == 'cuda':
+    print(torch.cuda.get_device_name(0))
+    print('Memory Usage:')
+    print('Allocated:', round(torch.cuda.memory_allocated(0)/1024**3,1), 'GB')
+    print('Cached:   ', round(torch.cuda.memory_reserved(0)/1024**3,1), 'GB')
+
+
+class CustomEnv(gym.Env):
+    """Custom Environment that follows gym interface."""
+
+    metadata = {"render_modes": ["human"], "render_fps": 30}
+
+    def __init__(self, board_height=8, board_width=8):
+        super().__init__()
+        
+        gym_agent  = DLAgent()
+        
+        self.bishopstable = self.table_reshape(gym_agent.bishopstable)
+        self.knightstable = self.table_reshape(gym_agent.knightstable)
+        self.queenstable = self.table_reshape(gym_agent.queenstable)
+        self.kingstable = self.table_reshape(gym_agent.kingstable)
+        
+        
+        self.board_height = board_height
+        self.board_width = board_width
+        self.score = 0
+        self.action_space = spaces.Discrete(50)
+        self.actions_map = {i: (i % 25, 'increment' if i < 25 else 'decrement') for i in range(50)}
+        # Example for using image as input (channel-first; channel-last also works):
+        self.observation_space = spaces.Box(low=0, high=255,
+                                            shape=(board_height, board_width), dtype=np.uint8)
+
+    def table_reshape(self, table):
+        original_board_2d = [table[i:i+8] for i in range(0, len(table), 8)]
+
+        modified_board_2d = [row[:5] for row in original_board_2d[:5]]
+
+        # Flatten the modified 2D board back to a 1D list
+        modified_board = [cell for row in modified_board_2d for cell in row]
+        return modified_board
+
+    def interpret_action(self, action):
+        index = action % 25
+        operation = 'increment' if action < 25 else 'decrement'
+        return index, operation
+    
+    def step(self, action):
+        # Interpret the action
+        index, operation = self.interpret_action(action)
+
+        # Perform the operation
+        if operation == 'increment':
+            self.bishopstable[index] += 1
+        else:  # operation == 'decrement'
+            self.bishopstable[index] -= 1
+
+        # Calculate reward and termination status
+        # This is just an example. You should replace this with your own logic.
+        reward = self.calculate_reward()
+        done = self.calculate_done()
+
+        # Return the new observation, reward, termination status, and info
+        return np.array(self.bishopstable), reward, done, {}
+    
+    def calculate_reward(self):
+        # Play the game
+        result = self.play_game(self.agent)
+
+        # Calculate the reward as the number of rounds won by the agent
+        if result == 1:
+            reward = 1
+        else:
+            reward = -1
+        return reward
+    
+    def play_game(self, agent):
+        ############### Set the players ###############
+        players = [agent, MinimaxAgent]
+        #players = [AgentInterface, RandomAgent]
+        #players = [MinimaxAgent, MinimaxAgent]
+        #players = [MinimaxAgent, MCSAgent]
+        #players = [RandomAgent, MCSAgent]
+        #players = [RandomAgent, MinimaxAgent]
+        #players = [RandomAgent, RandomAgent]
+        #players = [MCSAgent, RandomAgent]
+
+        # players = [Agent, IDMinimaxAgent]   <-- Uncomment this to test your agent
+        ###############################################
+
+        RENDER = True
+
+        # The rest of the file is not important; you can skip reading it. #
+        ###################################################################
+
+        results = [0, 0]
+        for i in range(1):
+            initial_state = State([self.player_name(p) for p in players])
+
+            for round in range(len(players)):
+                print( "########################################################")
+                print("#{: ^54}#".format(f"ROUND {round}"))
+                print( "########################################################")
+                print( self.player_name(players[0]) + " is playing WHITE.")
+                print( self.player_name(players[1]) + " is playing BLACK.")
+                players_instances = [p() for p in players]
+                # Timeout for each move. Don't rely on the value of it. This
+                # value might be changed during the tournament.
+                timeouts = [5, 5]
+                game = Game(players_instances)
+                new_round = initial_state.clone()
+                turn_duration_estimate = sum([t
+                                            for p, t in zip(players, timeouts)
+                                            if p != RandomAgent])
+                if RENDER:
+                    print(str(new_round))
+
+                winners = game.play(new_round,
+                                    output=True,
+                                    timeout_per_turn=timeouts)
+                if len(winners) == 1:
+                    results[winners[0]] += 1
+
+                print()
+                print(f"{i}) Result) {self.player_name(players[0])}: {results[0]} - "
+                    f"{self.player_name(players[1])}: {results[1]}")
+                print("########################################################")
+
+                # Rotating players for the next rounds
+    #            initial_state.rotate_players()
+                players.append(players.pop(0))
+                results.append(results.pop(0))
+        
+        if results[0] > results[1]:
+            return 1
+        else:
+            return 0
+        
+
+
+    def player_name(self, player: Type[AgentInterface]):
+        return player().info()['agent name']
+    
+
+models_dir = "models/PPO"
+#models_dir = "DQNmodel/DQN"
+
+if not os.path.exists(models_dir):
+    os.makedirs(models_dir)
+if __name__ == '__main__':
+    dir = "models/DQN"
+    dir_path = f"{dir}/DQN.zip"
+    env_lambda = lambda: CustomEnv(
+        screen_width=4,
+        screen_height=4,
+        chromedriver_path=os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "chromedriver"
+        )
+    )
+    do_train = True
+    Continue = False
+    num_cpu = 1
+    env = VecMonitor(SubprocVecEnv([env_lambda for i in range(num_cpu)]))
+
+    if Continue and do_train:
+        model_path = f"{models_dir}/rl_model_400000_steps"
+        log_path = f"C:/Koodi/RL_AI/logs/PPO_2/"
+        model = PPO.load(model_path, env=env, tensorboard_log=log_path)
+        model.set_env(env)
+        checkpoint_callback = CheckpointCallback(
+            save_freq= 10000,
+            save_path=dir
+        )
+        model.learn(
+            total_timesteps=500000, log_interval=1, reset_num_timesteps=False
+        )
+        model.save(f"{models_dir}/{2221}")
+
+    elif do_train and not Continue:
+        checkpoint_callback = CheckpointCallback(
+            save_freq= 50000,
+            save_path=dir
+        )
+        """model = PPO(
+            policy="MlpPolicy",
+            env = env,
+            verbose=1,
+            tensorboard_log="./logs/",
+            n_epochs=12,
+            n_steps=512,
+            device='cuda'
+        )"""
+        model = DQN(
+            "MlpPolicy", 
+            env, verbose=1,
+            tensorboard_log="./logs/")
+        model.learn(
+            total_timesteps=500000,           callback=[checkpoint_callback], log_interval=1
+        )
+        model.save(f"{models_dir}/{212}")
+        '''TIMESTEPS = 500
+        iters = 0
+        for i in range(1,10):
+            model.learn(total_timesteps=TIMESTEPS, reset_num_timesteps=False, callback=[checkpoint_callback], tb_log_name='PPO')
+            model.save(f"{models_dir}/{TIMESTEPS*i*num_cpu}")'''
+    elif not do_train:
+        episodes = 5
+        model_path = f"{models_dir}/rl_model_400000_steps"
+        log_path = f"C:/Koodi/RL_AI/logs/PPO_2/"
+        model = PPO.load(model_path, env=env, tensorboard_log=log_path)
+        for ep in range(episodes):
+            obs = env.reset()
+            done = False
+            while not done:
+                action, _states = model.predict(obs)
+                obs, rewards, done, info = env.step(action)
+                env.render()
+    #model.save(f"{models_dir}/{num_cpu}")
+    #model = PPO.load(f'{models_dir}/{num_cpu}.zip', env=env)
+    exit()

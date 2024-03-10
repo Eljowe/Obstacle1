@@ -36,7 +36,7 @@ def main():
     ###################################################################
 
     results = [0, 0]
-    for i in range(5):
+    for i in range(1):
         initial_state = State([player_name(p) for p in players])
 
         for round in range(len(players)):
