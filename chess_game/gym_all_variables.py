@@ -21,6 +21,7 @@ from DLAgent import DLAgent
 from testingAgent2 import TestingAgent2
 from DellAgent import DellAgent
 from FishAgent import FishAgent
+from Obstacle1 import Agent
 
 from stable_baselines3 import PPO, A2C, DQN
 from stable_baselines3.common.callbacks import CheckpointCallback
@@ -248,7 +249,7 @@ class CustomEnv(gym.Env):
                 players.append(players.pop(0))
                 results.append(results.pop(0))
         
-        opponent = TestingAgent2()
+        opponent = Agent()
         players = [self.agent, opponent]
         
         for i in range(2):
