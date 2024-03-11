@@ -228,7 +228,7 @@ class CustomEnv(gym.Env):
                     print(str(new_round))
 
                 winners = game.play(new_round,
-                                    output=True,
+                                    output=False,
                                     timeout_per_turn=timeouts)
                 if len(winners) == 1:
                     results[winners[0]] += 1
@@ -258,7 +258,7 @@ class CustomEnv(gym.Env):
                     print(str(new_round))
 
                 winners = game.play(new_round,
-                                    output=True,
+                                    output=False,
                                     timeout_per_turn=timeouts)
                 if len(winners) == 1:
                     results[winners[0]] += 1
@@ -288,7 +288,7 @@ class CustomEnv(gym.Env):
                     print(str(new_round))
 
                 winners = game.play(new_round,
-                                    output=True,
+                                    output=False,
                                     timeout_per_turn=timeouts)
                 if len(winners) == 1:
                     results[winners[0]] += 1
