@@ -23,9 +23,10 @@ from testingAgent2 import TestingAgent2
 def main():
     ############### Set the players ###############
     #players = [TestingAgent2, DLAgent]
-    players = [TestingAgent, TestingAgent2]
+    #players = [TestingAgent, TestingAgent2]
+    #players = [TestingAgent2, DLAgent]
     #players = [TestingAgent2, RandomAgent]
-    #players = [TestingAgent2, MinimaxAgent]
+    players = [TestingAgent2, MinimaxAgent]
     #players = [TestingAgent2, MCSAgent]
     #players = [MinimaxAgent, MCSAgent]
     #players = [RandomAgent, MCSAgent]
@@ -42,7 +43,7 @@ def main():
     ###################################################################
 
     results = [0, 0]
-    for i in range(10):
+    for i in range(1):
         initial_state = State([player_name(p) for p in players])
 
         for round in range(len(players)):
