@@ -20,6 +20,7 @@ from testingAgent import TestingAgent
 from DLAgent import DLAgent
 from testingAgent2 import TestingAgent2
 from DellAgent import DellAgent
+from FishAgent import FishAgent
 
 from stable_baselines3 import PPO, A2C, DQN
 from stable_baselines3.common.callbacks import CheckpointCallback
@@ -186,7 +187,7 @@ class CustomEnv(gym.Env):
     def play_game(self):
         ############### Set the players ###############
         #opponent = CustomAgent()
-        opponent = TestingAgent2()
+        opponent = FishAgent()
         players = [self.agent, opponent]
         self.agent.bishopstable = self.reverse_table_reshape(self.bishopstable)
         self.agent.knightstable = self.reverse_table_reshape(self.knightstable)
