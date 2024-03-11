@@ -181,9 +181,6 @@ class CustomEnv(gym.Env):
     
     def play_game(self):
         ############### Set the players ###############
-        #opponent = CustomAgent()
-        opponent = FishAgent()
-        players = [self.agent, opponent]
         self.agent.bishopstable = self.reverse_table_reshape(self.bishopstable)
         self.agent.knightstable = self.reverse_table_reshape(self.knightstable)
         self.agent.queenstable = self.reverse_table_reshape(self.queenstable)
@@ -193,22 +190,8 @@ class CustomEnv(gym.Env):
         self.agent.queenweight = self.queenweight
         self.agent.kingweight = self.kingweight
         
-        #players = [AgentInterface, RandomAgent]
-        #players = [MinimaxAgent, MinimaxAgent]
-        #players = [MinimaxAgent, MCSAgent]
-        #players = [RandomAgent, MCSAgent]
-        #players = [RandomAgent, MinimaxAgent]
-        #players = [RandomAgent, RandomAgent]
-        #players = [MCSAgent, RandomAgent]
-
-        # players = [Agent, IDMinimaxAgent]   <-- Uncomment this to test your agent
-        ###############################################
-        #table = np.array(self.table_reshape(self.agent.bishopstable))
-        
-        RENDER = False
-
-        # The rest of the file is not important; you can skip reading it. #
-        ###################################################################
+        opponent = FishAgent()
+        players = [self.agent, opponent]
 
         results = [0, 0]
         for i in range(2):
@@ -224,8 +207,7 @@ class CustomEnv(gym.Env):
                 turn_duration_estimate = sum([t
                                             for p, t in zip(players, timeouts)
                                             if p != RandomAgent])
-                if RENDER:
-                    print(str(new_round))
+
 
                 winners = game.play(new_round,
                                     output=False,
@@ -254,8 +236,6 @@ class CustomEnv(gym.Env):
                 turn_duration_estimate = sum([t
                                             for p, t in zip(players, timeouts)
                                             if p != RandomAgent])
-                if RENDER:
-                    print(str(new_round))
 
                 winners = game.play(new_round,
                                     output=False,
@@ -284,8 +264,7 @@ class CustomEnv(gym.Env):
                 turn_duration_estimate = sum([t
                                             for p, t in zip(players, timeouts)
                                             if p != RandomAgent])
-                if RENDER:
-                    print(str(new_round))
+
 
                 winners = game.play(new_round,
                                     output=False,
