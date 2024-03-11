@@ -147,14 +147,13 @@ class CustomEnv(gym.Env):
     
     def calculate_done(self):
         print(f"Games played: {self.games_played}")
-        if self.games_played >= 3:
+        if self.games_played >= 1:
             print(f"Score: {self.score}")
             print(f"All scores: {self.all_scores}")
             print("\n")
             
-            if self.score[0] >= 3:
-                print("Should ssave")
-                print(f"Tables to save: {self.bishopstable}, {self.knightstable}, {self.queenstable}, {self.kingstable}")
+            if self.all_scores[0] >= 11:
+                print("Saving the tables to tables.json")
                 with open('tables.json', 'r') as f:
                     try:
                         data = json.load(f)
@@ -215,7 +214,7 @@ class CustomEnv(gym.Env):
         ###################################################################
 
         results = [0, 0]
-        for i in range(2):
+        for i in range(6):
             initial_state = State([self.player_name(p) for p in players])
 
             for round in range(len(players)):
