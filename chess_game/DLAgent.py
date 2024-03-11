@@ -104,8 +104,6 @@ class DLAgent():
         }
         raise NotImplementedError
     
-    def check_capture(self, move):
-        return False
     
     def alphabeta(self, alpha, beta, depthleft, state):
         if (depthleft == 0):
