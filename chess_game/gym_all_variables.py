@@ -369,13 +369,12 @@ if __name__ == '__main__':
             verbose=1,
             tensorboard_log="./logs/",
             device='cuda',
-            learning_rate=0.0001,
+            learning_rate=0.0005,
         )
          
         
         model.learn(
-            total_timesteps=500000,
-            callback=[checkpoint_callback], log_interval=1
+            total_timesteps=5000, log_interval=1
         )
         
         model.save(f"{models_dir}/{212}")
