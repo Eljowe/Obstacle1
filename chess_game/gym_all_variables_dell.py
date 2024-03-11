@@ -17,6 +17,7 @@ from random_agent import RandomAgent
 from minimax_agent import MinimaxAgent
 from mcs_agent import MCSAgent
 from testingAgent import TestingAgent
+from testingAgent2 import TestingAgent2
 from DLAgent import DLAgent
 
 from stable_baselines3 import PPO, A2C, DQN
@@ -184,7 +185,7 @@ class CustomEnv(gym.Env):
     def play_game(self):
         ############### Set the players ###############
         #opponent = CustomAgent()
-        opponent = TestingAgent()
+        opponent = TestingAgent2()
         players = [self.agent, opponent]
         self.agent.bishopstable = self.reverse_table_reshape(self.bishopstable)
         self.agent.knightstable = self.reverse_table_reshape(self.knightstable)
