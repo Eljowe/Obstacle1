@@ -155,8 +155,8 @@ class CustomEnv(gym.Env):
             print("\n")
             
             if self.all_scores[0] >= 10:
-                print("Saving the tables to tables.json")
-                with open('tables.json', 'r') as f:
+                print("Saving the tables to delltables.json")
+                with open('delltables.json', 'r') as f:
                     try:
                         data = json.load(f)
                     except json.JSONDecodeError:  # If the file is empty, set data to an empty list
@@ -177,7 +177,7 @@ class CustomEnv(gym.Env):
                     })
 
                     # Write everything back to the file
-                    with open('tables.json', 'w') as f:
+                    with open('delltables.json', 'w') as f:
                         json.dump(data, f)
         
             
