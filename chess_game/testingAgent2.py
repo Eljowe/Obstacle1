@@ -21,7 +21,7 @@ class TestingAgent2():
         self.bishopweight = 326
         self.knightweight = 385
         self.queenweight = 950
-        self.kingweight = 74
+        self.kingweight = 5000 
     #Change these values with deep learning
     #Also find the best first moves with deep learning
     #Or even create an opening theory with DL
@@ -156,7 +156,20 @@ class TestingAgent2():
         kings_eval = kings_eval + sum([-self.kingstable[chess.square_mirror(i)]
                             for i in state.board.pieces(chess.KING, chess.BLACK)])
         
-        eval = material + knight_eval + bishop_eval + queens_eval + kings_eval
+        def evaluate_pinned(piece_set, color, value_of_pin):
+            eval = 0
+            for piece in piece_set:
+                if state.board.is_pinned(color, piece):
+                    eval = eval + value_of_pin
+            return eval
+        
+        pinned_value = evaluate_pinned(state.board.pieces(chess.KNIGHT, chess.WHITE), chess.WHITE, -30) + evaluate_pinned(state.board.pieces(chess.KNIGHT, chess.WHITE), chess.BLACK, 30) +\
+                        evaluate_pinned(state.board.pieces(chess.BISHOP, chess.WHITE),chess.WHITE, -30) + evaluate_pinned(state.board.pieces(chess.BISHOP, chess.BLACK),chess.BLACK, 30) +\
+                        evaluate_pinned(state.board.pieces(chess.QUEEN, chess.WHITE),chess.WHITE, -90) + evaluate_pinned(state.board.pieces(chess.QUEEN, chess.BLACK),chess.BLACK, 90)
+                            
+        
+        
+        eval = material + knight_eval + bishop_eval + queens_eval + kings_eval + pinned_value
         if id == 0:
             return eval
         else:

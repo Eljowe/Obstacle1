@@ -6,7 +6,7 @@ import numpy as np
 
 
 """
-This agent is a chess agent using the minimax algorithm with alpha-beta pruning and quiesce search.
+This agent is a chess agent using the minimax algorithm with alpha-beta pruning and quiescence search.
 The move-deciding algorithm is a simple implementation, and has no further optimizations or depth variations.
 
 The algorithm uses a custom evaluation function to evaluate the board state.
@@ -57,6 +57,41 @@ weights = {
     "kingweight": 116.14559555053711
   }
 
+weights2 = {
+    "bishopstable": [
+      6.292194366455078, 6.869808197021484, -65.65198707580566, -65.62728500366211, -157.13348579406738,
+      120.42205047607422, -81.6470718383789, -73.24918937683105, -86.08049392700195, -44.3415412902832,
+      17.056732177734375, -29.05750846862793, -104.1944465637207, -3.0357627868652344, -67.62578010559082,
+      -14.908208847045898, -127.71303367614746, 6.934017181396484, 11.946569442749023, -28.387283325195312,
+      -196.00423049926758, -30.7468204498291, 39.91965293884277, 6.2647247314453125, -40.23664474487305
+    ],
+    "knightstable": [
+      24.647518157958984, 66.98274612426758, -76.20516014099121, 48.051979064941406, -70.77320671081543,
+      -14.442520141601562, 30.452455520629883, 79.86080741882324, -16.176185607910156, 9.222558975219727,
+      -259.72936820983887, 147.85608673095703, -4.943204879760742, -125.15887069702148, 26.538238525390625,
+      -27.770305633544922, 45.52146339416504, -43.070858001708984, 130.0321044921875, -80.97233009338379,
+      82.3163070678711, -118.9792423248291, -129.0033779144287, -149.266752243042, 15.86984634399414
+    ],
+    "queenstable": [
+      -15.547187805175781, -66.63014221191406, -94.20897483825684, -70.83781051635742, -10.80422592163086,
+      -55.34687805175781, 23.64101791381836, 86.09530067443848, -33.008270263671875, 19.45463752746582,
+      -9.348882675170898, -35.08527183532715, -120.5623664855957, -107.29591941833496, -38.424800872802734,
+      72.71745300292969, 185.57015419006348, 12.057697296142578, -40.20488739013672, 175.85889434814453,
+      65.02014923095703, 0.3205547332763672, 119.27866172790527, 23.701671600341797, 144.87437057495117
+    ],
+    "kingstable": [
+      -87.32510566711426, -17.0026912689209, -28.713420867919922, 152.55694961547852, 69.74859619140625,
+      -56.4793586730957, -53.17198181152344, -46.07426643371582, -120.36303520202637, 98.33859634399414,
+      -65.66889572143555, -59.29198455810547, -89.33249282836914, 88.2198371887207, 16.25026512145996,
+      38.29982566833496, -208.97513389587402, -53.29103660583496, -60.67086410522461, 15.544694900512695,
+      -138.67167282104492, 41.84558868408203, -37.62973976135254, -180.8875961303711, 108.68782043457031
+    ],
+    "bishopweight": 396.78146743774414,
+    "knightweight": 256.141170501709,
+    "queenweight": 999.9413909912109,
+    "kingweight": -106.44881057739258
+  }
+
 class Agent():
     def __init__(self, depth: int = 4):
         self.depth = depth
@@ -83,13 +118,13 @@ class Agent():
     def info():
         return {
             "agent name": "Obstacle1",
-            "description": "A chess agent using the minimax algorithm with alpha-beta pruning and quiesce search",
+            "description": "A chess agent using the minimax algorithm with alpha-beta pruning and quiescence search",
         }
 
     
     def alphabeta(self, alpha, beta, depthleft, state: State):
         if (depthleft == 0):
-            return self.quiesce(alpha, beta, state)
+            return self.quiescence(alpha, beta, state)
         bestscore = -9999
         for move in state.applicable_moves():
             state.execute_move(move)
@@ -103,16 +138,16 @@ class Agent():
                 alpha = score
         return bestscore
     
-    def quiesce(self, alpha, beta, state: State):
-        stand_pat = self.custom_evaluate_board(state)
-        if (stand_pat >= beta):
+    def quiescence(self, alpha, beta, state: State):
+        padding = self.custom_evaluate_board(state)
+        if (padding >= beta):
             return beta
-        if (alpha < stand_pat):
-            alpha = stand_pat
+        if (alpha < padding):
+            alpha = padding
         for move in state.applicable_moves():
             if state.board.is_capture(move.chessmove):
                     state.execute_move(move)
-                    score = -self.quiesce(-beta, -alpha, state)
+                    score = -self.quiescence(-beta, -alpha, state)
                     state.undo_last_move()
                     if (score >= beta):
                         return beta
