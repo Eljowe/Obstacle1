@@ -22,10 +22,11 @@ from testingAgent2 import TestingAgent2
 
 def main():
     ############### Set the players ###############
-    #players = [TestingAgent, DLAgent]
+    #players = [TestingAgent2, DLAgent]
     players = [TestingAgent, TestingAgent2]
-    #players = [AgentInterface, RandomAgent]
-    #players = [MinimaxAgent, MinimaxAgent]
+    #players = [TestingAgent2, RandomAgent]
+    #players = [TestingAgent2, MinimaxAgent]
+    #players = [TestingAgent2, MCSAgent]
     #players = [MinimaxAgent, MCSAgent]
     #players = [RandomAgent, MCSAgent]
     #players = [RandomAgent, MinimaxAgent]
