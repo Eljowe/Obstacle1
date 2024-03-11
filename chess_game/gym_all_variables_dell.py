@@ -19,6 +19,8 @@ from mcs_agent import MCSAgent
 from testingAgent import TestingAgent
 from DLAgent import DLAgent
 from testingAgent2 import TestingAgent2
+from DellAgent import DellAgent
+from FishAgent import FishAgent
 
 from stable_baselines3 import PPO, A2C, DQN
 from stable_baselines3.common.callbacks import CheckpointCallback
@@ -127,9 +129,9 @@ class CustomEnv(gym.Env):
 
         # Calculate the reward as the number of rounds won by the agent
         if result == 1:
-            reward = self.all_scores[0]**2
+            reward = ((self.all_scores[0] - self.all_scores[1])**2) * 0.5
         elif result == -1:
-            reward = -self.all_scores[1]**2
+            reward = ((self.all_scores[1] - self.all_scores[0])**2) * 0.5
         else:
             reward = -0.5
         return reward
@@ -154,7 +156,7 @@ class CustomEnv(gym.Env):
             
             if self.all_scores[0] >= 11:
                 print("Saving the tables to tables.json")
-                with open('delltables.json', 'r') as f:
+                with open('tables.json', 'r') as f:
                     try:
                         data = json.load(f)
                     except json.JSONDecodeError:  # If the file is empty, set data to an empty list
@@ -175,7 +177,7 @@ class CustomEnv(gym.Env):
                     })
 
                     # Write everything back to the file
-                    with open('delltables.json', 'w') as f:
+                    with open('tables.json', 'w') as f:
                         json.dump(data, f)
         
             
@@ -185,7 +187,7 @@ class CustomEnv(gym.Env):
     def play_game(self):
         ############### Set the players ###############
         #opponent = CustomAgent()
-        opponent = TestingAgent2()
+        opponent = FishAgent()
         players = [self.agent, opponent]
         self.agent.bishopstable = self.reverse_table_reshape(self.bishopstable)
         self.agent.knightstable = self.reverse_table_reshape(self.knightstable)
@@ -214,7 +216,7 @@ class CustomEnv(gym.Env):
         ###################################################################
 
         results = [0, 0]
-        for i in range(3):
+        for i in range(2):
             initial_state = State([self.player_name(p) for p in players])
 
             for round in range(len(players)):
@@ -241,10 +243,40 @@ class CustomEnv(gym.Env):
                 players.append(players.pop(0))
                 results.append(results.pop(0))
                 
+        opponent = DellAgent()
+        players = [self.agent, opponent]
+        
+        for i in range(2):
+            initial_state = State([self.player_name(p) for p in players])
+
+            for round in range(len(players)):
+                players_instances = [p for p in players]
+                # Timeout for each move. Don't rely on the value of it. This
+                # value might be changed during the tournament.
+                timeouts = [5, 5]
+                game = Game(players_instances)
+                new_round = initial_state.clone()
+                turn_duration_estimate = sum([t
+                                            for p, t in zip(players, timeouts)
+                                            if p != RandomAgent])
+                if RENDER:
+                    print(str(new_round))
+
+                winners = game.play(new_round,
+                                    output=True,
+                                    timeout_per_turn=timeouts)
+                if len(winners) == 1:
+                    results[winners[0]] += 1
+
+                # Rotating players for the next rounds
+    #            initial_state.rotate_players()
+                players.append(players.pop(0))
+                results.append(results.pop(0))
+        
         opponent = DLAgent()
         players = [self.agent, opponent]
         
-        for i in range(3):
+        for i in range(2):
             initial_state = State([self.player_name(p) for p in players])
 
             for round in range(len(players)):
@@ -306,17 +338,17 @@ if __name__ == '__main__':
         model = PPO.load(model_path, env=env, tensorboard_log=log_path)
         model.set_env(env)
         checkpoint_callback = CheckpointCallback(
-            save_freq= 500,
+            save_freq= 100,
             save_path=dir
         )
         model.learn(
-            total_timesteps=20000, log_interval=1, reset_num_timesteps=False
+            total_timesteps=20000, log_interval=1, reset_num_timesteps=False, callback=[checkpoint_callback]
         )
         model.save(f"{models_dir}/{2221}")
 
     elif do_train and not Continue:
         checkpoint_callback = CheckpointCallback(
-            save_freq= 500,
+            save_freq= 100,
             save_path=dir
         )
         """
