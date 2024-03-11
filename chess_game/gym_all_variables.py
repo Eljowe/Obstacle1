@@ -337,7 +337,7 @@ if __name__ == '__main__':
             save_path=dir
         )
         model.learn(
-            total_timesteps=20000, log_interval=1, reset_num_timesteps=False, callback=[checkpoint_callback]
+            total_timesteps=20000, log_interval=1, reset_num_timesteps=False
         )
         model.save(f"{models_dir}/{2221}")
 
