@@ -16,6 +16,7 @@ from custom_agent import CustomAgent
 from random_agent import RandomAgent
 from minimax_agent import MinimaxAgent
 from mcs_agent import MCSAgent
+from testingAgent import TestingAgent
 from DLAgent import DLAgent
 
 from stable_baselines3 import PPO, A2C, DQN
@@ -67,11 +68,7 @@ class CustomEnv(gym.Env):
         self.table_size = 25
         self.score = 0
         self.action_space = spaces.Box(low=-50, high=50, shape=(4 * 25 + 4,), dtype=np.float32)
-
-        #self.actions_map = {i: (i % 50, 'increment' if i % 100 < 50 else 'decrement', i // 100) for i in range(200)}
-        # Example for using image as input (channel-first; channel-last also works):
         self.observation_space = spaces.Box(low=-50, high=50, shape=(8,), dtype=np.float32)
-        
     def table_reshape(self, table):
         original_board_2d = [table[i:i+8] for i in range(0, len(table), 8)]
 
@@ -138,7 +135,7 @@ class CustomEnv(gym.Env):
     
     def reset(self, seed=None, options=None):
         # Reset the environment
-        reset_info = {}  # Add any reset information you need here
+        reset_info = {"score": self.score}  # Add any reset information you need here
         self.games_played = 0
         self.score = [0, 0]
         self.all_scores = [0, 0]
@@ -186,7 +183,8 @@ class CustomEnv(gym.Env):
     
     def play_game(self):
         ############### Set the players ###############
-        opponent = CustomAgent()
+        #opponent = CustomAgent()
+        opponent = TestingAgent()
         players = [self.agent, opponent]
         self.agent.bishopstable = self.reverse_table_reshape(self.bishopstable)
         self.agent.knightstable = self.reverse_table_reshape(self.knightstable)
@@ -281,7 +279,7 @@ if __name__ == '__main__':
             save_path=dir
         )
         model.learn(
-            total_timesteps=5000, log_interval=1, reset_num_timesteps=False
+            total_timesteps=20000, log_interval=1, reset_num_timesteps=False
         )
         model.save(f"{models_dir}/{2221}")
 
@@ -311,7 +309,9 @@ if __name__ == '__main__':
             "MlpPolicy", 
             env, 
             verbose=1,
-            tensorboard_log="./logs/"
+            tensorboard_log="./logs/",
+            device='cuda',
+            learning_rate=0.0001,
         )
          
         
