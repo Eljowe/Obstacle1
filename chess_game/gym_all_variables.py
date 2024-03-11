@@ -307,17 +307,17 @@ if __name__ == '__main__':
         model = PPO.load(model_path, env=env, tensorboard_log=log_path)
         model.set_env(env)
         checkpoint_callback = CheckpointCallback(
-            save_freq= 500,
+            save_freq= 100,
             save_path=dir
         )
         model.learn(
-            total_timesteps=20000, log_interval=1, reset_num_timesteps=False
+            total_timesteps=20000, log_interval=1, reset_num_timesteps=False, callback=[checkpoint_callback]
         )
         model.save(f"{models_dir}/{2221}")
 
     elif do_train and not Continue:
         checkpoint_callback = CheckpointCallback(
-            save_freq= 500,
+            save_freq= 100,
             save_path=dir
         )
         """
