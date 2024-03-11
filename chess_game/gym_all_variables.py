@@ -67,7 +67,7 @@ class CustomEnv(gym.Env):
         self.table_size = 25
         self.score = 0
         self.action_space = spaces.Box(low=-50, high=50, shape=(4 * 25 + 4,), dtype=np.float32)
-        self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(25,), dtype=np.float32)
+        self.observation_space = spaces.Box(low=-50, high=50, shape=(8,), dtype=np.float32)
     def table_reshape(self, table):
         original_board_2d = [table[i:i+8] for i in range(0, len(table), 8)]
 
@@ -113,7 +113,7 @@ class CustomEnv(gym.Env):
 
         reward = self.calculate_reward()
         done = self.calculate_done()
-        observation = np.zeros(25)
+        observation = reward
         truncated = False
         info = {"score": self.score, "games_played": self.games_played}
         return observation, reward, done, truncated, info
@@ -138,7 +138,7 @@ class CustomEnv(gym.Env):
         self.games_played = 0
         self.score = [0, 0]
         self.all_scores = [0, 0]
-        return reset_info
+        return 0, reset_info
     
     def close(self):
         return super().close()
@@ -310,10 +310,6 @@ if __name__ == '__main__':
             tensorboard_log="./logs/",
             device='cuda',
             learning_rate=0.0001,
-            ent_coef='auto_0.1',
-            buffer_size=1500000,
-            
-            
         )
          
         
