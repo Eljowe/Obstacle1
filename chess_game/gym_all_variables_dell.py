@@ -128,12 +128,7 @@ class CustomEnv(gym.Env):
         self.games_played += 1
 
         # Calculate the reward as the number of rounds won by the agent
-        if result == 1:
-            reward = ((self.all_scores[0] - self.all_scores[1])**2) * 0.5
-        elif result == -1:
-            reward = ((self.all_scores[1] - self.all_scores[0])**2) * 0.5
-        else:
-            reward = -0.5
+        reward = (self.all_scores[0] - self.all_scores[1]) * 0.2
         return reward
     
     def reset(self, seed=None, options=None):
@@ -233,7 +228,7 @@ class CustomEnv(gym.Env):
                     print(str(new_round))
 
                 winners = game.play(new_round,
-                                    output=True,
+                                    output=False,
                                     timeout_per_turn=timeouts)
                 if len(winners) == 1:
                     results[winners[0]] += 1
@@ -263,7 +258,7 @@ class CustomEnv(gym.Env):
                     print(str(new_round))
 
                 winners = game.play(new_round,
-                                    output=True,
+                                    output=False,
                                     timeout_per_turn=timeouts)
                 if len(winners) == 1:
                     results[winners[0]] += 1
@@ -273,7 +268,7 @@ class CustomEnv(gym.Env):
                 players.append(players.pop(0))
                 results.append(results.pop(0))
         
-        opponent = DLAgent()
+        opponent = TestingAgent2()
         players = [self.agent, opponent]
         
         for i in range(2):
@@ -293,7 +288,7 @@ class CustomEnv(gym.Env):
                     print(str(new_round))
 
                 winners = game.play(new_round,
-                                    output=True,
+                                    output=False,
                                     timeout_per_turn=timeouts)
                 if len(winners) == 1:
                     results[winners[0]] += 1
