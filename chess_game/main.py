@@ -24,11 +24,11 @@ from DellAgent import DellAgent
 
 def main():
     ############### Set the players ###############
-    #players = [TestingAgent2, DLAgent]
+    players = [FishAgent, DLAgent]
     #players = [TestingAgent, TestingAgent2]
     #players = [TestingAgent2, DLAgent]
     #players = [TestingAgent2, RandomAgent]
-    players = [DellAgent, DLAgent]
+    #players = [DellAgent, FishAgent]
     #players = [TestingAgent2, MCSAgent]
     #players = [MinimaxAgent, MCSAgent]
     #players = [RandomAgent, MCSAgent]

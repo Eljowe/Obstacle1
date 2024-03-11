@@ -215,7 +215,7 @@ class CustomEnv(gym.Env):
         ###################################################################
 
         results = [0, 0]
-        for i in range(3):
+        for i in range(2):
             initial_state = State([self.player_name(p) for p in players])
 
             for round in range(len(players)):
@@ -245,7 +245,37 @@ class CustomEnv(gym.Env):
         opponent = DellAgent()
         players = [self.agent, opponent]
         
-        for i in range(3):
+        for i in range(2):
+            initial_state = State([self.player_name(p) for p in players])
+
+            for round in range(len(players)):
+                players_instances = [p for p in players]
+                # Timeout for each move. Don't rely on the value of it. This
+                # value might be changed during the tournament.
+                timeouts = [5, 5]
+                game = Game(players_instances)
+                new_round = initial_state.clone()
+                turn_duration_estimate = sum([t
+                                            for p, t in zip(players, timeouts)
+                                            if p != RandomAgent])
+                if RENDER:
+                    print(str(new_round))
+
+                winners = game.play(new_round,
+                                    output=True,
+                                    timeout_per_turn=timeouts)
+                if len(winners) == 1:
+                    results[winners[0]] += 1
+
+                # Rotating players for the next rounds
+    #            initial_state.rotate_players()
+                players.append(players.pop(0))
+                results.append(results.pop(0))
+        
+        opponent = DLAgent()
+        players = [self.agent, opponent]
+        
+        for i in range(2):
             initial_state = State([self.player_name(p) for p in players])
 
             for round in range(len(players)):
