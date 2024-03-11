@@ -17,8 +17,8 @@ from random_agent import RandomAgent
 from minimax_agent import MinimaxAgent
 from mcs_agent import MCSAgent
 from testingAgent import TestingAgent
-from testingAgent2 import TestingAgent2
 from DLAgent import DLAgent
+from testingAgent2 import TestingAgent2
 
 from stable_baselines3 import PPO, A2C, DQN
 from stable_baselines3.common.callbacks import CheckpointCallback
@@ -153,7 +153,8 @@ class CustomEnv(gym.Env):
             print("\n")
             
             if self.score[0] >= 3:
-            
+                print("Should ssave")
+                print(f"Tables to save: {self.bishopstable}, {self.knightstable}, {self.queenstable}, {self.kingstable}")
                 with open('delltables.json', 'r') as f:
                     try:
                         data = json.load(f)
