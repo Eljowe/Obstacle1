@@ -18,6 +18,7 @@ from minimax_agent import MinimaxAgent
 from mcs_agent import MCSAgent
 from testingAgent import TestingAgent
 from DLAgent import DLAgent
+from testingAgent2 import TestingAgent2
 
 from stable_baselines3 import PPO, A2C, DQN
 from stable_baselines3.common.callbacks import CheckpointCallback
@@ -151,7 +152,7 @@ class CustomEnv(gym.Env):
             print(f"All scores: {self.all_scores}")
             print("\n")
             
-            if self.all_scores[0] >= 10 | self.score[0] >= 3:
+            if self.all_scores[0] >= 10 & self.score[0] >= 3:
             
                 with open('tables.json', 'r') as f:
                     try:
@@ -184,7 +185,7 @@ class CustomEnv(gym.Env):
     def play_game(self):
         ############### Set the players ###############
         #opponent = CustomAgent()
-        opponent = TestingAgent()
+        opponent = TestingAgent2()
         players = [self.agent, opponent]
         self.agent.bishopstable = self.reverse_table_reshape(self.bishopstable)
         self.agent.knightstable = self.reverse_table_reshape(self.knightstable)
