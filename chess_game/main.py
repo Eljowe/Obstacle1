@@ -23,7 +23,7 @@ from testingAgent2 import TestingAgent2
 def main():
     ############### Set the players ###############
     #players = [TestingAgent, DLAgent]
-    players = [MinimaxAgent, TestingAgent2]
+    players = [TestingAgent, TestingAgent2]
     #players = [AgentInterface, RandomAgent]
     #players = [MinimaxAgent, MinimaxAgent]
     #players = [MinimaxAgent, MCSAgent]
