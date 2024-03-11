@@ -14,10 +14,12 @@ The evaluation function is based on the material difference and the piece-square
 
 The agent also uses weights for each piece and piece-square table to evaluate the board state.
 The weights and tables are based on moderate amount of reinforcement learning training with stable baselines3,
-where the goal was to optimize the evaluation function to win games against other agents, itself as well.
+where the goal was to optimize the evaluation function to win games against other agents, as well as itself, too.
 
-This wasn't the focus of this course, but I was interested in trying to combine the methods of the course with
-reinforcement learning to see if I could improve the agent's performance after implementing the minimax algorithm.
+Reinforcement learning wasn't the focus of this course, but I was interested in trying to combine the methods of this course with
+reinforcement learning to see if I could improve the agent's performance after implementing the basic minimax algorithm.
+
+Who knows how optimised the tables are, but the weights seem to be accurate enough to make the agent perform decently.
 """
 
 weights = {
