@@ -25,14 +25,15 @@ from Obstacle1 import Agent
 
 def main():
     ############### Set the players ###############
-    players = [DLAgent, Agent]
-    #players = [TestingAgent, TestingAgent2]
-    #players = [TestingAgent2, DLAgent]
-    #players = [TestingAgent2, RandomAgent]
-    #players = [DellAgent, FishAgent]
-    #players = [TestingAgent2, MCSAgent]
-    #players = [MinimaxAgent, MCSAgent]
-    #players = [RandomAgent, MCSAgent]
+    #players = [Agent, MinimaxAgent]
+    players = [Agent, TestingAgent2]
+    #players = [Agent, DLAgent]
+    #players = [Agent, RandomAgent]
+    #players = [Agent, FishAgent]
+    #players = [Agent, DellAgent]
+    #players = [Agent, TestingAgent]
+    #players = [Agent, CustomAgent]
+    #players = [TestingAgent2, DellAgent]
     #players = [RandomAgent, MinimaxAgent]
     #players = [RandomAgent, RandomAgent]
     #players = [MCSAgent, RandomAgent]

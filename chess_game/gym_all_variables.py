@@ -248,7 +248,7 @@ class CustomEnv(gym.Env):
                 players.append(players.pop(0))
                 results.append(results.pop(0))
         
-        opponent = DLAgent()
+        opponent = TestingAgent2()
         players = [self.agent, opponent]
         
         for i in range(2):
