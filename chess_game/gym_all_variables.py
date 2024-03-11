@@ -125,20 +125,20 @@ class CustomEnv(gym.Env):
 
         # Calculate the reward as the number of rounds won by the agent
         if result == 1:
-            reward = 1
+            reward = self.score[0]**2
         elif result == -1:
-            reward = -1
+            reward = -self.score[1]**2
         else:
-            reward = -0.3
+            reward = -0.5
         return reward
     
     def reset(self, seed=None, options=None):
         # Reset the environment
-        reset_info = {}  # Add any reset information you need here
+        reset_info = {"score": self.score}  # Add any reset information you need here
         self.games_played = 0
         self.score = [0, 0]
         self.all_scores = [0, 0]
-        return self.bishopstable, reset_info
+        return reset_info
     
     def close(self):
         return super().close()
@@ -277,7 +277,7 @@ if __name__ == '__main__':
             save_path=dir
         )
         model.learn(
-            total_timesteps=2000, log_interval=1, reset_num_timesteps=False
+            total_timesteps=20000, log_interval=1, reset_num_timesteps=False
         )
         model.save(f"{models_dir}/{2221}")
 
@@ -307,7 +307,13 @@ if __name__ == '__main__':
             "MlpPolicy", 
             env, 
             verbose=1,
-            tensorboard_log="./logs/"
+            tensorboard_log="./logs/",
+            device='cuda',
+            learning_rate=0.0001,
+            ent_coef='auto_0.1',
+            buffer_size=1500000,
+            
+            
         )
          
         
