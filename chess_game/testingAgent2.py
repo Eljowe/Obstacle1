@@ -5,7 +5,40 @@ from envs.game import State, ID
 import numpy as np
 
 
-
+weights = {
+    "bishopstable": [
+      -0.5351104736328125, 67.75389099121094, 62.19477081298828, -13.676307678222656, -26.181903839111328,
+      16.395889282226562, 4.877735137939453, -42.011268615722656, 61.084991455078125, 27.158035278320312,
+      -46.75889587402344, 60.415313720703125, 82.23982238769531, 33.42598342895508, 25.408077239990234,
+      38.24860382080078, -9.737430572509766, -47.529945373535156, -40.558834075927734, 29.38214874267578,
+      -44.40135383605957, -86.24573516845703, -35.217567443847656, -11.712505340576172, 10.277095794677734
+    ],
+    "knightstable": [
+      -37.11063003540039, -4.381725311279297, 63.28852844238281, -84.0914077758789, -68.78004837036133,
+      24.39364242553711, -0.28163909912109375, -64.04652786254883, -1.56988525390625, -76.62065887451172,
+      -93.12121200561523, -39.95299530029297, 87.60726165771484, -25.231563568115234, -15.614448547363281,
+      -2.2921981811523438, -24.334980010986328, 72.73082733154297, 38.46958923339844, -26.94715118408203,
+      -3.1719741821289062, -31.252777099609375, 1.8460807800292969, 52.98860549926758, 55.708763122558594
+    ],
+    "queenstable": [
+      -8.583427429199219, 6.821062088012695, -11.72122573852539, -32.630401611328125, -19.229904174804688,
+      -81.85993003845215, 32.72822570800781, 5.93634033203125, -77.30665969848633, -63.57341003417969,
+      -2.045196533203125, 16.367298126220703, 60.746482849121094, -22.212121963500977, 0.5939788818359375,
+      -1.984090805053711, -38.49396896362305, -27.175630569458008, -4.839565277099609, -44.837005615234375,
+      -26.208810806274414, -7.59765625, -71.24874687194824, -52.27927589416504, 23.43175506591797
+    ],
+    "kingstable": [
+      -25.064701080322266, 31.75836753845215, 67.16104125976562, 55.19562911987305, 64.38150024414062,
+      -33.889347076416016, -101.50999450683594, -59.20869064331055, 6.408626556396484, 3.6911849975585938,
+      21.13513946533203, -100.57134628295898, -52.0190486907959, -65.4409065246582, -67.45635795593262,
+      -33.34642791748047, -20.625259399414062, -47.523916244506836, -71.99042129516602, 41.59632110595703,
+      19.464889526367188, -127.29568481445312, -44.3587760925293, 12.832565307617188, -55.45540237426758
+    ],
+    "bishopweight": 272.9850082397461,
+    "knightweight": 282.5135612487793,
+    "queenweight": 957.3457183837891,
+    "kingweight": 116.14559555053711
+  }
 
 class TestingAgent2():
     """
@@ -13,51 +46,19 @@ class TestingAgent2():
 
     This class defines the required methods for an agent class
     """
-    def __init__(self, depth: int = 4):
+    def __init__(self, depth: int = 3):
         self.depth = depth
         self.__player = None
         self.side = None
+        self.knightweight = weights["knightweight"]
+        self.bishopweight = weights["bishopweight"]
+        self.queenweight = weights["queenweight"]
+        self.kingweight = weights["kingweight"]
         
-        self.bishopweight = 326
-        self.knightweight = 385
-        self.queenweight = 950
-        self.kingweight = 5000 
-    #Change these values with deep learning
-    #Also find the best first moves with deep learning
-    #Or even create an opening theory with DL
-        self.bishopstable = self.reverse_table_reshape([
-      -8.257211685180664, -45.602325439453125, -66.8542251586914, -70.00279998779297, 30.53160858154297,
-      -22.614757537841797, -1.6128463745117188, -53.65303039550781, 12.89461898803711, -43.34302520751953,
-      79.06857299804688, 48.47069549560547, 66.27078819274902, 4.720771789550781, -91.89281845092773,
-      -5.513801574707031, -1.6561660766601562, 3.6916847229003906, -99.49597549438477, -8.166702270507812,
-      54.079071044921875, -28.698482513427734, -33.59449768066406, 17.429420471191406, -29.410907745361328
-    ])
-        
-        
-        self.knightstable = self.reverse_table_reshape([
-      -10.288726806640625, -125.86349868774414, 62.52924728393555, -76.05221748352051, -3.473358154296875,
-      100.36528778076172, -34.11406326293945, 101.96412658691406, -45.1275577545166, 18.027130126953125,
-      81.38987731933594, -80.70923233032227, 15.510929107666016, 45.97636032104492, 85.35476684570312,
-      53.09674072265625, -41.41509246826172, 42.96012496948242, -30.750375747680664, -18.808902740478516,
-      -57.731224060058594, -45.02654838562012, 34.589115142822266, 40.57453155517578, -53.474822998046875
-    ])
-        
-        
-        self.queenstable = self.reverse_table_reshape([
-      -74.46636962890625, -36.53805160522461, 55.39234924316406, -64.91791343688965, 11.802711486816406,
-      71.38187408447266, 7.890228271484375, 47.268089294433594, -24.857173919677734, -70.12844848632812,
-      39.94581985473633, -0.6905097961425781, -34.599958419799805, -36.67597198486328, 23.263694763183594,
-      -17.507102966308594, 18.670448303222656, -31.96295928955078, 43.65176010131836, -9.001533508300781,
-      -37.99224281311035, -58.39117431640625, 7.3231964111328125, 36.93107986450195, -78.52197265625
-    ])
-        
-        self.kingstable = self.reverse_table_reshape([
-      71.41886520385742, 34.094520568847656, -10.11540412902832, 26.197128295898438, -9.944339752197266,
-      -92.38948440551758, 7.463493347167969, -46.049997329711914, -55.666175842285156, -136.0878028869629,
-      16.32215118408203, -26.00394058227539, 10.413810729980469, -0.5139312744140625, -3.4421463012695312,
-      -48.62348556518555, -29.396961212158203, -75.65679550170898, 44.776466369628906, 59.63180160522461,
-      46.36799621582031, -17.97539520263672, 22.904151916503906, -108.77283477783203, -51.906105041503906
-    ])
+        self.bishopstable = self.reverse_table_reshape(weights["bishopstable"])
+        self.knightstable = self.reverse_table_reshape(weights["knightstable"])
+        self.queenstable = self.reverse_table_reshape(weights["queenstable"])
+        self.kingstable = self.reverse_table_reshape(weights["kingstable"])
 
     def reverse_table_reshape(self, table):
         # Convert the 1D list to a 2D list
@@ -163,13 +164,29 @@ class TestingAgent2():
                     eval = eval + value_of_pin
             return eval
         
-        pinned_value = evaluate_pinned(state.board.pieces(chess.KNIGHT, chess.WHITE), chess.WHITE, -30) + evaluate_pinned(state.board.pieces(chess.KNIGHT, chess.WHITE), chess.BLACK, 30) +\
+        pinned_val = evaluate_pinned(state.board.pieces(chess.KNIGHT, chess.WHITE), chess.WHITE, -30) + evaluate_pinned(state.board.pieces(chess.KNIGHT, chess.WHITE), chess.BLACK, 30) +\
                         evaluate_pinned(state.board.pieces(chess.BISHOP, chess.WHITE),chess.WHITE, -30) + evaluate_pinned(state.board.pieces(chess.BISHOP, chess.BLACK),chess.BLACK, 30) +\
                         evaluate_pinned(state.board.pieces(chess.QUEEN, chess.WHITE),chess.WHITE, -90) + evaluate_pinned(state.board.pieces(chess.QUEEN, chess.BLACK),chess.BLACK, 90)
                             
+
+        def attacking_value(pieces, attacking_pieces, attacked_pieces):
+            eval = 0
+            for piece in pieces:
+                attacked = state.board.attacks(piece)
+                for i in range(0,len(attacking_pieces)):
+                    num_of_attacks_on_piece_type = len(attacked.intersection(attacking_pieces[i]))
+                    eval = eval + num_of_attacks_on_piece_type * attacked_pieces[i]
+            return eval
+
+        attacking_val = attacking_value(state.board.pieces(chess.KNIGHT, chess.WHITE), [state.board.pieces(chess.KNIGHT, chess.BLACK), state.board.pieces(chess.BISHOP, chess.BLACK), state.board.pieces(chess.QUEEN, chess.BLACK)], [10, 30, 90]) +\
+                        attacking_value(state.board.pieces(chess.KNIGHT, chess.BLACK), [state.board.pieces(chess.KNIGHT, chess.WHITE), state.board.pieces(chess.BISHOP, chess.WHITE), state.board.pieces(chess.QUEEN, chess.WHITE)], [-10, -30, -90]) +\
+                        attacking_value(state.board.pieces(chess.BISHOP, chess.WHITE), [state.board.pieces(chess.KNIGHT, chess.BLACK), state.board.pieces(chess.BISHOP, chess.BLACK), state.board.pieces(chess.QUEEN, chess.BLACK)], [10, 30, 90]) +\
+                        attacking_value(state.board.pieces(chess.BISHOP, chess.BLACK), [state.board.pieces(chess.KNIGHT, chess.WHITE), state.board.pieces(chess.BISHOP, chess.WHITE), state.board.pieces(chess.QUEEN, chess.WHITE)], [-10, -30, -90]) +\
+                        attacking_value(state.board.pieces(chess.QUEEN, chess.WHITE), [state.board.pieces(chess.KNIGHT, chess.BLACK), state.board.pieces(chess.BISHOP, chess.BLACK), state.board.pieces(chess.QUEEN, chess.BLACK)], [10, 30, 90]) +\
+                        attacking_value(state.board.pieces(chess.QUEEN, chess.BLACK), [state.board.pieces(chess.KNIGHT, chess.WHITE), state.board.pieces(chess.BISHOP, chess.WHITE), state.board.pieces(chess.QUEEN, chess.WHITE)], [-10, -30, -90])
+                        
         
-        
-        eval = material + knight_eval + bishop_eval + queens_eval + kings_eval + pinned_value
+        eval = material + knight_eval + bishop_eval + queens_eval + kings_eval + pinned_val + attacking_val
         if id == 0:
             return eval
         else:
