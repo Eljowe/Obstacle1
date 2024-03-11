@@ -14,6 +14,7 @@ from testingAgent import TestingAgent
 from DLAgent import DLAgent
 from testingAgent2 import TestingAgent2
 from FishAgent import FishAgent
+from DellAgent import DellAgent
 # from agent import Agent    # After completing your agent, you can uncomment this line
 
 
@@ -27,7 +28,7 @@ def main():
     #players = [TestingAgent, TestingAgent2]
     #players = [TestingAgent2, DLAgent]
     #players = [TestingAgent2, RandomAgent]
-    players = [TestingAgent2, FishAgent]
+    players = [DellAgent, FishAgent]
     #players = [TestingAgent2, MCSAgent]
     #players = [MinimaxAgent, MCSAgent]
     #players = [RandomAgent, MCSAgent]
