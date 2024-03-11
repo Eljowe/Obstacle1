@@ -152,8 +152,9 @@ class CustomEnv(gym.Env):
             print(f"All scores: {self.all_scores}")
             print("\n")
             
-            if self.all_scores[0] >= 10 & self.score[0] >= 3:
-            
+            if self.score[0] >= 3:
+                print("Should ssave")
+                print(f"Tables to save: {self.bishopstable}, {self.knightstable}, {self.queenstable}, {self.kingstable}")
                 with open('tables.json', 'r') as f:
                     try:
                         data = json.load(f)
