@@ -127,9 +127,9 @@ class CustomEnv(gym.Env):
 
         # Calculate the reward as the number of rounds won by the agent
         if result == 1:
-            reward = self.score[0]**2
+            reward = self.all_scores[0]**2
         elif result == -1:
-            reward = -self.score[1]**2
+            reward = -self.all_scores[1]**2
         else:
             reward = -0.5
         return reward
