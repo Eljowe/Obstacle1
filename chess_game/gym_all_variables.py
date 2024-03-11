@@ -19,6 +19,7 @@ from mcs_agent import MCSAgent
 from testingAgent import TestingAgent
 from DLAgent import DLAgent
 from testingAgent2 import TestingAgent2
+from DellAgent import DellAgent
 
 from stable_baselines3 import PPO, A2C, DQN
 from stable_baselines3.common.callbacks import CheckpointCallback
@@ -241,7 +242,7 @@ class CustomEnv(gym.Env):
                 players.append(players.pop(0))
                 results.append(results.pop(0))
                 
-        opponent = DLAgent()
+        opponent = DellAgent()
         players = [self.agent, opponent]
         
         for i in range(3):
