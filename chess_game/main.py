@@ -28,7 +28,7 @@ def main():
     #players = [TestingAgent, TestingAgent2]
     #players = [TestingAgent2, DLAgent]
     #players = [TestingAgent2, RandomAgent]
-    players = [DellAgent, FishAgent]
+    players = [DellAgent, DLAgent]
     #players = [TestingAgent2, MCSAgent]
     #players = [MinimaxAgent, MCSAgent]
     #players = [RandomAgent, MCSAgent]
@@ -45,7 +45,7 @@ def main():
     ###################################################################
 
     results = [0, 0]
-    for i in range(1):
+    for i in range(5):
         initial_state = State([player_name(p) for p in players])
 
         for round in range(len(players)):
