@@ -8,13 +8,20 @@ def print_mean_differences(original, modified, label):
     modified_mean = np.mean(np.array(modified), axis=0)
     differences = np.subtract(modified_mean, original_mean)
     
-    print(Fore.BLUE + f"Mean differences for {label}:" + Style.RESET_ALL)
-    for i, diff in enumerate(differences, start=1):
-        color = Fore.RED if diff < 0 else Fore.GREEN
-        print(color + f"{diff:+.2f}" + Style.RESET_ALL, end=' ')
-        if i % 5 == 0:
-            print()  # New line every 5 elements for a 5x5 grid display
-    print()  # Extra newline for spacing between sections
+    print(Fore.BLUE + f"Mean differences for {label} (Original vs. Modified):" + Style.RESET_ALL)
+    print("-" * 50)
+    for i in range(5):
+        for j in range(5):
+            index = i * 5 + j
+            diff = differences[index]
+            color = Fore.RED if diff < 0 else Fore.GREEN
+            print(color + f"{diff:+.2f}" + Style.RESET_ALL, end='   ')
+        print()
+    print("-" * 50)
+    overall_original_mean = np.mean(original_mean)
+    overall_modified_mean = np.mean(modified_mean)
+    print(Fore.BLUE + f"Overall Mean - Original: {overall_original_mean:.2f}, Modified: {overall_modified_mean:.2f}" + Style.RESET_ALL)
+    print()  # Extra newline for spacing
 
 # Load JSON data
 with open('tables.json', 'r') as f:
@@ -62,10 +69,11 @@ def print_weight_differences(original, modified, label):
     modified_mean = np.mean(modified)
     difference = modified_mean - original_mean
     color = Fore.RED if difference < 0 else Fore.GREEN
-    print(Fore.BLUE + f"Mean difference for {label} weight:" + Style.RESET_ALL, end=' ')
+    print(Fore.BLUE + f"Mean difference for {label} weight:" + Style.RESET_ALL)
     print(color + f"{difference:+.2f}" + Style.RESET_ALL)
+    print(Fore.BLUE + f"Overall Mean - Original: {original_mean:.2f}, Modified: {modified_mean:.2f}" + Style.RESET_ALL)
     print()  # Extra newline for spacing
-
+    
 print_weight_differences(knightsweights, dell_knightsweights, "Knight")
 print_weight_differences(bishopsweights, dell_bishopsweights, "Bishop")
 print_weight_differences(queensweights, dell_queensweights, "Queen")
