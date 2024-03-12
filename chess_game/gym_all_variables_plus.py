@@ -203,7 +203,7 @@ class CustomEnv(gym.Env):
                         'knight_attacking_value': self.knight_attacking_value,
                         'black_knight_attacking_value': self.black_knight_attacking_value,
                         'bishop_attacking_value': self.bishop_attacking_value,
-                        'black_knight_attacking_value': self.black_knight_attacking_value,
+                        'black_bishop_attacking_value': self.black_bishop_attacking_value,
                         'queen_attacking_value': self.queen_attacking_value,
                         'black_queen_attacking_value': self.black_queen_attacking_value,
                         'knight_pin_value': self.knight_pin_value,
@@ -411,7 +411,7 @@ if __name__ == '__main__':
         model.save(f"{models_dir}/{2221}")
 
     elif do_train and not Continue:
-        checkpoint_callback = CheckpointCallback(save_freq= 100000, save_path=dir)
+        checkpoint_callback = CheckpointCallback(save_freq= 10000, save_path=dir)
         """
         model = PPO(
             policy="MlpPolicy",
