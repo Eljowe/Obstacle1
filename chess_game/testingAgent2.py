@@ -1,7 +1,7 @@
 from envs.environment import AbstractState
 import chess
 import random
-from envs.game import State, ID
+from envs.game import State, ID, Action
 import numpy as np
 import json
 
@@ -35,6 +35,15 @@ class TestingAgent2():
         self.knightstable = self.reverse_table_reshape(tables[-1]['knightstable'])
         self.queenstable = self.reverse_table_reshape(tables[-1]['queenstable'])
         self.kingstable = self.reverse_table_reshape(tables[-1]['kingstable'])
+        
+    def table_reshape(self, table):
+        original_board_2d = [table[i:i+8] for i in range(0, len(table), 8)]
+
+        modified_board_2d = [row[:5] for row in original_board_2d[:5]]
+
+        # Flatten the modified 2D board back to a 1D list
+        modified_board = [cell for row in modified_board_2d for cell in row]
+        return modified_board
 
     def reverse_table_reshape(self, table):
         # Convert the 1D list to a 2D list
@@ -91,10 +100,16 @@ class TestingAgent2():
     def custom_evaluate_board(self, state: State):
         #id = state.current_player_id
         id = state.current_player()
-        if state.is_winner() == 1:
+        winning = state.board.is_checkmate() & (id == 0)
+        losing = state.board.is_checkmate() & (id == 1)
+        if state.is_winner() == 1 | winning:
             return 9999
-        if state.is_winner() == -1:
+        if state.is_winner() == -1 | losing:
             return -9999
+        if state.board.is_stalemate():
+            return 0
+        if state.board.is_insufficient_material():
+            return 0
         
         white_knight = len(state.board.pieces(chess.KNIGHT, chess.WHITE))
         black_knight = len(state.board.pieces(chess.KNIGHT, chess.BLACK))
@@ -158,27 +173,14 @@ class TestingAgent2():
 
 
     def decide(self, state: AbstractState):
-        """
-        Generate a sequence of increasing good actions
+        if state.current_player() == 0 and state.board.fullmove_number == 1:
+            #When white, play same starting move
+            chessmove = chess.Move.from_uci("d1b3")
+            action = Action(chessmove)
 
-        NOTE: You can find the possible actions from `state` by calling
-              `state.successors()`, which returns a list of pairs of
-              `(action, successor_state)`.
-
-        This is a generator function; it means it should have no `return`
-        statement, but it should `yield` a sequence of increasing good
-        actions.
-
-        Parameters
-        ----------
-        state: State
-            Current state of the game
-
-        Yields
-        ------
-        action
-            the chosen `action` from the `state.successors()` list
-        """
+            yield action
+            return
+            
         depth = 1
         bestValue = -99999
         alpha = -100000

@@ -160,10 +160,16 @@ class Agent2():
     def custom_evaluate_board(self, state: State):
         #id = state.current_player_id
         id = state.current_player()
-        if state.is_winner() == 1:
+        winning = state.board.is_checkmate() & (id == 0)
+        losing = state.board.is_checkmate() & (id == 1)
+        if state.is_winner() == 1 | winning:
             return 9999
-        if state.is_winner() == -1:
+        if state.is_winner() == -1 | losing:
             return -9999
+        if state.board.is_stalemate():
+            return 0
+        if state.board.is_insufficient_material():
+            return 0
         
         white_knight = len(state.board.pieces(chess.KNIGHT, chess.WHITE))
         black_knight = len(state.board.pieces(chess.KNIGHT, chess.BLACK))
