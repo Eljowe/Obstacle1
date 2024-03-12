@@ -265,6 +265,11 @@ class CustomEnv(gym.Env):
         
         print(f"Game 1 played, results: {results}")
         
+        if results[0] >= 2:
+            self.all_scores[0] += results[0]
+            self.all_scores[1] += results[1]
+            return -1
+        
         if results[0] > results[1]:
             self.score[0] += 1
         elif results[0] < results[1]:
@@ -294,6 +299,11 @@ class CustomEnv(gym.Env):
                 
         print(f"Game 2 played, results: {results}")
         
+        if results[1] >=4:
+            self.all_scores[0] += results[0]
+            self.all_scores[1] += results[1]
+            return -1
+        
         if results[0] > results[1]:
             self.score[0] += 1
         elif results[0] < results[1]:
@@ -322,6 +332,11 @@ class CustomEnv(gym.Env):
                 results.append(results.pop(0))
         
         print(f"Game 3 played, results: {results}")
+        
+        if results[1] >= 6:
+            self.all_scores[0] += results[0]
+            self.all_scores[1] += results[1]
+            return -1
         
         if results[0] > results[1]:
             self.score[0] += 1
@@ -397,10 +412,7 @@ if __name__ == '__main__':
         model.save(f"{models_dir}/{2221}")
 
     elif do_train and not Continue:
-        checkpoint_callback = CheckpointCallback(
-            save_freq= 100,
-            save_path=dir
-        )
+        checkpoint_callback = CheckpointCallback(save_freq= 10, save_path=dir)
         """
         model = PPO(
             policy="MlpPolicy",
