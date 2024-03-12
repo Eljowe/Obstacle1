@@ -22,6 +22,7 @@ from testingAgent2 import TestingAgent2
 from DellAgent import DellAgent
 from FishAgent import FishAgent
 from Obstacle1 import Agent
+from Obstacle2 import Agent2
 
 from stable_baselines3 import PPO, A2C, DQN
 from stable_baselines3.common.callbacks import CheckpointCallback
@@ -238,7 +239,7 @@ class CustomEnv(gym.Env):
         self.agent.queen_pinned_value = self.queen_pin_value
         
         
-        opponent = FishAgent()
+        opponent = Agent2()
         players = [self.agent, opponent]
 
         results = [0, 0]
