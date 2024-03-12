@@ -6,7 +6,7 @@ import numpy as np
 import json
 
 
-example = {
+tables = [{
     "score": [4, 0],
     "all_scores": [14, 2],
     "bishopstable": [
@@ -37,20 +37,20 @@ example = {
       -17.097118377685547, -60.39339065551758, -258.4964714050293, -216.26342010498047, 113.97338104248047,
       -56.88783836364746, -221.62507247924805, -85.8525619506836, 50.51230049133301, -38.86490249633789
     ],
-    "bishopweight": 248.3557071685791,
+    "bishopweight": 350,
     "knightweight": 356.52113342285156,
     "queenweight": 1078.1783714294434,
-    "kingweight": 29.61370277404785,
+    "kingweight": 300,
     "knight_attacking_value": [59.99795913696289, 200.68230819702148, -75.40661430358887],
     "black_knight_attacking_value": [15.36958122253418, 154.0067253112793, 23.229398727416992],
     "bishop_attacking_value": [24.991960525512695, 18.292619705200195, -11.061483383178711],
     "black_bishop_attacking_value": [-108.60357475280762, -33.98246192932129, -21.426347732543945],
     "queen_attacking_value": [-99.39786529541016, 85.59332656860352, -26.703746795654297],
     "black_queen_attacking_value": [42.53481101989746, -94.14887046813965, -8.749160766601562],
-    "knight_pin_value": -73.98660659790039,
-    "bishop_pin_value": -5.896812438964844,
-    "queen_pin_value": -114.62930107116699
-  }
+    "knight_pin_value": -10,
+    "bishop_pin_value": -300,
+    "queen_pin_value": 30
+  }]
 
 class TestingAgent():
     def __init__(self, max_depth: int = 20):
@@ -58,8 +58,7 @@ class TestingAgent():
         self.__player = None
         self.side = None
         
-        with open('tables.json', 'r') as f:
-            tables = json.load(f)
+        
         
         self.knightweight = tables[-1]['knightweight']
         self.bishopweight = tables[-1]['bishopweight']
