@@ -180,11 +180,12 @@ class CustomEnv(gym.Env):
     
     def calculate_done(self):
         if self.games_played >= 1:
+            print(f"Score: {self.score}")
             print(f"All scores: {self.all_scores}")
             print("\n")
-            if self.all_scores[0] >= 13:
-                print("Saving the tables to delltables.json")
-                with open('tables.json', 'r') as f:
+            if self.all_scores[0] >= 12 or self.score[0] >= 3:
+                print("Saving the tables to tables.json")
+                with open('delltables.json', 'r') as f:
                     try:
                         data = json.load(f)
                     except json.JSONDecodeError:  # If the file is empty, set data to an empty list
@@ -263,6 +264,16 @@ class CustomEnv(gym.Env):
                 results.append(results.pop(0))
         
         print(f"Game 1 played, results: {results}")
+        
+        if results[0] >= 2:
+            self.all_scores[0] += results[0]
+            self.all_scores[1] += results[1]
+            return -1
+        
+        if results[0] > results[1]:
+            self.score[0] += 1
+        elif results[0] < results[1]:
+            self.score[1] += 1
                 
         opponent = DellAgent()
         players = [self.agent, opponent]
@@ -288,6 +299,16 @@ class CustomEnv(gym.Env):
                 
         print(f"Game 2 played, results: {results}")
         
+        if results[1] >=4:
+            self.all_scores[0] += results[0]
+            self.all_scores[1] += results[1]
+            return -1
+        
+        if results[0] > results[1]:
+            self.score[0] += 1
+        elif results[0] < results[1]:
+            self.score[1] += 1
+        
         opponent = TestingAgent2()
         players = [self.agent, opponent]
         for i in range(2):
@@ -312,6 +333,16 @@ class CustomEnv(gym.Env):
         
         print(f"Game 3 played, results: {results}")
         
+        if results[1] >= 6:
+            self.all_scores[0] += results[0]
+            self.all_scores[1] += results[1]
+            return -1
+        
+        if results[0] > results[1]:
+            self.score[0] += 1
+        elif results[0] < results[1]:
+            self.score[1] += 1
+        
         opponent = DLAgent()
         players = [self.agent, opponent]
         for i in range(2):
@@ -334,13 +365,17 @@ class CustomEnv(gym.Env):
         
         print(f"Game 4 played, results: {results}")
         
-        self.all_scores[0] += results[0]
-        self.all_scores[1] += results[1]
         if results[0] > results[1]:
             self.score[0] += 1
+        elif results[0] < results[1]:
+            self.score[1] += 1
+        
+        self.all_scores[0] += results[0]
+        self.all_scores[1] += results[1]
+        
+        if results[0] > results[1]:
             return 1
         if results[0] < results[1]:
-            self.score[1] += 1
             return -1
         return 0
         
@@ -377,10 +412,7 @@ if __name__ == '__main__':
         model.save(f"{models_dir}/{2221}")
 
     elif do_train and not Continue:
-        checkpoint_callback = CheckpointCallback(
-            save_freq= 100,
-            save_path=dir
-        )
+        checkpoint_callback = CheckpointCallback(save_freq= 1000, save_path=dir)
         """
         model = PPO(
             policy="MlpPolicy",
