@@ -180,7 +180,6 @@ class CustomEnv(gym.Env):
     
     def calculate_done(self):
         if self.games_played >= 1:
-            print(f"Score: {self.score}")
             print(f"All scores: {self.all_scores}")
             print("\n")
             if self.all_scores[0] >= 12:
