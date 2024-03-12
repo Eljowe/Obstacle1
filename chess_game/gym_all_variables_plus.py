@@ -51,7 +51,7 @@ class CustomEnv(gym.Env):
     def __init__(self):
         super().__init__()
         
-        self.agent = DLAgent()
+        self.agent = TestingAgent2()
         
         self.games_played = 0
         
@@ -68,10 +68,23 @@ class CustomEnv(gym.Env):
         self.queenweight = self.agent.queenweight
         self.kingweight = self.agent.kingweight
         
+        self.knight_attacking_value = self.agent.knight_attacking_value
+        self.black_knight_attacking_value = self.agent.black_knight_attacking_value
+        
+        self.bishop_attacking_value = self.agent.bishop_attacking_value
+        self.black_knight_attacking_value = self.agent.black_knight_attacking_value
+        
+        self.queen_attacking_value = self.agent.queen_attacking_value
+        self.black_queen_attacking_value = self.agent.black_queen_attacking_value
+        
+        self.knight_pin_value = self.agent.knight_pinned_value
+        self.bishop_pin_value = self.agent.bishop_pinned_value
+        self.queen_pin_value = self.agent.queen_pinned_value
+        
         self.num_tables = 4
         self.table_size = 25
         self.score = 0
-        self.action_space = spaces.Box(low=-50, high=50, shape=(4 * 25 + 4,), dtype=np.float32)
+        self.action_space = spaces.Box(low=-50, high=50, shape=(4 * 25 + 4 + 6 * 3 + 3,), dtype=np.float32)
         self.observation_space = spaces.Box(low=-50, high=50, shape=(8,), dtype=np.float32)
     def table_reshape(self, table):
         original_board_2d = [table[i:i+8] for i in range(0, len(table), 8)]
@@ -109,6 +122,17 @@ class CustomEnv(gym.Env):
             for j in range(num_cells_per_table):
                 action_value = action[i * num_cells_per_table + j]
                 table[j] += action_value
+                
+        self.knight_attacking_value += action[-12]
+        self.black_knight_attacking_value += action[-11]
+        self.bishop_attacking_value += action[-10]
+        self.black_knight_attacking_value += action[-9]
+        self.queen_attacking_value += action[-8]
+        self.black_queen_attacking_value += action[-7]
+        
+        self.knight_pin_value += action[-6]
+        self.bishop_pin_value += action[-5]
+        self.queen_pin_value += action[-4]
 
         # Apply the last 4 actions to the weights
         self.bishopweight += action[-4]
@@ -231,7 +255,7 @@ class CustomEnv(gym.Env):
                 players_instances = [p for p in players]
                 # Timeout for each move. Don't rely on the value of it. This
                 # value might be changed during the tournament.
-                timeouts = [5, 5]
+                timeouts = [2, 2]
                 game = Game(players_instances)
                 new_round = initial_state.clone()
                 turn_duration_estimate = sum([t
@@ -288,7 +312,7 @@ class CustomEnv(gym.Env):
                 players_instances = [p for p in players]
                 # Timeout for each move. Don't rely on the value of it. This
                 # value might be changed during the tournament.
-                timeouts = [5, 5]
+                timeouts = [2, 2]
                 game = Game(players_instances)
                 new_round = initial_state.clone()
                 turn_duration_estimate = sum([t

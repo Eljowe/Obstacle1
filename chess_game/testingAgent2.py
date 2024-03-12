@@ -41,19 +41,28 @@ weights = {
   }
 
 class TestingAgent2():
-    """
-    The interface of an Agent
-
-    This class defines the required methods for an agent class
-    """
-    def __init__(self, depth: int = 3):
-        self.depth = depth
+    def __init__(self, max_depth: int = 20):
+        self.max_depth = max_depth
         self.__player = None
         self.side = None
+        
         self.knightweight = weights["knightweight"]
         self.bishopweight = weights["bishopweight"]
         self.queenweight = weights["queenweight"]
         self.kingweight = weights["kingweight"]
+        
+        self.knight_attacking_value = [10, 30, 90]
+        self.black_knight_attacking_value = [-10, -30, -90]
+        
+        self.bishop_attacking_value = [10, 30, 90]
+        self.black_bishop_attacking_value = [-10, -30, -90]
+        
+        self.queen_attacking_value = [10, 30, 90]
+        self.black_queen_attacking_value = [-10, -30, -90]
+        
+        self.knight_pinned_value = -30
+        self.bishop_pinned_value = -30
+        self.queen_pinned_value = -90
         
         self.bishopstable = self.reverse_table_reshape(weights["bishopstable"])
         self.knightstable = self.reverse_table_reshape(weights["knightstable"])
@@ -73,22 +82,10 @@ class TestingAgent2():
 
     @staticmethod
     def info():
-        """
-        Return the agent's information
-
-        This function returns the agent's information as a dictionary variable.
-        The returned dictionary should contain at least the `agent name`.
-
-        Returns
-        -------
-        Dict[str, str]
-        """
         return {
             "agent name": "Testing agent2",
         }
-        raise NotImplementedError
 
-    
     def alphabeta(self, alpha, beta, depthleft, state):
         if (depthleft == 0):
             return self.quiesce(alpha, beta, state)
@@ -164,9 +161,9 @@ class TestingAgent2():
                     eval = eval + value_of_pin
             return eval
         
-        pinned_val = evaluate_pinned(state.board.pieces(chess.KNIGHT, chess.WHITE), chess.WHITE, -30) + evaluate_pinned(state.board.pieces(chess.KNIGHT, chess.WHITE), chess.BLACK, 30) +\
-                        evaluate_pinned(state.board.pieces(chess.BISHOP, chess.WHITE),chess.WHITE, -30) + evaluate_pinned(state.board.pieces(chess.BISHOP, chess.BLACK),chess.BLACK, 30) +\
-                        evaluate_pinned(state.board.pieces(chess.QUEEN, chess.WHITE),chess.WHITE, -90) + evaluate_pinned(state.board.pieces(chess.QUEEN, chess.BLACK),chess.BLACK, 90)
+        pinned_val = evaluate_pinned(state.board.pieces(chess.KNIGHT, chess.WHITE), chess.WHITE, self.knight_pinned_value) + evaluate_pinned(state.board.pieces(chess.KNIGHT, chess.WHITE), chess.BLACK, -self.knight_pinned_value) +\
+                        evaluate_pinned(state.board.pieces(chess.BISHOP, chess.WHITE),chess.WHITE, self.bishop_pinned_value) + evaluate_pinned(state.board.pieces(chess.BISHOP, chess.BLACK),chess.BLACK, -self.bishop_pinned_value) +\
+                        evaluate_pinned(state.board.pieces(chess.QUEEN, chess.WHITE),chess.WHITE, self.queen_pinned_value) + evaluate_pinned(state.board.pieces(chess.QUEEN, chess.BLACK),chess.BLACK, -self.queen_pinned_value)
                             
 
         def attacking_value(pieces, attacking_pieces, attacked_pieces):
@@ -178,12 +175,12 @@ class TestingAgent2():
                     eval = eval + num_of_attacks_on_piece_type * attacked_pieces[i]
             return eval
 
-        attacking_val = attacking_value(state.board.pieces(chess.KNIGHT, chess.WHITE), [state.board.pieces(chess.KNIGHT, chess.BLACK), state.board.pieces(chess.BISHOP, chess.BLACK), state.board.pieces(chess.QUEEN, chess.BLACK)], [10, 30, 90]) +\
-                        attacking_value(state.board.pieces(chess.KNIGHT, chess.BLACK), [state.board.pieces(chess.KNIGHT, chess.WHITE), state.board.pieces(chess.BISHOP, chess.WHITE), state.board.pieces(chess.QUEEN, chess.WHITE)], [-10, -30, -90]) +\
-                        attacking_value(state.board.pieces(chess.BISHOP, chess.WHITE), [state.board.pieces(chess.KNIGHT, chess.BLACK), state.board.pieces(chess.BISHOP, chess.BLACK), state.board.pieces(chess.QUEEN, chess.BLACK)], [10, 30, 90]) +\
-                        attacking_value(state.board.pieces(chess.BISHOP, chess.BLACK), [state.board.pieces(chess.KNIGHT, chess.WHITE), state.board.pieces(chess.BISHOP, chess.WHITE), state.board.pieces(chess.QUEEN, chess.WHITE)], [-10, -30, -90]) +\
-                        attacking_value(state.board.pieces(chess.QUEEN, chess.WHITE), [state.board.pieces(chess.KNIGHT, chess.BLACK), state.board.pieces(chess.BISHOP, chess.BLACK), state.board.pieces(chess.QUEEN, chess.BLACK)], [10, 30, 90]) +\
-                        attacking_value(state.board.pieces(chess.QUEEN, chess.BLACK), [state.board.pieces(chess.KNIGHT, chess.WHITE), state.board.pieces(chess.BISHOP, chess.WHITE), state.board.pieces(chess.QUEEN, chess.WHITE)], [-10, -30, -90])
+        attacking_val = attacking_value(state.board.pieces(chess.KNIGHT, chess.WHITE), [state.board.pieces(chess.KNIGHT, chess.BLACK), state.board.pieces(chess.BISHOP, chess.BLACK), state.board.pieces(chess.QUEEN, chess.BLACK)], self.knight_attacking_value) +\
+                        attacking_value(state.board.pieces(chess.KNIGHT, chess.BLACK), [state.board.pieces(chess.KNIGHT, chess.WHITE), state.board.pieces(chess.BISHOP, chess.WHITE), state.board.pieces(chess.QUEEN, chess.WHITE)], self.black_knight_attacking_value) +\
+                        attacking_value(state.board.pieces(chess.BISHOP, chess.WHITE), [state.board.pieces(chess.KNIGHT, chess.BLACK), state.board.pieces(chess.BISHOP, chess.BLACK), state.board.pieces(chess.QUEEN, chess.BLACK)], self.bishop_attacking_value) +\
+                        attacking_value(state.board.pieces(chess.BISHOP, chess.BLACK), [state.board.pieces(chess.KNIGHT, chess.WHITE), state.board.pieces(chess.BISHOP, chess.WHITE), state.board.pieces(chess.QUEEN, chess.WHITE)], self.black_bishop_attacking_value) +\
+                        attacking_value(state.board.pieces(chess.QUEEN, chess.WHITE), [state.board.pieces(chess.KNIGHT, chess.BLACK), state.board.pieces(chess.BISHOP, chess.BLACK), state.board.pieces(chess.QUEEN, chess.BLACK)], self.queen_attacking_value) +\
+                        attacking_value(state.board.pieces(chess.QUEEN, chess.BLACK), [state.board.pieces(chess.KNIGHT, chess.WHITE), state.board.pieces(chess.BISHOP, chess.WHITE), state.board.pieces(chess.QUEEN, chess.WHITE)], self.black_queen_attacking_value)
                         
         
         eval = material + knight_eval + bishop_eval + queens_eval + kings_eval + pinned_val + attacking_val
@@ -215,28 +212,31 @@ class TestingAgent2():
         action
             the chosen `action` from the `state.successors()` list
         """
+        depth = 1
         bestValue = -99999
         alpha = -100000
         beta = 100000
         moves = state.applicable_moves()
         random.shuffle(moves)
         best_action = moves[0]
-        for action in moves:
-            state.execute_move(action)
-            action_value = -self.alphabeta(-beta, -alpha, self.depth - 1, state)
-            
-            if action_value > bestValue:
-                bestValue = action_value
-                best_action = action
-                yield best_action
-            if action_value > alpha:
-                alpha = action_value
-            state.undo_last_move()
-        #print("best value: ", bestValue)
-        #print("side: ", self.side)
-        #print("best action: ", best_action)
-        #print("custom evaluate: ", self.custom_evaluate_board(state))
-        yield best_action
+        while depth < self.max_depth + 1:
+            for action in moves:
+                state.execute_move(action)
+                action_value = -self.alphabeta(-beta, -alpha, depth, state)
+                
+                if action_value > bestValue:
+                    bestValue = action_value
+                    best_action = action
+                    yield best_action
+                if action_value > alpha:
+                    alpha = action_value
+                state.undo_last_move()
+            #print("best value: ", bestValue)
+            #print("side: ", self.side)
+            #print("best action: ", best_action)
+            #print("custom evaluate: ", self.custom_evaluate_board(state))
+            yield best_action
+            depth += 1
 
     def __str__(self):
         return self.info()["agent name"]
