@@ -12,17 +12,13 @@ from random import seed
 from game import Game
 from envs.game import State
 from agent_interface import AgentInterface
-from custom_agent import CustomAgent
 from random_agent import RandomAgent
-from minimax_agent import MinimaxAgent
-from mcs_agent import MCSAgent
-from testingAgent import TestingAgent
 from DLAgent import DLAgent
 from testingAgent2 import TestingAgent2
 from DellAgent import DellAgent
-from FishAgent import FishAgent
 from Obstacle1 import Agent
 from Obstacle2 import Agent2
+from DellAgent import DellAgent
 
 from stable_baselines3 import PPO, A2C, DQN
 from stable_baselines3.common.callbacks import CheckpointCallback
@@ -109,6 +105,7 @@ class CustomEnv(gym.Env):
     
     def step(self, action):
         num_cells_per_table = self.table_size
+        action = np.array([action][-1], dtype=np.float32)
         for i in range(self.num_tables):
             table = None
             if i == 0:
@@ -141,6 +138,7 @@ class CustomEnv(gym.Env):
             for j in range(3):
                 action_value = action[4 * 25 + i * 3 + j]
                 table[j] += action_value
+                table = np.array(table)
         
         self.knight_pin_value += action[-6]
         self.bishop_pin_value += action[-5]
@@ -239,7 +237,7 @@ class CustomEnv(gym.Env):
         self.agent.queen_pinned_value = self.queen_pin_value
         
         
-        opponent = Agent2()
+        opponent = DellAgent()
         players = [self.agent, opponent]
 
         results = [0, 0]
@@ -275,7 +273,7 @@ class CustomEnv(gym.Env):
         elif results[0] < results[1]:
             self.score[1] += 1
                 
-        opponent = DellAgent()
+        opponent = Agent2()
         players = [self.agent, opponent]
         for i in range(2):
             initial_state = State([self.player_name(p) for p in players])
@@ -383,14 +381,14 @@ class CustomEnv(gym.Env):
         return player.__class__.__name__
     
 
-models_dir = "models/PPO"
+models_dir = "models/SAC"
 #models_dir = "DQNmodel/DQN"
 
 if not os.path.exists(models_dir):
     os.makedirs(models_dir)
 if __name__ == '__main__':
-    dir = "models/DQN"
-    dir_path = f"{dir}/DQN.zip"
+    dir = "models/SAC"
+    dir_path = f"{dir}/SAC.zip"
     env_lambda = lambda: CustomEnv()
     do_train = True
     Continue = False
@@ -399,11 +397,11 @@ if __name__ == '__main__':
 
     if Continue and do_train:
         model_path = f"{models_dir}/rl_model_400000_steps"
-        log_path = f"C:/Koodi/RL_AI/logs/PPO_2/"
+        log_path = f"C:/Koodi/RL_AI/logs/SAC/"
         model = PPO.load(model_path, env=env, tensorboard_log=log_path)
         model.set_env(env)
         checkpoint_callback = CheckpointCallback(
-            save_freq= 100,
+            save_freq= 8,
             save_path=dir
         )
         model.learn(
@@ -412,7 +410,6 @@ if __name__ == '__main__':
         model.save(f"{models_dir}/{2221}")
 
     elif do_train and not Continue:
-        checkpoint_callback = CheckpointCallback(save_freq= 10000, save_path=dir)
         """
         model = PPO(
             policy="MlpPolicy",
@@ -438,10 +435,15 @@ if __name__ == '__main__':
             device='cuda',
             learning_rate=0.0005,
         )
+        
+        checkpoint_callback = CheckpointCallback(
+            save_freq= 1000,
+            save_path=dir
+        )
          
         
         model.learn(
-            total_timesteps=5000, log_interval=1
+            total_timesteps=5000, log_interval=1, callback=[checkpoint_callback]
         )
         
         model.save(f"{models_dir}/{212}")
@@ -453,7 +455,7 @@ if __name__ == '__main__':
     elif not do_train:
         episodes = 5
         model_path = f"{models_dir}/rl_model_400000_steps"
-        log_path = f"C:/Koodi/RL_AI/logs/PPO_2/"
+        log_path = f"C:/Koodi/RL_AI/logs/SAC/"
         model = PPO.load(model_path, env=env, tensorboard_log=log_path)
         for ep in range(episodes):
             obs = env.reset()
