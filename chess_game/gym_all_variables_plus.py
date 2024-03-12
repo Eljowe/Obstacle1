@@ -411,7 +411,7 @@ if __name__ == '__main__':
         model.save(f"{models_dir}/{2221}")
 
     elif do_train and not Continue:
-        checkpoint_callback = CheckpointCallback(save_freq= 10, save_path=dir)
+        checkpoint_callback = CheckpointCallback(save_freq= 100000, save_path=dir)
         """
         model = PPO(
             policy="MlpPolicy",
