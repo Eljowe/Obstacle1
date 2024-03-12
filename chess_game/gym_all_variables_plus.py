@@ -193,7 +193,16 @@ class CustomEnv(gym.Env):
                         'bishopweight': self.bishopweight,
                         'knightweight': self.knightweight,
                         'queenweight': self.queenweight,
-                        'kingweight': self.kingweight
+                        'kingweight': self.kingweight,
+                        'knight_attacking_value': self.knight_attacking_value,
+                        'black_knight_attacking_value': self.black_knight_attacking_value,
+                        'bishop_attacking_value': self.bishop_attacking_value,
+                        'black_knight_attacking_value': self.black_knight_attacking_value,
+                        'queen_attacking_value': self.queen_attacking_value,
+                        'black_queen_attacking_value': self.black_queen_attacking_value,
+                        'knight_pin_value': self.knight_pin_value,
+                        'bishop_pin_value': self.bishop_pin_value,
+                        'queen_pin_value': self.queen_pin_value
                     })
 
                     # Write everything back to the file
