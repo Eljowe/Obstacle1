@@ -226,7 +226,7 @@ class CustomEnv(gym.Env):
                 players_instances = [p for p in players]
                 # Timeout for each move. Don't rely on the value of it. This
                 # value might be changed during the tournament.
-                timeouts = [5, 5]
+                timeouts = [1.5, 2]
                 game = Game(players_instances)
                 new_round = initial_state.clone()
                 turn_duration_estimate = sum([t
@@ -248,7 +248,7 @@ class CustomEnv(gym.Env):
                 players_instances = [p for p in players]
                 # Timeout for each move. Don't rely on the value of it. This
                 # value might be changed during the tournament.
-                timeouts = [2, 2]
+                timeouts = [1.5, 2]
                 game = Game(players_instances)
                 new_round = initial_state.clone()
                 turn_duration_estimate = sum([t
@@ -270,7 +270,7 @@ class CustomEnv(gym.Env):
                 players_instances = [p for p in players]
                 # Timeout for each move. Don't rely on the value of it. This
                 # value might be changed during the tournament.
-                timeouts = [2, 2]
+                timeouts = [1.5, 1]
                 game = Game(players_instances)
                 new_round = initial_state.clone()
                 turn_duration_estimate = sum([t
@@ -290,7 +290,7 @@ class CustomEnv(gym.Env):
             initial_state = State([self.player_name(p) for p in players])
             for round in range(len(players)):
                 players_instances = [p for p in players]
-                timeouts = [2, 2]
+                timeouts = [1.5, 2]
                 game = Game(players_instances)
                 new_round = initial_state.clone()
                 turn_duration_estimate = sum([t

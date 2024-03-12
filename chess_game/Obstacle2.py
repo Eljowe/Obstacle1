@@ -92,7 +92,7 @@ class Agent2():
     @staticmethod
     def info():
         return {
-            "agent name": "Testing agent2",
+            "agent name": "Obstacle2",
         }
 
     def alphabeta(self, alpha, beta, depthleft, state):
