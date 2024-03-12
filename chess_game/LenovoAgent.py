@@ -6,13 +6,13 @@ import numpy as np
 import json
 
 
-class DellAgent():
+class LenovoAgent():
     def __init__(self, max_depth: int = 20):
         self.max_depth = max_depth
         self.__player = None
         self.side = None
         
-        with open('delltables.json', 'r') as f:
+        with open('tables.json', 'r') as f:
             tables = json.load(f)
         
         self.knightweight = tables[-1]['knightweight']
@@ -50,7 +50,7 @@ class DellAgent():
     @staticmethod
     def info():
         return {
-            "agent name": "DellAgent",
+            "agent name": "LenovoAgent",
         }
 
     def alphabeta(self, alpha, beta, depthleft, state):
