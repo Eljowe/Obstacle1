@@ -19,6 +19,7 @@ from DellAgent import DellAgent
 from Obstacle1 import Agent
 from Obstacle2 import Agent2
 from LenovoAgent import LenovoAgent
+from FishAgent import FishAgent
 
 
 from stable_baselines3 import PPO, A2C, DQN
@@ -342,7 +343,7 @@ class CustomEnv(gym.Env):
         elif results[0] < results[1]:
             self.score[1] += 1
         
-        opponent = DLAgent()
+        opponent = FishAgent()
         players = [self.agent, opponent]
         for i in range(2):
             initial_state = State([self.player_name(p) for p in players])

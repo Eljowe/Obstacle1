@@ -17,6 +17,7 @@ from FishAgent import FishAgent
 from DellAgent import DellAgent
 from Obstacle1 import Agent
 from Obstacle2 import Agent2
+from LenovoAgent import LenovoAgent
 # from agent import Agent    # After completing your agent, you can uncomment this line
 
 
@@ -27,7 +28,7 @@ from Obstacle2 import Agent2
 def main():
     ############### Set the players ###############
     #players = [Agent, MinimaxAgent]
-    players = [DellAgent, Agent2]
+    players = [FishAgent, DellAgent]
     #players = [Agent, DLAgent]
     #players = [Agent, RandomAgent]
     #players = [Agent, FishAgent]
