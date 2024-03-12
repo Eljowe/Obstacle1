@@ -265,7 +265,7 @@ class CustomEnv(gym.Env):
         
         print(f"Game 1 played, results: {results}")
         
-        if results[0] >= 2:
+        if results[1] >= 2:
             self.all_scores[0] += results[0]
             self.all_scores[1] += results[1]
             return -1
