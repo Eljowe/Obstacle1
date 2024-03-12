@@ -18,7 +18,8 @@ from testingAgent2 import TestingAgent2
 from DellAgent import DellAgent
 from Obstacle1 import Agent
 from Obstacle2 import Agent2
-from DellAgent import DellAgent
+from LenovoAgent import LenovoAgent
+
 
 from stable_baselines3 import PPO, A2C, DQN
 from stable_baselines3.common.callbacks import CheckpointCallback
@@ -237,7 +238,7 @@ class CustomEnv(gym.Env):
         self.agent.queen_pinned_value = self.queen_pin_value
         
         
-        opponent = DellAgent()
+        opponent = LenovoAgent()
         players = [self.agent, opponent]
 
         results = [0, 0]
@@ -437,7 +438,7 @@ if __name__ == '__main__':
         )
         
         checkpoint_callback = CheckpointCallback(
-            save_freq= 8,
+            save_freq= 500,
             save_path=dir
         )
          
