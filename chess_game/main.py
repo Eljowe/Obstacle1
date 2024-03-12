@@ -28,7 +28,7 @@ from LenovoAgent import LenovoAgent
 def main():
     ############### Set the players ###############
     #players = [Agent, MinimaxAgent]
-    players = [LenovoAgent, Agent2]
+    players = [FishAgent, Agent2]
     #players = [Agent, DLAgent]
     #players = [Agent, RandomAgent]
     #players = [Agent, FishAgent]
