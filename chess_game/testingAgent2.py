@@ -3,42 +3,10 @@ import chess
 import random
 from envs.game import State, ID
 import numpy as np
+import json
 
 
-weights = {
-    "bishopstable": [
-      -0.5351104736328125, 67.75389099121094, 62.19477081298828, -13.676307678222656, -26.181903839111328,
-      16.395889282226562, 4.877735137939453, -42.011268615722656, 61.084991455078125, 27.158035278320312,
-      -46.75889587402344, 60.415313720703125, 82.23982238769531, 33.42598342895508, 25.408077239990234,
-      38.24860382080078, -9.737430572509766, -47.529945373535156, -40.558834075927734, 29.38214874267578,
-      -44.40135383605957, -86.24573516845703, -35.217567443847656, -11.712505340576172, 10.277095794677734
-    ],
-    "knightstable": [
-      -37.11063003540039, -4.381725311279297, 63.28852844238281, -84.0914077758789, -68.78004837036133,
-      24.39364242553711, -0.28163909912109375, -64.04652786254883, -1.56988525390625, -76.62065887451172,
-      -93.12121200561523, -39.95299530029297, 87.60726165771484, -25.231563568115234, -15.614448547363281,
-      -2.2921981811523438, -24.334980010986328, 72.73082733154297, 38.46958923339844, -26.94715118408203,
-      -3.1719741821289062, -31.252777099609375, 1.8460807800292969, 52.98860549926758, 55.708763122558594
-    ],
-    "queenstable": [
-      -8.583427429199219, 6.821062088012695, -11.72122573852539, -32.630401611328125, -19.229904174804688,
-      -81.85993003845215, 32.72822570800781, 5.93634033203125, -77.30665969848633, -63.57341003417969,
-      -2.045196533203125, 16.367298126220703, 60.746482849121094, -22.212121963500977, 0.5939788818359375,
-      -1.984090805053711, -38.49396896362305, -27.175630569458008, -4.839565277099609, -44.837005615234375,
-      -26.208810806274414, -7.59765625, -71.24874687194824, -52.27927589416504, 23.43175506591797
-    ],
-    "kingstable": [
-      -25.064701080322266, 31.75836753845215, 67.16104125976562, 55.19562911987305, 64.38150024414062,
-      -33.889347076416016, -101.50999450683594, -59.20869064331055, 6.408626556396484, 3.6911849975585938,
-      21.13513946533203, -100.57134628295898, -52.0190486907959, -65.4409065246582, -67.45635795593262,
-      -33.34642791748047, -20.625259399414062, -47.523916244506836, -71.99042129516602, 41.59632110595703,
-      19.464889526367188, -127.29568481445312, -44.3587760925293, 12.832565307617188, -55.45540237426758
-    ],
-    "bishopweight": 272.9850082397461,
-    "knightweight": 282.5135612487793,
-    "queenweight": 957.3457183837891,
-    "kingweight": 116.14559555053711
-  }
+
 
 class TestingAgent2():
     def __init__(self, max_depth: int = 20):
@@ -46,28 +14,29 @@ class TestingAgent2():
         self.__player = None
         self.side = None
         
-        self.knightweight = weights["knightweight"]
-        self.bishopweight = weights["bishopweight"]
-        self.queenweight = weights["queenweight"]
-        self.kingweight = weights["kingweight"]
+        with open('tables.json', 'r') as f:
+            tables = json.load(f)
         
-        self.knight_attacking_value = [10, 30, 90]
-        self.black_knight_attacking_value = [-10, -30, -90]
+        self.knightweight = tables[-1]['knightweight']
+        self.bishopweight = tables[-1]['bishopweight']
+        self.queenweight = tables[-1]['queenweight']
+        self.kingweight = tables[-1]['kingweight']
         
-        self.bishop_attacking_value = [10, 30, 90]
-        self.black_bishop_attacking_value = [-10, -30, -90]
+        self.knight_attacking_value = tables[-1]['knight_attacking_value']
+        self.black_knight_attacking_value = tables[-1]['black_knight_attacking_value']
+        self.bishop_attacking_value = tables[-1]['bishop_attacking_value']
+        self.black_bishop_attacking_value = tables[-1]['black_bishop_attacking_value']
+        self.queen_attacking_value = tables[-1]['queen_attacking_value']
+        self.black_queen_attacking_value = tables[-1]['black_queen_attacking_value']
         
-        self.queen_attacking_value = [10, 30, 90]
-        self.black_queen_attacking_value = [-10, -30, -90]
+        self.knight_pinned_value = tables[-1]['knight_pinned_value']
+        self.bishop_pinned_value = tables[-1]['bishop_pinned_value']
+        self.queen_pinned_value = tables[-1]['queen_pinned_value']
         
-        self.knight_pinned_value = -30
-        self.bishop_pinned_value = -30
-        self.queen_pinned_value = -90
-        
-        self.bishopstable = self.reverse_table_reshape(weights["bishopstable"])
-        self.knightstable = self.reverse_table_reshape(weights["knightstable"])
-        self.queenstable = self.reverse_table_reshape(weights["queenstable"])
-        self.kingstable = self.reverse_table_reshape(weights["kingstable"])
+        self.bishopstable = self.reverse_table_reshape(tables[-1]['bishopstable'])
+        self.knightstable = self.reverse_table_reshape(tables[-1]['knightstable'])
+        self.queenstable = self.reverse_table_reshape(tables[-1]['queenstable'])
+        self.kingstable = self.reverse_table_reshape(tables[-1]['kingstable'])
 
     def reverse_table_reshape(self, table):
         # Convert the 1D list to a 2D list
