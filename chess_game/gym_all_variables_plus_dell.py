@@ -183,7 +183,7 @@ class CustomEnv(gym.Env):
             print(f"Score: {self.score}")
             print(f"All scores: {self.all_scores}")
             print("\n")
-            if self.all_scores[0] >= 12 or self.score[0] >= 3:
+            if self.all_scores[0] >= 12:
                 print("Saving the tables to tables.json")
                 with open('delltables.json', 'r') as f:
                     try:
