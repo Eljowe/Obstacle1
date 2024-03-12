@@ -405,8 +405,7 @@ if __name__ == '__main__':
          
         
         model.learn(
-            total_timesteps=500000,
-            callback=[checkpoint_callback], log_interval=1
+            total_timesteps=500000, log_interval=1
         )
         
         model.save(f"{models_dir}/{212}")
