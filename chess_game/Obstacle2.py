@@ -200,27 +200,6 @@ class Agent2():
 
 
     def decide(self, state: AbstractState):
-        """
-        Generate a sequence of increasing good actions
-
-        NOTE: You can find the possible actions from `state` by calling
-              `state.successors()`, which returns a list of pairs of
-              `(action, successor_state)`.
-
-        This is a generator function; it means it should have no `return`
-        statement, but it should `yield` a sequence of increasing good
-        actions.
-
-        Parameters
-        ----------
-        state: State
-            Current state of the game
-
-        Yields
-        ------
-        action
-            the chosen `action` from the `state.successors()` list
-        """
         depth = 1
         bestValue = -99999
         alpha = -100000
@@ -240,10 +219,6 @@ class Agent2():
                 if action_value > alpha:
                     alpha = action_value
                 state.undo_last_move()
-            #print("best value: ", bestValue)
-            #print("side: ", self.side)
-            #print("best action: ", best_action)
-            #print("custom evaluate: ", self.custom_evaluate_board(state))
             yield best_action
             depth += 1
 
