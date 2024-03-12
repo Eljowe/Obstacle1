@@ -22,7 +22,7 @@ from LenovoAgent import LenovoAgent
 from FishAgent import FishAgent
 
 
-from stable_baselines3 import PPO, A2C, DQN
+from stable_baselines3 import PPO, A2C, DQN, TD3
 from stable_baselines3.common.callbacks import CheckpointCallback
 from stable_baselines3.common.vec_env import SubprocVecEnv
 from stable_baselines3.common.vec_env import DummyVecEnv
@@ -174,6 +174,7 @@ class CustomEnv(gym.Env):
         self.games_played = 0
         self.score = [0, 0]
         self.all_scores = [0, 0]
+        #obs = np.random.uniform(-50, 50, size=(8,))
         return 0, reset_info
     
     def close(self):
@@ -239,7 +240,7 @@ class CustomEnv(gym.Env):
         self.agent.queen_pinned_value = self.queen_pin_value
         
         
-        opponent = LenovoAgent()
+        opponent = FishAgent()
         players = [self.agent, opponent]
 
         results = [0, 0]
@@ -275,7 +276,7 @@ class CustomEnv(gym.Env):
         elif results[0] < results[1]:
             self.score[1] += 1
                 
-        opponent = FishAgent()
+        opponent = LenovoAgent()
         players = [self.agent, opponent]
         for i in range(2):
             initial_state = State([self.player_name(p) for p in players])
@@ -422,13 +423,9 @@ if __name__ == '__main__':
             n_steps=512,
             device='cuda'
         )
-        
-        model = DQN(
-            "MlpPolicy", 
-            env, verbose=1,
-            tensorboard_log="./logs/")
         """
-
+        
+        
         model = SAC(
             "MlpPolicy", 
             env, 
@@ -439,13 +436,14 @@ if __name__ == '__main__':
         )
         
         checkpoint_callback = CheckpointCallback(
-            save_freq= 500,
-            save_path=dir
+            save_freq= 1000,
+            save_path=dir,
+            name_prefix='rl_model'
         )
          
         
         model.learn(
-            total_timesteps=5000, log_interval=1, callback=[checkpoint_callback]
+            total_timesteps=5000, log_interval=1, callback=checkpoint_callback
         )
         
         model.save(f"{models_dir}/{212}")

@@ -21,6 +21,18 @@ def print_mean_differences(original, modified, label):
     overall_original_mean = np.mean(original_mean)
     overall_modified_mean = np.mean(modified_mean)
     print(Fore.BLUE + f"Overall Mean - Original: {overall_original_mean:.2f}, Modified: {overall_modified_mean:.2f}" + Style.RESET_ALL)
+    
+    # Print means between the means of two databases for each cell
+    print(Fore.MAGENTA + "Means between the means of two databases for each cell:" + Style.RESET_ALL)
+    print("-" * 50)
+    for i in range(5):
+        for j in range(5):
+            index = i * 5 + j
+            mean_between_means = (original_mean[index] + modified_mean[index]) / 2
+            print(f"{mean_between_means:.2f}", end='   ')
+        print()
+    print("-" * 50)
+    
     print()  # Extra newline for spacing
 
 # Load JSON data
@@ -61,20 +73,3 @@ for obj in delltables:
 print_mean_differences(knightstables, dell_knightstables, "knightstables")
 print_mean_differences(bishopstables, dell_bishopstables, "bishopstables")
 print_mean_differences(queentables, dell_queentables, "queentables")
-print_mean_differences(kingstables, dell_kingstables, "kingstables")
-
-# For weights, since they are single values per object, we handle them slightly differently
-def print_weight_differences(original, modified, label):
-    original_mean = np.mean(original)
-    modified_mean = np.mean(modified)
-    difference = modified_mean - original_mean
-    color = Fore.RED if difference < 0 else Fore.GREEN
-    print(Fore.BLUE + f"Mean difference for {label} weight:" + Style.RESET_ALL)
-    print(color + f"{difference:+.2f}" + Style.RESET_ALL)
-    print(Fore.BLUE + f"Overall Mean - Original: {original_mean:.2f}, Modified: {modified_mean:.2f}" + Style.RESET_ALL)
-    print()  # Extra newline for spacing
-    
-print_weight_differences(knightsweights, dell_knightsweights, "Knight")
-print_weight_differences(bishopsweights, dell_bishopsweights, "Bishop")
-print_weight_differences(queensweights, dell_queensweights, "Queen")
-print_weight_differences(kingsweights, dell_kingsweights, "King")
