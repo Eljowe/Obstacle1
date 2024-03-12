@@ -18,9 +18,11 @@ from testingAgent2 import TestingAgent2
 from DellAgent import DellAgent
 from Obstacle1 import Agent
 from Obstacle2 import Agent2
-from DellAgent import DellAgent
+from LenovoAgent import LenovoAgent
+from FishAgent import FishAgent
 
-from stable_baselines3 import PPO, A2C, DQN
+
+from stable_baselines3 import PPO, A2C, DQN, TD3
 from stable_baselines3.common.callbacks import CheckpointCallback
 from stable_baselines3.common.vec_env import SubprocVecEnv
 from stable_baselines3.common.vec_env import DummyVecEnv
@@ -28,7 +30,7 @@ from stable_baselines3.common.vec_env import VecMonitor
 from stable_baselines3 import SAC
 from gym import spaces
 
-MAX_STEPS = 1000
+
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print('Using device:', device)
 
@@ -172,6 +174,7 @@ class CustomEnv(gym.Env):
         self.games_played = 0
         self.score = [0, 0]
         self.all_scores = [0, 0]
+        #obs = np.random.uniform(-50, 50, size=(8,))
         return 0, reset_info
     
     def close(self):
@@ -237,7 +240,7 @@ class CustomEnv(gym.Env):
         self.agent.queen_pinned_value = self.queen_pin_value
         
         
-        opponent = DellAgent()
+        opponent = FishAgent()
         players = [self.agent, opponent]
 
         results = [0, 0]
@@ -247,7 +250,7 @@ class CustomEnv(gym.Env):
                 players_instances = [p for p in players]
                 # Timeout for each move. Don't rely on the value of it. This
                 # value might be changed during the tournament.
-                timeouts = [1.5, 2]
+                timeouts = [2, 2]
                 game = Game(players_instances)
                 new_round = initial_state.clone()
                 turn_duration_estimate = sum([t
@@ -273,7 +276,7 @@ class CustomEnv(gym.Env):
         elif results[0] < results[1]:
             self.score[1] += 1
                 
-        opponent = Agent2()
+        opponent = DellAgent()
         players = [self.agent, opponent]
         for i in range(2):
             initial_state = State([self.player_name(p) for p in players])
@@ -281,7 +284,7 @@ class CustomEnv(gym.Env):
                 players_instances = [p for p in players]
                 # Timeout for each move. Don't rely on the value of it. This
                 # value might be changed during the tournament.
-                timeouts = [1.5, 2]
+                timeouts = [2, 2]
                 game = Game(players_instances)
                 new_round = initial_state.clone()
                 turn_duration_estimate = sum([t
@@ -315,7 +318,7 @@ class CustomEnv(gym.Env):
                 players_instances = [p for p in players]
                 # Timeout for each move. Don't rely on the value of it. This
                 # value might be changed during the tournament.
-                timeouts = [1.5, 1]
+                timeouts = [2, 1]
                 game = Game(players_instances)
                 new_round = initial_state.clone()
                 turn_duration_estimate = sum([t
@@ -341,13 +344,13 @@ class CustomEnv(gym.Env):
         elif results[0] < results[1]:
             self.score[1] += 1
         
-        opponent = DLAgent()
+        opponent = Agent2()
         players = [self.agent, opponent]
         for i in range(2):
             initial_state = State([self.player_name(p) for p in players])
             for round in range(len(players)):
                 players_instances = [p for p in players]
-                timeouts = [1.5, 2]
+                timeouts = [2, 2]
                 game = Game(players_instances)
                 new_round = initial_state.clone()
                 turn_duration_estimate = sum([t
@@ -420,13 +423,9 @@ if __name__ == '__main__':
             n_steps=512,
             device='cuda'
         )
-        
-        model = DQN(
-            "MlpPolicy", 
-            env, verbose=1,
-            tensorboard_log="./logs/")
         """
-
+        
+        
         model = SAC(
             "MlpPolicy", 
             env, 
@@ -438,12 +437,13 @@ if __name__ == '__main__':
         
         checkpoint_callback = CheckpointCallback(
             save_freq= 1000,
-            save_path=dir
+            save_path=dir,
+            name_prefix='rl_model'
         )
          
         
         model.learn(
-            total_timesteps=5000, log_interval=1, callback=[checkpoint_callback]
+            total_timesteps=5000, log_interval=1, callback=checkpoint_callback
         )
         
         model.save(f"{models_dir}/{212}")
