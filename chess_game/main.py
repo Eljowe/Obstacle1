@@ -27,7 +27,7 @@ from Obstacle2 import Agent2
 def main():
     ############### Set the players ###############
     #players = [Agent, MinimaxAgent]
-    players = [MinimaxAgent, Agent2]
+    players = [DLAgent, Agent2]
     #players = [Agent, DLAgent]
     #players = [Agent, RandomAgent]
     #players = [Agent, FishAgent]

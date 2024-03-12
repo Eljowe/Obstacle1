@@ -109,6 +109,7 @@ class CustomEnv(gym.Env):
     
     def step(self, action):
         num_cells_per_table = self.table_size
+        action = np.array([action][-1], dtype=np.float32)
         for i in range(self.num_tables):
             table = None
             if i == 0:
@@ -141,6 +142,7 @@ class CustomEnv(gym.Env):
             for j in range(3):
                 action_value = action[4 * 25 + i * 3 + j]
                 table[j] += action_value
+                table = np.array(table)
         
         self.knight_pin_value += action[-6]
         self.bishop_pin_value += action[-5]
@@ -412,7 +414,7 @@ if __name__ == '__main__':
         model.save(f"{models_dir}/{2221}")
 
     elif do_train and not Continue:
-        checkpoint_callback = CheckpointCallback(save_freq= 10000, save_path=dir)
+        checkpoint_callback = CheckpointCallback(save_freq=8, save_path=dir)
         """
         model = PPO(
             policy="MlpPolicy",
