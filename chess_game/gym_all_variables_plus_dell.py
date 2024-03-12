@@ -72,7 +72,7 @@ class CustomEnv(gym.Env):
         self.black_knight_attacking_value = self.agent.black_knight_attacking_value
         
         self.bishop_attacking_value = self.agent.bishop_attacking_value
-        self.black_knight_attacking_value = self.agent.black_knight_attacking_value
+        self.black_bishop_attacking_value = self.agent.black_bishop_attacking_value
         
         self.queen_attacking_value = self.agent.queen_attacking_value
         self.black_queen_attacking_value = self.agent.black_queen_attacking_value
@@ -123,12 +123,23 @@ class CustomEnv(gym.Env):
                 action_value = action[i * num_cells_per_table + j]
                 table[j] += action_value
                 
-        self.knight_attacking_value += action[-12]
-        self.black_knight_attacking_value += action[-11]
-        self.bishop_attacking_value += action[-10]
-        self.black_knight_attacking_value += action[-9]
-        self.queen_attacking_value += action[-8]
-        self.black_queen_attacking_value += action[-7]
+        for i in range(6):
+            action_value = action[4 * 25 + i]
+            if i == 0:
+                table = self.knight_attacking_value
+            elif i == 1:
+                table = self.black_knight_attacking_value
+            elif i == 2:
+                table = self.bishop_attacking_value
+            elif i == 3:
+                table = self.black_bishop_attacking_value
+            elif i == 4:
+                table = self.queen_attacking_value
+            elif i == 5:
+                table = self.black_queen_attacking_value
+            for j in range(3):
+                action_value = action[4 * 25 + i * 3 + j]
+                table[j] += action_value
         
         self.knight_pin_value += action[-6]
         self.bishop_pin_value += action[-5]
@@ -226,6 +237,7 @@ class CustomEnv(gym.Env):
         self.agent.bishop_pinned_value = self.bishop_pin_value
         self.agent.queen_pinned_value = self.queen_pin_value
         
+        
         opponent = FishAgent()
         players = [self.agent, opponent]
 
@@ -249,6 +261,8 @@ class CustomEnv(gym.Env):
                     results[winners[0]] += 1
                 players.append(players.pop(0))
                 results.append(results.pop(0))
+        
+        print(f"Game 1 played, results: {results}")
                 
         opponent = DellAgent()
         players = [self.agent, opponent]
@@ -271,6 +285,8 @@ class CustomEnv(gym.Env):
                     results[winners[0]] += 1
                 players.append(players.pop(0))
                 results.append(results.pop(0))
+                
+        print(f"Game 2 played, results: {results}")
         
         opponent = TestingAgent2()
         players = [self.agent, opponent]
@@ -294,6 +310,8 @@ class CustomEnv(gym.Env):
                 players.append(players.pop(0))
                 results.append(results.pop(0))
         
+        print(f"Game 3 played, results: {results}")
+        
         opponent = DLAgent()
         players = [self.agent, opponent]
         for i in range(2):
@@ -313,6 +331,8 @@ class CustomEnv(gym.Env):
                     results[winners[0]] += 1
                 players.append(players.pop(0))
                 results.append(results.pop(0))
+        
+        print(f"Game 4 played, results: {results}")
         
         self.all_scores[0] += results[0]
         self.all_scores[1] += results[1]
