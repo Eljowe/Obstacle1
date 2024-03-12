@@ -168,12 +168,9 @@ class CustomEnv(gym.Env):
         return super().close()
     
     def calculate_done(self):
-        print(f"Games played: {self.games_played}")
         if self.games_played >= 1:
-            print(f"Score: {self.score}")
             print(f"All scores: {self.all_scores}")
             print("\n")
-            
             if self.all_scores[0] >= 13:
                 print("Saving the tables to tables.json")
                 with open('tables.json', 'r') as f:
@@ -181,8 +178,6 @@ class CustomEnv(gym.Env):
                         data = json.load(f)
                     except json.JSONDecodeError:  # If the file is empty, set data to an empty list
                         data = []
-
-                    # Append new data
                     data.append({
                         'score': self.score,
                         'all_scores': self.all_scores,
@@ -205,11 +200,8 @@ class CustomEnv(gym.Env):
                         'queen_pin_value': self.queen_pin_value
                     })
 
-                    # Write everything back to the file
                     with open('tables.json', 'w') as f:
                         json.dump(data, f)
-        
-            
             return True
         return False
     
@@ -230,7 +222,6 @@ class CustomEnv(gym.Env):
         results = [0, 0]
         for i in range(2):
             initial_state = State([self.player_name(p) for p in players])
-
             for round in range(len(players)):
                 players_instances = [p for p in players]
                 # Timeout for each move. Don't rely on the value of it. This
@@ -241,25 +232,18 @@ class CustomEnv(gym.Env):
                 turn_duration_estimate = sum([t
                                             for p, t in zip(players, timeouts)
                                             if p != RandomAgent])
-
-
                 winners = game.play(new_round,
                                     output=False,
                                     timeout_per_turn=timeouts)
                 if len(winners) == 1:
                     results[winners[0]] += 1
-
-                # Rotating players for the next rounds
-    #            initial_state.rotate_players()
                 players.append(players.pop(0))
                 results.append(results.pop(0))
                 
         opponent = DellAgent()
         players = [self.agent, opponent]
-        
         for i in range(2):
             initial_state = State([self.player_name(p) for p in players])
-
             for round in range(len(players)):
                 players_instances = [p for p in players]
                 # Timeout for each move. Don't rely on the value of it. This
@@ -270,24 +254,18 @@ class CustomEnv(gym.Env):
                 turn_duration_estimate = sum([t
                                             for p, t in zip(players, timeouts)
                                             if p != RandomAgent])
-
                 winners = game.play(new_round,
                                     output=False,
                                     timeout_per_turn=timeouts)
                 if len(winners) == 1:
                     results[winners[0]] += 1
-
-                # Rotating players for the next rounds
-    #            initial_state.rotate_players()
                 players.append(players.pop(0))
                 results.append(results.pop(0))
         
         opponent = TestingAgent2()
         players = [self.agent, opponent]
-        
         for i in range(2):
             initial_state = State([self.player_name(p) for p in players])
-
             for round in range(len(players)):
                 players_instances = [p for p in players]
                 # Timeout for each move. Don't rely on the value of it. This
@@ -298,51 +276,36 @@ class CustomEnv(gym.Env):
                 turn_duration_estimate = sum([t
                                             for p, t in zip(players, timeouts)
                                             if p != RandomAgent])
-
-
                 winners = game.play(new_round,
                                     output=False,
                                     timeout_per_turn=timeouts)
                 if len(winners) == 1:
                     results[winners[0]] += 1
-
-                # Rotating players for the next rounds
-    #            initial_state.rotate_players()
                 players.append(players.pop(0))
                 results.append(results.pop(0))
         
         opponent = DLAgent()
         players = [self.agent, opponent]
-        
         for i in range(2):
             initial_state = State([self.player_name(p) for p in players])
-
             for round in range(len(players)):
                 players_instances = [p for p in players]
-                # Timeout for each move. Don't rely on the value of it. This
-                # value might be changed during the tournament.
                 timeouts = [2, 2]
                 game = Game(players_instances)
                 new_round = initial_state.clone()
                 turn_duration_estimate = sum([t
                                             for p, t in zip(players, timeouts)
                                             if p != RandomAgent])
-
-
                 winners = game.play(new_round,
                                     output=False,
                                     timeout_per_turn=timeouts)
                 if len(winners) == 1:
                     results[winners[0]] += 1
-
-                # Rotating players for the next rounds
-    #            initial_state.rotate_players()
                 players.append(players.pop(0))
                 results.append(results.pop(0))
         
         self.all_scores[0] += results[0]
         self.all_scores[1] += results[1]
-        
         if results[0] > results[1]:
             self.score[0] += 1
             return 1

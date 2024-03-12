@@ -49,7 +49,7 @@ weights = {
     "queen_pinned_value": -90
   }
 
-class TestingAgent2():
+class Agent2():
     def __init__(self, max_depth: int = 20):
         self.max_depth = max_depth
         self.__player = None
