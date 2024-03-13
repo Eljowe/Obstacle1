@@ -1,7 +1,7 @@
 from envs.environment import AbstractState
 import chess
 import random
-from envs.game import State, ID
+from envs.game import State, ID, Action
 import numpy as np
 import json
 
@@ -145,13 +145,13 @@ class TestingAgent():
         if state.is_winner() == -1:
             return -9999
         if state.board.is_stalemate() and state.board.turn == chess.WHITE and id == 0:
-            return -9999
+            return -9998
         if state.board.is_stalemate() and state.board.turn == chess.BLACK and id == 1:
-            return 9999
+            return 9998
         if state.board.is_insufficient_material() and id == 0 and state.board.turn == chess.WHITE:
-            return -9999
+            return -9998
         if state.board.is_insufficient_material() and id == 1 and state.board.turn == chess.BLACK:
-            return 9999
+            return 9998
         
         white_knight = len(state.board.pieces(chess.KNIGHT, chess.WHITE))
         black_knight = len(state.board.pieces(chess.KNIGHT, chess.BLACK))
@@ -219,6 +219,15 @@ class TestingAgent():
             return -eval
 
     def decide(self, state: AbstractState):
+        if state.current_player() == 0 and state.board.fullmove_number == 1:
+            # First move as white
+            chessmove = chess.Move.from_uci("b1c2")
+            #chessmove = chess.Move.from_uci("a1b3")
+            #chessmove = chess.Move.from_uci("d1b3")
+            action = Action(chessmove)
+
+            yield action
+            return
         depth = 1
         bestValue = -99999
         alpha = -100000

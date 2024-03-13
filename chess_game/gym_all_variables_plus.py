@@ -310,7 +310,7 @@ class CustomEnv(gym.Env):
         if results[1] >=3:
             self.all_scores[0] += results[0]
             self.all_scores[1] += results[1]
-            return -1
+            return -0.75
         
         opponent = DLAgent()
         players = [self.agent, opponent]
@@ -320,7 +320,7 @@ class CustomEnv(gym.Env):
                 players_instances = [p for p in players]
                 # Timeout for each move. Don't rely on the value of it. This
                 # value might be changed during the tournament.
-                timeouts = [2, 1]
+                timeouts = [2, 2]
                 game = Game(players_instances)
                 new_round = initial_state.clone()
                 turn_duration_estimate = sum([t
@@ -341,10 +341,10 @@ class CustomEnv(gym.Env):
         elif results[0] < results[1]:
             self.score[1] += 1
         
-        if results[1] >= 5:
+        if results[1] >= 4:
             self.all_scores[0] += results[0]
             self.all_scores[1] += results[1]
-            return -1
+            return -0.1
         
         opponent = Agent2()
         players = [self.agent, opponent]
@@ -371,14 +371,14 @@ class CustomEnv(gym.Env):
         elif results[0] < results[1]:
             self.score[1] += 1
         
-        if results[1] >= 7:
+        if results[1] >= 5:
             self.all_scores[0] += results[0]
             self.all_scores[1] += results[1]
-            return -1
+            return 0.25
 
         print(f"Game 4 played, results: {results}")
         
-        opponent = FishAgent()
+        opponent = Agent()
         players = [self.agent, opponent]
         for i in range(2):
             initial_state = State([self.player_name(p) for p in players])
@@ -408,11 +408,12 @@ class CustomEnv(gym.Env):
         self.all_scores[0] += results[0]
         self.all_scores[1] += results[1]
         
-        if results[0] > results[1]:
-            return 1
-        if results[0] < results[1]:
-            return -1
-        return 0
+        if results[1] >= 6:
+            self.all_scores[0] += results[0]
+            self.all_scores[1] += results[1]
+            return 0.5
+        
+        return 1
         
     def player_name(self, player):
         return player.__class__.__name__
