@@ -57,11 +57,11 @@ class TestingAgent():
         self.max_depth = max_depth
         self.__player = None
         self.side = None
-        """
+        
         with open('tables.json', 'r') as f:
             tables = json.load(f)
-            
-        """
+        
+        
         
         self.knightweight = tables[-1]['knightweight']
         self.bishopweight = tables[-1]['bishopweight']
