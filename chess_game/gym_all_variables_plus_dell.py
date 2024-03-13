@@ -20,8 +20,8 @@ from agents.Obstacle1 import Agent
 from agents.Obstacle2 import Agent2
 from agents.LenovoAgent import LenovoAgent
 from agents.FishAgent import FishAgent
-from agents.testingAgent import TestingAgent
 from agents.custom_agent import CustomAgent
+from agents.testingAgent_dell import TestingAgent
 
 
 from stable_baselines3 import PPO, A2C, DQN, TD3
@@ -257,7 +257,7 @@ class CustomEnv(gym.Env):
         self.agent.queen_pinned_value = self.queen_pin_value
         
         
-        opponent = TestingAgent()
+        opponent = DLAgent()
         players = [self.agent, opponent]
 
         results = [0, 0]
@@ -327,7 +327,7 @@ class CustomEnv(gym.Env):
             self.all_scores[1] += results[1]
             return -0.75
         
-        opponent = DLAgent()
+        opponent = TestingAgent()
         players = [self.agent, opponent]
         for i in range(2):
             initial_state = State([self.player_name(p) for p in players])
@@ -489,14 +489,14 @@ if __name__ == '__main__':
         )
         
         checkpoint_callback = CheckpointCallback(
-            save_freq= 10,
+            save_freq= 300,
             save_path=dir,
             name_prefix='rl_model'
         )
          
         
         model.learn(
-            total_timesteps=5000, log_interval=1, callback=checkpoint_callback
+            total_timesteps=50000, log_interval=1, callback=checkpoint_callback
         )
         
         model.save(f"{models_dir}/{212}")
