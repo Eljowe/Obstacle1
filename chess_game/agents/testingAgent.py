@@ -81,6 +81,8 @@ class TestingAgent():
         self.knightstable = self.reverse_table_reshape(tables[-1]['knightstable'])
         self.queenstable = self.reverse_table_reshape(tables[-1]['queenstable'])
         self.kingstable = self.reverse_table_reshape(tables[-1]['kingstable'])
+        
+        self.mobility_score = 0.1
 
     def reverse_table_reshape(self, table):
         board_2d = [table[i:i+5] for i in range(0, len(table), 5)]
@@ -206,7 +208,7 @@ class TestingAgent():
         black_mobility = mobility_evaluation(state, chess.BLACK)
         mobility_score = (white_mobility - black_mobility)
         
-        eval = material + knight_eval + bishop_eval + queens_eval + kings_eval + pinned_val * 0.1 + attacking_val * 0.1 + mobility_score * 0.1
+        eval = material + knight_eval + bishop_eval + queens_eval + kings_eval + pinned_val * 0.1 + attacking_val * 0.1 + mobility_score * self.mobility_score
         if not is_white:
             eval = -eval
 
