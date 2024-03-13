@@ -12,15 +12,15 @@ from random import seed
 from game import Game
 from envs.game import State
 from agent_interface import AgentInterface
-from random_agent import RandomAgent
-from DLAgent import DLAgent
-from testingAgent2 import TestingAgent2
-from DellAgent import DellAgent
-from Obstacle1 import Agent
-from Obstacle2 import Agent2
-from LenovoAgent import LenovoAgent
-from FishAgent import FishAgent
-from testingAgent import TestingAgent
+from agents.random_agent import RandomAgent
+from agents.DLAgent import DLAgent
+from agents.testingAgent2 import TestingAgent2
+from agents.DellAgent import DellAgent
+from agents.Obstacle1 import Agent
+from agents.Obstacle2 import Agent2
+from agents.LenovoAgent import LenovoAgent
+from agents.FishAgent import FishAgent
+from agents.testingAgent import TestingAgent
 
 
 from stable_baselines3 import PPO, A2C, DQN, TD3

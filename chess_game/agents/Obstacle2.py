@@ -1,12 +1,83 @@
 from envs.environment import AbstractState
 import chess
 import random
-from envs.game import State, ID
+from envs.game import State, ID, Action
 import numpy as np
-import json
 
+"""
+This agent is a chess agent using the minimax algorithm with alpha-beta pruning and quiescence search.
+The move-deciding algorithm is a simple implementation, and has no further optimizations or depth variations.
 
-tables = [{
+The algorithm uses a custom evaluation function to evaluate the board state.
+The evaluation function is based on the material difference and the piece-square tables.
+
+The agent also uses weights for each piece and piece-square table to evaluate the board state.
+The weights and tables are based on moderate amount of reinforcement learning training with stable baselines3,
+where the goal was to optimize the evaluation function to win games against other agents, as well as itself, too.
+
+Reinforcement learning wasn't the focus of this course, but I was interested in trying to combine the methods of this course with
+reinforcement learning to see if I could improve the agent's performance after implementing the basic minimax algorithm.
+
+The weights were trained using the SAC algorithm, and the agents played against each other for approximately 10,000 games.
+
+The agent building process was following:
+0. Understand the chess library and the game environment.
+1. Implement the minimax algorithm with alpha-beta pruning and quiescence search.
+2. Implement the custom evaluation function.
+3. Implement the weights and piece-square tables.
+4. Modify custom evaluation function by adding pinning and attacking value.
+5. Train the weights using reinforcement learning.
+6. Testing different weights and piece-square tables to find the best performing ones.
+7. Finally implement iterative deepening.
+"""
+
+weights2 = {
+    "score": [4, 0],
+    "all_scores": [14, 2],
+    "bishopstable": [
+      -1.3165817260742188, -54.32647514343262, 283.39254570007324, 54.241193771362305, -97.65041923522949,
+      8.624094009399414, -289.9993305206299, 122.9853572845459, -93.2891902923584, 311.5648193359375, 52.60125732421875,
+      227.08377838134766, -363.4749355316162, -182.24555587768555, 144.4368438720703, 91.57030487060547,
+      -229.8640537261963, -227.41910362243652, -411.48789405822754, 129.84887313842773, 242.42215538024902,
+      -95.6132755279541, -3.955259323120117, -160.0073699951172, 236.9867877960205
+    ],
+    "knightstable": [
+      -172.28234100341797, 223.0459213256836, 67.91155052185059, -368.66541290283203, 29.470746994018555,
+      -40.92670440673828, 136.0531711578369, -48.32846450805664, 197.08857345581055, 108.48383140563965,
+      9.541500091552734, 86.56028175354004, -153.9066925048828, 387.97168159484863, 5.78706169128418, 87.00185012817383,
+      2.3975353240966797, 11.02029800415039, -58.4148006439209, 15.364641189575195, -56.979509353637695,
+      24.097270965576172, 195.05109024047852, 135.32243156433105, -178.48808670043945
+    ],
+    "queenstable": [
+      560.842456817627, 106.32813835144043, -115.91402053833008, -238.2559757232666, 133.07611846923828,
+      -71.37496185302734, 115.17683601379395, 196.32369804382324, -212.03493118286133, -134.81345748901367,
+      10.938720703125, 105.55173301696777, 311.7333068847656, 135.5024299621582, 117.17972755432129,
+      -22.754865646362305, -201.17102432250977, 73.6533317565918, -47.31594276428223, -31.06593894958496,
+      -70.76598930358887, -98.83921432495117, -159.27891540527344, -25.46590805053711, 179.67540740966797
+    ],
+    "kingstable": [
+      58.45306587219238, -230.2301368713379, -166.03585624694824, 113.82272529602051, 177.57596015930176,
+      217.13628005981445, -120.21517562866211, -41.354148864746094, 119.98504638671875, 6.917354583740234,
+      70.4172248840332, -24.053510665893555, 52.26346206665039, -28.052757263183594, 21.340669631958008,
+      -124.06098556518555, 282.8760738372803, -90.60652542114258, -86.45013046264648, 38.33823013305664,
+      146.09135055541992, -172.38956832885742, 209.30456352233887, -12.40064811706543, 45.93386459350586
+    ],
+    "bishopweight": 527.1901111602783,
+    "knightweight": 336.857479095459,
+    "queenweight": 1094.2414417266846,
+    "kingweight": 293.5579586029053,
+    "knight_attacking_value": [-199.1007900238037, 304.9807777404785, -0.9197940826416016],
+    "black_knight_attacking_value": [-44.8298397064209, 14.853343963623047, -175.9599151611328],
+    "bishop_attacking_value": [-131.7009334564209, -79.62968444824219, 99.28949737548828],
+    "black_bishop_attacking_value": [96.94354057312012, -166.52964401245117, 174.70190238952637],
+    "queen_attacking_value": [-1.8053054809570312, -16.178770065307617, 270.4558334350586],
+    "black_queen_attacking_value": [-91.37489891052246, -5.511262893676758, 17.36613655090332],
+    "knight_pin_value": 80.09872817993164,
+    "bishop_pin_value": -307.56445121765137,
+    "queen_pin_value": 164.20510292053223
+  }
+
+weights = {
     "score": [4, 0],
     "all_scores": [14, 2],
     "bishopstable": [
@@ -50,36 +121,35 @@ tables = [{
     "knight_pin_value": -10,
     "bishop_pin_value": -300,
     "queen_pin_value": 30
-  }]
-
-class TestingAgent():
+  }
+class Agent2():
     def __init__(self, max_depth: int = 20):
         self.max_depth = max_depth
         self.__player = None
         self.side = None
         
+        self.knightweight = weights["knightweight"]
+        self.bishopweight = weights["bishopweight"]
+        self.queenweight = weights["queenweight"]
+        self.kingweight = weights["kingweight"]
         
+        self.knight_attacking_value = weights["knight_attacking_value"]
+        self.black_knight_attacking_value = weights["black_knight_attacking_value"]
         
-        self.knightweight = tables[-1]['knightweight']
-        self.bishopweight = tables[-1]['bishopweight']
-        self.queenweight = tables[-1]['queenweight']
-        self.kingweight = tables[-1]['kingweight']
+        self.bishop_attacking_value = weights["bishop_attacking_value"]
+        self.black_bishop_attacking_value = weights["black_bishop_attacking_value"]
         
-        self.knight_attacking_value = tables[-1]['knight_attacking_value']
-        self.black_knight_attacking_value = tables[-1]['black_knight_attacking_value']
-        self.bishop_attacking_value = tables[-1]['bishop_attacking_value']
-        self.black_bishop_attacking_value = tables[-1]['black_bishop_attacking_value']
-        self.queen_attacking_value = tables[-1]['queen_attacking_value']
-        self.black_queen_attacking_value = tables[-1]['black_queen_attacking_value']
+        self.queen_attacking_value = weights["queen_attacking_value"]
+        self.black_queen_attacking_value = weights["black_queen_attacking_value"]
         
-        self.knight_pinned_value = tables[-1]['knight_pin_value']
-        self.bishop_pinned_value = tables[-1]['bishop_pin_value']
-        self.queen_pinned_value = tables[-1]['queen_pin_value']
+        self.knight_pinned_value = weights["knight_pin_value"]
+        self.bishop_pinned_value = weights["bishop_pin_value"]
+        self.queen_pinned_value = weights["queen_pin_value"]
         
-        self.bishopstable = self.reverse_table_reshape(tables[-1]['bishopstable'])
-        self.knightstable = self.reverse_table_reshape(tables[-1]['knightstable'])
-        self.queenstable = self.reverse_table_reshape(tables[-1]['queenstable'])
-        self.kingstable = self.reverse_table_reshape(tables[-1]['kingstable'])
+        self.bishopstable = self.reverse_table_reshape(weights["bishopstable"])
+        self.knightstable = self.reverse_table_reshape(weights["knightstable"])
+        self.queenstable = self.reverse_table_reshape(weights["queenstable"])
+        self.kingstable = self.reverse_table_reshape(weights["kingstable"])
 
     def reverse_table_reshape(self, table):
         # Convert the 1D list to a 2D list
@@ -95,7 +165,7 @@ class TestingAgent():
     @staticmethod
     def info():
         return {
-            "agent name": "Testing agent",
+            "agent name": "Obstacle2",
         }
 
     def alphabeta(self, alpha, beta, depthleft, state):
@@ -136,10 +206,16 @@ class TestingAgent():
     def custom_evaluate_board(self, state: State):
         #id = state.current_player_id
         id = state.current_player()
-        if state.is_winner() == 1:
+        winning = state.board.is_checkmate() & (id == 0)
+        losing = state.board.is_checkmate() & (id == 1)
+        if state.is_winner() == 1 | winning:
             return 9999
-        if state.is_winner() == -1:
+        if state.is_winner() == -1 | losing:
             return -9999
+        if state.board.is_stalemate():
+            return 0
+        if state.board.is_insufficient_material():
+            return 0
         
         white_knight = len(state.board.pieces(chess.KNIGHT, chess.WHITE))
         black_knight = len(state.board.pieces(chess.KNIGHT, chess.BLACK))
@@ -204,25 +280,13 @@ class TestingAgent():
 
     def decide(self, state: AbstractState):
         """
-        Generate a sequence of increasing good actions
+        if state.current_player() == 0 and state.board.fullmove_number == 1:
+            # First move as white
+            chessmove = chess.Move.from_uci("d1b3")
+            action = Action(chessmove)
 
-        NOTE: You can find the possible actions from `state` by calling
-              `state.successors()`, which returns a list of pairs of
-              `(action, successor_state)`.
-
-        This is a generator function; it means it should have no `return`
-        statement, but it should `yield` a sequence of increasing good
-        actions.
-
-        Parameters
-        ----------
-        state: State
-            Current state of the game
-
-        Yields
-        ------
-        action
-            the chosen `action` from the `state.successors()` list
+            yield action
+            return
         """
         depth = 1
         bestValue = -99999
@@ -243,10 +307,6 @@ class TestingAgent():
                 if action_value > alpha:
                     alpha = action_value
                 state.undo_last_move()
-            #print("best value: ", bestValue)
-            #print("side: ", self.side)
-            #print("best action: ", best_action)
-            #print("custom evaluate: ", self.custom_evaluate_board(state))
             yield best_action
             depth += 1
 

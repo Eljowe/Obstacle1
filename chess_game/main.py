@@ -6,18 +6,18 @@ from envs.game import State
 
 # Importing Agents
 from agent_interface import AgentInterface
-from custom_agent import CustomAgent
-from random_agent import RandomAgent
-from minimax_agent import MinimaxAgent
-from mcs_agent import MCSAgent
-from testingAgent import TestingAgent
-from DLAgent import DLAgent
-from testingAgent2 import TestingAgent2
-from FishAgent import FishAgent
-from DellAgent import DellAgent
-from Obstacle1 import Agent
-from Obstacle2 import Agent2
-from LenovoAgent import LenovoAgent
+from agents.custom_agent import CustomAgent
+from agents.random_agent import RandomAgent
+from agents.minimax_agent import MinimaxAgent
+from agents.testingAgent import TestingAgent
+from agents.DLAgent import DLAgent
+from agents.testingAgent2 import TestingAgent2
+from agents.FishAgent import FishAgent
+from agents.DellAgent import DellAgent
+from agents.Obstacle1 import Agent
+from agents.Obstacle2 import Agent2
+from agents.Obstacle3 import Agent3
+from agents.LenovoAgent import LenovoAgent
 # from agent import Agent    # After completing your agent, you can uncomment this line
 
 
@@ -28,7 +28,7 @@ from LenovoAgent import LenovoAgent
 def main():
     ############### Set the players ###############
     #players = [Agent, MinimaxAgent]
-    players = [Agent2, TestingAgent]
+    players = [FishAgent, TestingAgent]
     #players = [Agent, DLAgent]
     #players = [Agent, RandomAgent]
     #players = [Agent, FishAgent]
@@ -61,7 +61,7 @@ def main():
             players_instances = [p() for p in players]
             # Timeout for each move. Don't rely on the value of it. This
             # value might be changed during the tournament.
-            timeouts = [2, 2]
+            timeouts = [3, 3]
             game = Game(players_instances)
             new_round = initial_state.clone()
             turn_duration_estimate = sum([t
