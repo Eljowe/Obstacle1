@@ -47,9 +47,9 @@ tables = [{
     "black_bishop_attacking_value": [-81.0854320526123, -33.98246192932129, -21.426347732543945],
     "queen_attacking_value": [-137.33206939697266, 85.59332656860352, -26.703746795654297],
     "black_queen_attacking_value": [70.41002464294434, -94.14887046813965, -8.749160766601562],
-    "knight_pin_value": -55.86949920654297,
-    "bishop_pin_value": -291.3027153015137,
-    "queen_pin_value": 49.04508972167969
+    "knight_pin_value": 50,
+    "bishop_pin_value": 30,
+    "queen_pin_value": 400
   }]
 
 class TestingAgent():
@@ -57,9 +57,11 @@ class TestingAgent():
         self.max_depth = max_depth
         self.__player = None
         self.side = None
-        
+        """
         with open('tables.json', 'r') as f:
             tables = json.load(f)
+            
+        """
         
         self.knightweight = tables[-1]['knightweight']
         self.bishopweight = tables[-1]['bishopweight']
@@ -138,20 +140,28 @@ class TestingAgent():
         return alpha
     
     def custom_evaluate_board(self, state: State):
-        #id = state.current_player_id
         id = state.current_player()
-        if state.is_winner() == 1:
+        my_turn = state.board.turn
+        
+        if my_turn and state.is_winner() == 1:
             return 9999
-        if state.is_winner() == -1:
-            return -9999
-        if state.board.is_stalemate() and state.board.turn == chess.WHITE and id == 0:
-            return -9998
-        if state.board.is_stalemate() and state.board.turn == chess.BLACK and id == 1:
-            return 9998
-        if state.board.is_insufficient_material() and id == 0 and state.board.turn == chess.WHITE:
-            return -9998
-        if state.board.is_insufficient_material() and id == 1 and state.board.turn == chess.BLACK:
-            return 9998
+        
+        if state.board.is_checkmate():
+            if my_turn:
+                return -9999
+            else:
+                return 9999
+            
+        if state.board.is_stalemate():
+            if my_turn:
+                return -9998
+            else:
+                return 9998
+        if state.board.is_insufficient_material():
+            if my_turn:
+                return -9998
+            else:
+                return 9998
         
         white_knight = len(state.board.pieces(chess.KNIGHT, chess.WHITE))
         black_knight = len(state.board.pieces(chess.KNIGHT, chess.BLACK))
@@ -208,15 +218,21 @@ class TestingAgent():
             legal_moves = list(state.board.legal_moves)
             mobility = sum(1 for move in legal_moves if state.board.piece_at(move.from_square).color == color)
             return mobility
+        
         white_mobility = mobility_evaluation(state, chess.WHITE)
         black_mobility = mobility_evaluation(state, chess.BLACK)
-        mobility_score = (white_mobility - black_mobility) * 10
+        mobility_score = (white_mobility - black_mobility)
         
-        eval = material + knight_eval + bishop_eval + queens_eval + kings_eval + pinned_val + attacking_val + mobility_score
-        if id == 0:
+        eval = material + 0.3 * knight_eval + 0.3 * bishop_eval + 0.3 * queens_eval + 10 * kings_eval + 0.5 * pinned_val + 0.4 * attacking_val + 0.4 * mobility_score
+        
+        if self.side == "white" and my_turn:
             return eval
-        else:
+        if self.side == "black" and my_turn:
             return -eval
+        if self.side == "white" and not my_turn:
+            return -eval
+        if self.side == "black" and not my_turn:
+            return eval
 
     def decide(self, state: AbstractState):
         if state.current_player() == 0 and state.board.fullmove_number == 1:
@@ -225,9 +241,11 @@ class TestingAgent():
             #chessmove = chess.Move.from_uci("a1b3")
             #chessmove = chess.Move.from_uci("d1b3")
             action = Action(chessmove)
-
+            self.side = "white"
             yield action
             return
+        if state.current_player() == 1 and state.board.fullmove_number == 1:
+            self.side = "black"
         depth = 1
         bestValue = -99999
         alpha = -100000

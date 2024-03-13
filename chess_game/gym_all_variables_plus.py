@@ -439,7 +439,7 @@ if __name__ == '__main__':
         model = PPO.load(model_path, env=env, tensorboard_log=log_path)
         model.set_env(env)
         checkpoint_callback = CheckpointCallback(
-            save_freq= 8,
+            save_freq= 16,
             save_path=dir
         )
         model.learn(
