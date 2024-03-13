@@ -489,14 +489,14 @@ if __name__ == '__main__':
         )
         
         checkpoint_callback = CheckpointCallback(
-            save_freq= 10,
+            save_freq= 200,
             save_path=dir,
             name_prefix='rl_model'
         )
          
         
         model.learn(
-            total_timesteps=5000, log_interval=1, callback=checkpoint_callback
+            total_timesteps=50000, log_interval=1, callback=checkpoint_callback
         )
         
         model.save(f"{models_dir}/{212}")
