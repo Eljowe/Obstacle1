@@ -53,7 +53,7 @@ class CustomEnv(gym.Env):
     def __init__(self):
         super().__init__()
         
-        self.agent = TestingAgent()
+        self.agent = TestingAgent_dell()
         
         self.games_played = 0
         
