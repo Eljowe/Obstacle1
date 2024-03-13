@@ -91,7 +91,7 @@ class TestingAgent_dell():
     @staticmethod
     def info():
         return {
-            "agent name": "Testing agent",
+            "agent name": "Testing agent Dell",
         }
     
     def order_moves(self, moves, state):
