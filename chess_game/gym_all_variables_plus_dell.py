@@ -485,7 +485,7 @@ if __name__ == '__main__':
             tensorboard_log="./logs/",
             device='cuda',
             learning_rate=0.0005,
-            learning_starts=0
+            learning_starts=64
         )
         
         checkpoint_callback = CheckpointCallback(
