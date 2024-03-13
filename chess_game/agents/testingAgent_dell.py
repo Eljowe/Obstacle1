@@ -52,7 +52,7 @@ tables = [{
     "queen_pin_value": 26.48444938659668
   }]
 
-class TestingAgent():
+class TestingAgent_dell():
     def __init__(self, max_depth: int = 20):
         self.max_depth = max_depth
         self.__player = None

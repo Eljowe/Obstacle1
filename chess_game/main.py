@@ -18,6 +18,7 @@ from agents.Obstacle1 import Agent
 from agents.Obstacle2 import Agent2
 from agents.Obstacle3 import Agent3
 from agents.LenovoAgent import LenovoAgent
+from agents.testingAgent_dell import TestingAgent_dell
 # from agent import Agent    # After completing your agent, you can uncomment this line
 
 
