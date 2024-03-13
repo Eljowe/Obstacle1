@@ -20,6 +20,7 @@ from Obstacle1 import Agent
 from Obstacle2 import Agent2
 from LenovoAgent import LenovoAgent
 from FishAgent import FishAgent
+from testingAgent import TestingAgent
 
 
 from stable_baselines3 import PPO, A2C, DQN, TD3
@@ -184,7 +185,7 @@ class CustomEnv(gym.Env):
         if self.games_played >= 1:
             print(f"All scores: {self.all_scores}")
             print("\n")
-            if self.all_scores[0] >= 12:
+            if self.all_scores[0] >= 14:
                 print("Saving the tables to tables.json")
                 with open('tables.json', 'r') as f:
                     try:
@@ -364,7 +365,39 @@ class CustomEnv(gym.Env):
                 players.append(players.pop(0))
                 results.append(results.pop(0))
         
+        if results[1] >= 7:
+            self.all_scores[0] += results[0]
+            self.all_scores[1] += results[1]
+            return -1
+        
+        if results[0] > results[1]:
+            self.score[0] += 1
+        elif results[0] < results[1]:
+            self.score[1] += 1
+        
         print(f"Game 4 played, results: {results}")
+        
+        opponent = TestingAgent()
+        players = [self.agent, opponent]
+        for i in range(2):
+            initial_state = State([self.player_name(p) for p in players])
+            for round in range(len(players)):
+                players_instances = [p for p in players]
+                timeouts = [2, 2]
+                game = Game(players_instances)
+                new_round = initial_state.clone()
+                turn_duration_estimate = sum([t
+                                            for p, t in zip(players, timeouts)
+                                            if p != RandomAgent])
+                winners = game.play(new_round,
+                                    output=False,
+                                    timeout_per_turn=timeouts)
+                if len(winners) == 1:
+                    results[winners[0]] += 1
+                players.append(players.pop(0))
+                results.append(results.pop(0))
+        
+        print(f"Game 5 played, results: {results}")
         
         if results[0] > results[1]:
             self.score[0] += 1
