@@ -21,6 +21,7 @@ from agents.Obstacle2 import Agent2
 from agents.LenovoAgent import LenovoAgent
 from agents.FishAgent import FishAgent
 from agents.testingAgent import TestingAgent
+from agents.custom_agent import CustomAgent
 
 
 from stable_baselines3 import PPO, A2C, DQN, TD3
@@ -51,7 +52,7 @@ class CustomEnv(gym.Env):
     def __init__(self):
         super().__init__()
         
-        self.agent = TestingAgent2()
+        self.agent = TestingAgent()
         
         self.games_played = 0
         
@@ -241,7 +242,7 @@ class CustomEnv(gym.Env):
         self.agent.queen_pinned_value = self.queen_pin_value
         
         
-        opponent = FishAgent()
+        opponent = TestingAgent()
         players = [self.agent, opponent]
 
         results = [0, 0]
@@ -267,17 +268,17 @@ class CustomEnv(gym.Env):
         
         print(f"Game 1 played, results: {results}")
         
-        if results[1] >= 2:
-            self.all_scores[0] += results[0]
-            self.all_scores[1] += results[1]
-            return -1
-        
         if results[0] > results[1]:
             self.score[0] += 1
         elif results[0] < results[1]:
             self.score[1] += 1
+        
+        if results[1] >= 2:
+            self.all_scores[0] += results[0]
+            self.all_scores[1] += results[1]
+            return -1
                 
-        opponent = LenovoAgent()
+        opponent = FishAgent()
         players = [self.agent, opponent]
         for i in range(2):
             initial_state = State([self.player_name(p) for p in players])
@@ -301,15 +302,15 @@ class CustomEnv(gym.Env):
                 
         print(f"Game 2 played, results: {results}")
         
-        if results[1] >=3:
-            self.all_scores[0] += results[0]
-            self.all_scores[1] += results[1]
-            return -1
-        
         if results[0] > results[1]:
             self.score[0] += 1
         elif results[0] < results[1]:
             self.score[1] += 1
+        
+        if results[1] >=3:
+            self.all_scores[0] += results[0]
+            self.all_scores[1] += results[1]
+            return -1
         
         opponent = DLAgent()
         players = [self.agent, opponent]
@@ -335,15 +336,15 @@ class CustomEnv(gym.Env):
         
         print(f"Game 3 played, results: {results}")
         
-        if results[1] >= 5:
-            self.all_scores[0] += results[0]
-            self.all_scores[1] += results[1]
-            return -1
-        
         if results[0] > results[1]:
             self.score[0] += 1
         elif results[0] < results[1]:
             self.score[1] += 1
+        
+        if results[1] >= 5:
+            self.all_scores[0] += results[0]
+            self.all_scores[1] += results[1]
+            return -1
         
         opponent = Agent2()
         players = [self.agent, opponent]
@@ -364,20 +365,20 @@ class CustomEnv(gym.Env):
                     results[winners[0]] += 1
                 players.append(players.pop(0))
                 results.append(results.pop(0))
-        
-        if results[1] >= 7:
-            self.all_scores[0] += results[0]
-            self.all_scores[1] += results[1]
-            return -1
-        
+                
         if results[0] > results[1]:
             self.score[0] += 1
         elif results[0] < results[1]:
             self.score[1] += 1
         
+        if results[1] >= 7:
+            self.all_scores[0] += results[0]
+            self.all_scores[1] += results[1]
+            return -1
+
         print(f"Game 4 played, results: {results}")
         
-        opponent = TestingAgent()
+        opponent = FishAgent()
         players = [self.agent, opponent]
         for i in range(2):
             initial_state = State([self.player_name(p) for p in players])

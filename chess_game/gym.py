@@ -12,11 +12,10 @@ from random import seed
 from game import Game
 from envs.game import State
 from agent_interface import AgentInterface
-from custom_agent import CustomAgent
-from random_agent import RandomAgent
-from minimax_agent import MinimaxAgent
-from mcs_agent import MCSAgent
-from DLAgent import DLAgent
+from agents.custom_agent import CustomAgent
+from agents.random_agent import RandomAgent
+from agents.minimax_agent import MinimaxAgent
+from agents.DLAgent import DLAgent
 
 from stable_baselines3 import PPO, A2C, DQN
 from stable_baselines3.common.callbacks import CheckpointCallback

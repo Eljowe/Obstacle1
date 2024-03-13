@@ -58,6 +58,9 @@ class TestingAgent():
         self.__player = None
         self.side = None
         
+        with open('tables.json', 'r') as f:
+            tables = json.load(f)
+        
         self.knightweight = tables[-1]['knightweight']
         self.bishopweight = tables[-1]['bishopweight']
         self.queenweight = tables[-1]['queenweight']
@@ -141,6 +144,14 @@ class TestingAgent():
             return 9999
         if state.is_winner() == -1:
             return -9999
+        if state.board.is_stalemate() and state.board.turn == chess.WHITE and id == 0:
+            return -9999
+        if state.board.is_stalemate() and state.board.turn == chess.BLACK and id == 1:
+            return 9999
+        if state.board.is_insufficient_material() and id == 0 and state.board.turn == chess.WHITE:
+            return -9999
+        if state.board.is_insufficient_material() and id == 1 and state.board.turn == chess.BLACK:
+            return 9999
         
         white_knight = len(state.board.pieces(chess.KNIGHT, chess.WHITE))
         black_knight = len(state.board.pieces(chess.KNIGHT, chess.BLACK))
