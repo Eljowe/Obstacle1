@@ -32,6 +32,7 @@ from stable_baselines3.common.vec_env import VecMonitor
 from stable_baselines3 import SAC
 from gym import spaces
 
+NUM_CPU = 20
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print('Using device:', device)
@@ -86,7 +87,9 @@ class CustomEnv(gym.Env):
         self.table_size = 25
         self.score = 0
         self.action_space = spaces.Box(low=-50, high=50, shape=(4 * 25 + 4 + 6 * 3 + 3,), dtype=np.float32)
-        self.observation_space = spaces.Box(low=-50, high=50, shape=(8,), dtype=np.float32)
+        self.observation_space = spaces.Box(low=-1, high=1, shape=(NUM_CPU,1), dtype=np.float32)
+
+
     def table_reshape(self, table):
         original_board_2d = [table[i:i+8] for i in range(0, len(table), 8)]
 
@@ -108,7 +111,11 @@ class CustomEnv(gym.Env):
         return original_board
     
     def step(self, action):
+        expected_shape = (4 * 25 + 4 + 6 * 3 + 3,)
+        if action.shape != expected_shape:
+            print(f"Invalid action shape: {action.shape}, expected: {expected_shape}")
         num_cells_per_table = self.table_size
+        
         action = np.array([action][-1], dtype=np.float32)
         for i in range(self.num_tables):
             table = None
@@ -156,10 +163,14 @@ class CustomEnv(gym.Env):
 
         reward = self.calculate_reward()
         done = self.calculate_done()
-        observation = reward
+        observation = np.float32(reward)
+        observation = np.reshape(observation, (1, 1))  # Reshape to (1, 1) for a single environment
         truncated = False
         info = {"score": self.score, "games_played": self.games_played}
+
         return observation, reward, done, truncated, info
+
+
     
     def calculate_reward(self):
         # Play the game
@@ -171,13 +182,17 @@ class CustomEnv(gym.Env):
         return reward
     
     def reset(self, seed=None, options=None):
-        # Reset the environment
-        reset_info = {"score": self.score}  # Add any reset information you need here
+        # Reset the environment state here
         self.games_played = 0
         self.score = [0, 0]
         self.all_scores = [0, 0]
-        #obs = np.random.uniform(-50, 50, size=(8,))
-        return 0, reset_info
+
+        # Initialize the observation with a meaningful value
+        # For example, you can set the observation to a zero vector with the correct shape
+        initial_observation = np.zeros((NUM_CPU, 1), dtype=np.float32)
+
+        reset_info = {"score": self.score}  # Add any reset information you need here
+        return initial_observation, reset_info
     
     def close(self):
         return super().close()
@@ -430,9 +445,9 @@ if __name__ == '__main__':
     env_lambda = lambda: CustomEnv()
     do_train = True
     Continue = False
-    num_cpu = 8
+    num_cpu = NUM_CPU
     env = VecMonitor(SubprocVecEnv([env_lambda for i in range(num_cpu)]))
-
+    """
     if Continue and do_train:
         model_path = f"{models_dir}/rl_model_400000_steps"
         log_path = f"C:/Koodi/RL_AI/logs/SAC/"
@@ -446,8 +461,10 @@ if __name__ == '__main__':
             total_timesteps=20000, log_interval=1, reset_num_timesteps=False
         )
         model.save(f"{models_dir}/{2221}")
+        
+    """
 
-    elif do_train and not Continue:
+    if do_train and not Continue:
         """
         model = PPO(
             policy="MlpPolicy",
@@ -468,10 +485,11 @@ if __name__ == '__main__':
             tensorboard_log="./logs/",
             device='cuda',
             learning_rate=0.0005,
+            learning_starts=64
         )
         
         checkpoint_callback = CheckpointCallback(
-            save_freq= 1000,
+            save_freq= 10,
             save_path=dir,
             name_prefix='rl_model'
         )
@@ -487,18 +505,5 @@ if __name__ == '__main__':
         for i in range(1,10):
             model.learn(total_timesteps=TIMESTEPS, reset_num_timesteps=False, callback=[checkpoint_callback], tb_log_name='PPO')
             model.save(f"{models_dir}/{TIMESTEPS*i*num_cpu}")'''
-    elif not do_train:
-        episodes = 5
-        model_path = f"{models_dir}/rl_model_400000_steps"
-        log_path = f"C:/Koodi/RL_AI/logs/SAC/"
-        model = PPO.load(model_path, env=env, tensorboard_log=log_path)
-        for ep in range(episodes):
-            obs = env.reset()
-            done = False
-            while not done:
-                action, _states = model.predict(obs)
-                obs, rewards, done, truncated, info = env.step(action)
-                env.render()
-    #model.save(f"{models_dir}/{num_cpu}")
-    #model = PPO.load(f'{models_dir}/{num_cpu}.zip', env=env)
+
     exit()
