@@ -21,7 +21,7 @@ from agents.Obstacle2 import Agent2
 from agents.LenovoAgent import LenovoAgent
 from agents.FishAgent import FishAgent
 from agents.custom_agent import CustomAgent
-from agents.testingAgent_dell import TestingAgent
+from agents.testingAgent_dell import TestingAgent_dell
 
 
 from stable_baselines3 import PPO, A2C, DQN, TD3
@@ -327,7 +327,7 @@ class CustomEnv(gym.Env):
             self.all_scores[1] += results[1]
             return -0.75
         
-        opponent = TestingAgent()
+        opponent = TestingAgent_dell()
         players = [self.agent, opponent]
         for i in range(2):
             initial_state = State([self.player_name(p) for p in players])
@@ -420,13 +420,13 @@ class CustomEnv(gym.Env):
         elif results[0] < results[1]:
             self.score[1] += 1
         
-        self.all_scores[0] += results[0]
-        self.all_scores[1] += results[1]
-        
         if results[1] >= 6:
             self.all_scores[0] += results[0]
             self.all_scores[1] += results[1]
             return 0.5
+        
+        self.all_scores[0] += results[0]
+        self.all_scores[1] += results[1]
         
         return 1
         
