@@ -12,14 +12,16 @@ from random import seed
 from game import Game
 from envs.game import State
 from agent_interface import AgentInterface
-from random_agent import RandomAgent
-from DLAgent import DLAgent
-from testingAgent2 import TestingAgent2
-from DellAgent import DellAgent
-from Obstacle1 import Agent
-from Obstacle2 import Agent2
-from LenovoAgent import LenovoAgent
-from FishAgent import FishAgent
+from agents.random_agent import RandomAgent
+from agents.DLAgent import DLAgent
+from agents.testingAgent2 import TestingAgent2
+from agents.DellAgent import DellAgent
+from agents.Obstacle1 import Agent
+from agents.Obstacle2 import Agent2
+from agents.LenovoAgent import LenovoAgent
+from agents.FishAgent import FishAgent
+from agents.testingAgent import TestingAgent
+from agents.custom_agent import CustomAgent
 
 
 from stable_baselines3 import PPO, A2C, DQN, TD3
@@ -50,7 +52,7 @@ class CustomEnv(gym.Env):
     def __init__(self):
         super().__init__()
         
-        self.agent = TestingAgent2()
+        self.agent = TestingAgent()
         
         self.games_played = 0
         
@@ -184,7 +186,7 @@ class CustomEnv(gym.Env):
         if self.games_played >= 1:
             print(f"All scores: {self.all_scores}")
             print("\n")
-            if self.all_scores[0] >= 12:
+            if self.all_scores[0] >= 14:
                 print("Saving the tables to tables.json")
                 with open('delltables.json', 'r') as f:
                     try:
@@ -240,7 +242,7 @@ class CustomEnv(gym.Env):
         self.agent.queen_pinned_value = self.queen_pin_value
         
         
-        opponent = FishAgent()
+        opponent = TestingAgent()
         players = [self.agent, opponent]
 
         results = [0, 0]
@@ -266,17 +268,17 @@ class CustomEnv(gym.Env):
         
         print(f"Game 1 played, results: {results}")
         
-        if results[1] >= 2:
-            self.all_scores[0] += results[0]
-            self.all_scores[1] += results[1]
-            return -1
-        
         if results[0] > results[1]:
             self.score[0] += 1
         elif results[0] < results[1]:
             self.score[1] += 1
+        
+        if results[1] >= 2:
+            self.all_scores[0] += results[0]
+            self.all_scores[1] += results[1]
+            return -1
                 
-        opponent = DellAgent()
+        opponent = FishAgent()
         players = [self.agent, opponent]
         for i in range(2):
             initial_state = State([self.player_name(p) for p in players])
@@ -300,17 +302,17 @@ class CustomEnv(gym.Env):
                 
         print(f"Game 2 played, results: {results}")
         
-        if results[1] >=3:
-            self.all_scores[0] += results[0]
-            self.all_scores[1] += results[1]
-            return -1
-        
         if results[0] > results[1]:
             self.score[0] += 1
         elif results[0] < results[1]:
             self.score[1] += 1
         
-        opponent = TestingAgent2()
+        if results[1] >=3:
+            self.all_scores[0] += results[0]
+            self.all_scores[1] += results[1]
+            return -0.75
+        
+        opponent = DLAgent()
         players = [self.agent, opponent]
         for i in range(2):
             initial_state = State([self.player_name(p) for p in players])
@@ -318,7 +320,7 @@ class CustomEnv(gym.Env):
                 players_instances = [p for p in players]
                 # Timeout for each move. Don't rely on the value of it. This
                 # value might be changed during the tournament.
-                timeouts = [2, 1]
+                timeouts = [2, 2]
                 game = Game(players_instances)
                 new_round = initial_state.clone()
                 turn_duration_estimate = sum([t
@@ -334,15 +336,15 @@ class CustomEnv(gym.Env):
         
         print(f"Game 3 played, results: {results}")
         
-        if results[1] >= 5:
-            self.all_scores[0] += results[0]
-            self.all_scores[1] += results[1]
-            return -1
-        
         if results[0] > results[1]:
             self.score[0] += 1
         elif results[0] < results[1]:
             self.score[1] += 1
+        
+        if results[1] >= 4:
+            self.all_scores[0] += results[0]
+            self.all_scores[1] += results[1]
+            return -0.1
         
         opponent = Agent2()
         players = [self.agent, opponent]
@@ -363,8 +365,40 @@ class CustomEnv(gym.Env):
                     results[winners[0]] += 1
                 players.append(players.pop(0))
                 results.append(results.pop(0))
+                
+        if results[0] > results[1]:
+            self.score[0] += 1
+        elif results[0] < results[1]:
+            self.score[1] += 1
         
+        if results[1] >= 5:
+            self.all_scores[0] += results[0]
+            self.all_scores[1] += results[1]
+            return 0.25
+
         print(f"Game 4 played, results: {results}")
+        
+        opponent = Agent()
+        players = [self.agent, opponent]
+        for i in range(2):
+            initial_state = State([self.player_name(p) for p in players])
+            for round in range(len(players)):
+                players_instances = [p for p in players]
+                timeouts = [2, 2]
+                game = Game(players_instances)
+                new_round = initial_state.clone()
+                turn_duration_estimate = sum([t
+                                            for p, t in zip(players, timeouts)
+                                            if p != RandomAgent])
+                winners = game.play(new_round,
+                                    output=False,
+                                    timeout_per_turn=timeouts)
+                if len(winners) == 1:
+                    results[winners[0]] += 1
+                players.append(players.pop(0))
+                results.append(results.pop(0))
+        
+        print(f"Game 5 played, results: {results}")
         
         if results[0] > results[1]:
             self.score[0] += 1
@@ -374,11 +408,12 @@ class CustomEnv(gym.Env):
         self.all_scores[0] += results[0]
         self.all_scores[1] += results[1]
         
-        if results[0] > results[1]:
-            return 1
-        if results[0] < results[1]:
-            return -1
-        return 0
+        if results[1] >= 6:
+            self.all_scores[0] += results[0]
+            self.all_scores[1] += results[1]
+            return 0.5
+        
+        return 1
         
     def player_name(self, player):
         return player.__class__.__name__
@@ -404,7 +439,7 @@ if __name__ == '__main__':
         model = PPO.load(model_path, env=env, tensorboard_log=log_path)
         model.set_env(env)
         checkpoint_callback = CheckpointCallback(
-            save_freq= 8,
+            save_freq= 16,
             save_path=dir
         )
         model.learn(
