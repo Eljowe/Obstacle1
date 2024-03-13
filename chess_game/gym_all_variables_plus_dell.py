@@ -32,7 +32,7 @@ from stable_baselines3.common.vec_env import VecMonitor
 from stable_baselines3 import SAC
 from gym import spaces
 
-NUM_CPU = 20
+NUM_CPU = 16
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print('Using device:', device)
