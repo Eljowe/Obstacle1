@@ -385,13 +385,13 @@ class CustomEnv(gym.Env):
             self.score[0] += 1
         elif results[0] < results[1]:
             self.score[1] += 1
+            
+        print(f"Game 4 played, results: {results}")
         
         if results[1] >= 5:
             self.all_scores[0] += results[0]
             self.all_scores[1] += results[1]
             return 0.25
-
-        print(f"Game 4 played, results: {results}")
         
         opponent = Agent()
         players = [self.agent, opponent]
