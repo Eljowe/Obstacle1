@@ -420,13 +420,13 @@ class CustomEnv(gym.Env):
         elif results[0] < results[1]:
             self.score[1] += 1
         
-        self.all_scores[0] += results[0]
-        self.all_scores[1] += results[1]
-        
         if results[1] >= 6:
             self.all_scores[0] += results[0]
             self.all_scores[1] += results[1]
             return 0.5
+        
+        self.all_scores[0] += results[0]
+        self.all_scores[1] += results[1]
         
         return 1
         
