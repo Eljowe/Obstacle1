@@ -143,7 +143,6 @@ class CustomEnv(gym.Env):
         return observation, reward, done, truncated, info
 
 
-    
     def calculate_reward(self):
         # Play the game
         result = self.play_game()
@@ -152,6 +151,7 @@ class CustomEnv(gym.Env):
         # Calculate the reward as the number of rounds won by the agent
         reward = (self.all_scores[0] - self.all_scores[1]) * 0.2
         return reward
+    
     
     def reset(self, seed=None, options=None):
         # Reset the environment state here
@@ -165,8 +165,10 @@ class CustomEnv(gym.Env):
         info = {"terminal_observation": terminal_observation, "score": self.score, "games_played": self.games_played}
         return terminal_observation, info
     
+    
     def close(self):
         return super().close()
+    
     
     def calculate_done(self):
         if self.games_played >= 1:
@@ -219,7 +221,6 @@ class CustomEnv(gym.Env):
         self.agent.knight_pinned_value = self.knight_pin_value
         self.agent.bishop_pinned_value = self.bishop_pin_value
         self.agent.queen_pinned_value = self.queen_pin_value
-        
         
         opponent = MinimaxAgent()
         players = [self.agent, opponent]
