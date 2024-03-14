@@ -181,7 +181,7 @@ class CustomEnv(gym.Env):
         if self.games_played >= 1:
             print(f"All scores: {self.all_scores}")
             print("\n")
-            if self.all_scores[0] >= 15:
+            if self.all_scores[0] >= 13:
                 print("Saving the tables to tables.json")
                 with open('tables.json', 'r') as f:
                     try:
@@ -332,7 +332,7 @@ class CustomEnv(gym.Env):
         if results[1] >= 4:
             self.all_scores[0] += results[0]
             self.all_scores[1] += results[1]
-            return -0.1
+            return 0.2
         
         opponent = MinimaxAgent()
         players = [self.agent, opponent]
@@ -364,7 +364,7 @@ class CustomEnv(gym.Env):
         if results[1] >= 5:
             self.all_scores[0] += results[0]
             self.all_scores[1] += results[1]
-            return 0.25
+            return 0.6
         
         opponent = MinimaxAgent()
         players = [self.agent, opponent]

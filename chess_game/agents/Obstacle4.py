@@ -89,7 +89,7 @@ class Agent4(AgentInterface):
                 zobrist_hash ^= self.zobrist_table[square][piece_index]
         return zobrist_hash
 
-    
+
     @staticmethod
     def info():
         return {
@@ -158,6 +158,28 @@ class Agent4(AgentInterface):
         return alpha
     
     def custom_evaluate_board(self, state: State):
+        
+        def evaluate_pinned(piece_set, color, value_of_pin):
+            eval = 0
+            for piece in piece_set:
+                if state.board.is_pinned(color, piece):
+                    eval = eval + value_of_pin
+            return eval
+        
+        def attacking_value(pieces, attacking_pieces, attacked_pieces):
+            eval = 0
+            for piece in pieces:
+                attacked = state.board.attacks(piece)
+                for i in range(0,len(attacking_pieces)):
+                    num_of_attacks_on_piece_type = len(attacked.intersection(attacking_pieces[i]))
+                    eval = eval + num_of_attacks_on_piece_type * attacked_pieces[i]
+            return eval
+        
+        def mobility_evaluation(state: State, color):
+            legal_moves = list(state.board.legal_moves)
+            mobility = sum(1 for move in legal_moves if state.board.piece_at(move.from_square).color == color)
+            return mobility
+        
         id = state.current_player()
         is_white = id == 0
         if state.is_winner() == 1:
@@ -179,26 +201,10 @@ class Agent4(AgentInterface):
         black_pawn = len(state.board.pieces(chess.PAWN, chess.BLACK))
 
         material = self.knightweight * (white_knight - black_knight) + self.bishopweight * (white_bishop - black_bishop) + self.queenweight * (white_queen - black_queen) + self.kingweight * (white_king - black_king) + self.rookweight * (white_rook - black_rook) + self.pawnweight * (white_pawn - black_pawn)
-            
-        def evaluate_pinned(piece_set, color, value_of_pin):
-            eval = 0
-            for piece in piece_set:
-                if state.board.is_pinned(color, piece):
-                    eval = eval + value_of_pin
-            return eval
         
         pinned_val = evaluate_pinned(state.board.pieces(chess.KNIGHT, chess.WHITE), chess.WHITE, self.knight_pinned_value) + evaluate_pinned(state.board.pieces(chess.KNIGHT, chess.WHITE), chess.BLACK, -self.knight_pinned_value) +\
                         evaluate_pinned(state.board.pieces(chess.BISHOP, chess.WHITE),chess.WHITE, self.bishop_pinned_value) + evaluate_pinned(state.board.pieces(chess.BISHOP, chess.BLACK),chess.BLACK, -self.bishop_pinned_value) +\
                         evaluate_pinned(state.board.pieces(chess.QUEEN, chess.WHITE),chess.WHITE, self.queen_pinned_value) + evaluate_pinned(state.board.pieces(chess.QUEEN, chess.BLACK),chess.BLACK, -self.queen_pinned_value)                 
-
-        def attacking_value(pieces, attacking_pieces, attacked_pieces):
-            eval = 0
-            for piece in pieces:
-                attacked = state.board.attacks(piece)
-                for i in range(0,len(attacking_pieces)):
-                    num_of_attacks_on_piece_type = len(attacked.intersection(attacking_pieces[i]))
-                    eval = eval + num_of_attacks_on_piece_type * attacked_pieces[i]
-            return eval
 
         attacking_val = attacking_value(state.board.pieces(chess.KNIGHT, chess.WHITE), [state.board.pieces(chess.KNIGHT, chess.BLACK), state.board.pieces(chess.BISHOP, chess.BLACK), state.board.pieces(chess.QUEEN, chess.BLACK)], self.knight_attacking_value) +\
                         attacking_value(state.board.pieces(chess.KNIGHT, chess.BLACK), [state.board.pieces(chess.KNIGHT, chess.WHITE), state.board.pieces(chess.BISHOP, chess.WHITE), state.board.pieces(chess.QUEEN, chess.WHITE)], self.black_knight_attacking_value) +\
@@ -207,11 +213,6 @@ class Agent4(AgentInterface):
                         attacking_value(state.board.pieces(chess.QUEEN, chess.WHITE), [state.board.pieces(chess.KNIGHT, chess.BLACK), state.board.pieces(chess.BISHOP, chess.BLACK), state.board.pieces(chess.QUEEN, chess.BLACK)], self.queen_attacking_value) +\
                         attacking_value(state.board.pieces(chess.QUEEN, chess.BLACK), [state.board.pieces(chess.KNIGHT, chess.WHITE), state.board.pieces(chess.BISHOP, chess.WHITE), state.board.pieces(chess.QUEEN, chess.WHITE)], self.black_queen_attacking_value)
                         
-        def mobility_evaluation(state: State, color):
-            legal_moves = list(state.board.legal_moves)
-            mobility = sum(1 for move in legal_moves if state.board.piece_at(move.from_square).color == color)
-            return mobility
-        
         white_mobility = mobility_evaluation(state, chess.WHITE)
         black_mobility = mobility_evaluation(state, chess.BLACK)
         mobility_score = (white_mobility - black_mobility)
