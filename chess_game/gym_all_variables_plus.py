@@ -13,13 +13,7 @@ from game import Game
 from envs.game import State
 from agent_interface import AgentInterface
 from agents.random_agent import RandomAgent
-from agents.DLAgent import DLAgent
-from agents.testingAgent2 import TestingAgent2
-from agents.DellAgent import DellAgent
 from agents.Obstacle2 import Agent2
-from agents.LenovoAgent import LenovoAgent
-from agents.FishAgent import FishAgent
-from agents.testingAgent import TestingAgent
 from agents.custom_agent import CustomAgent
 from agents.minimax_agent import MinimaxAgent
 from chess_game.agents.Obstacle1 import Agent
@@ -264,7 +258,7 @@ class CustomEnv(gym.Env):
             self.all_scores[1] += results[1]
             return -1
                 
-        opponent = MinimaxAgent()
+        opponent = Agent()
         players = [self.agent, opponent]
         for i in range(2):
             initial_state = State([self.player_name(p) for p in players])
@@ -332,7 +326,7 @@ class CustomEnv(gym.Env):
             self.all_scores[1] += results[1]
             return 0.2
         
-        opponent = MinimaxAgent()
+        opponent = Agent()
         players = [self.agent, opponent]
         for i in range(2):
             initial_state = State([self.player_name(p) for p in players])
@@ -364,7 +358,7 @@ class CustomEnv(gym.Env):
             self.all_scores[1] += results[1]
             return 0.6
         
-        opponent = MinimaxAgent()
+        opponent = Agent()
         players = [self.agent, opponent]
         for i in range(2):
             initial_state = State([self.player_name(p) for p in players])
