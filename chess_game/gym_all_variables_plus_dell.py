@@ -21,6 +21,7 @@ from agents.Obstacle2 import Agent2
 from agents.LenovoAgent import LenovoAgent
 from agents.FishAgent import FishAgent
 from agents.custom_agent import CustomAgent
+from agents.testingAgent import TestingAgent
 from agents.testingAgent_dell import TestingAgent_dell
 
 
@@ -53,7 +54,7 @@ class CustomEnv(gym.Env):
     def __init__(self):
         super().__init__()
         
-        self.agent = TestingAgent_dell()
+        self.agent = TestingAgent()
         
         self.games_played = 0
         
