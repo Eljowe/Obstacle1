@@ -10,9 +10,10 @@ class MinimaxAgent(AgentInterface):
     An agent who plays Chess using the Minimax algorithm
     """
 
-    def __init__(self, depth: int = 4):
+    def __init__(self, depth: int = 2):
         self.depth = depth
         self.__player = None
+
 
     def info(self):
         return {"agent name": f"Minimax-Parity"}
@@ -51,15 +52,18 @@ class MinimaxAgent(AgentInterface):
         random.shuffle(moves)
         best_action = moves[0]
         max_value = float('-inf')
-        for action in moves:
-            state.execute_move(action)
-            action_value = self.min_value(state, self.depth - 1)
-            state.undo_last_move()
-            if action_value > max_value:
-                max_value = action_value
-                best_action = action
-                yield best_action
-        yield best_action
+        max_depth = 20
+        while self.depth < max_depth + 1: 
+            for action in moves:
+                state.execute_move(action)
+                action_value = self.min_value(state, self.depth - 1)
+                state.undo_last_move()
+                if action_value > max_value:
+                    max_value = action_value
+                    best_action = action
+                    yield best_action
+            yield best_action
+            self.depth += 1
 
     def max_value(self, state: State, depth: int):
         """

@@ -250,8 +250,8 @@ class Agent(AgentInterface):
     def decide(self, state: AbstractState):
         if state.current_player() == 0 and state.board.fullmove_number == 1:
             # First move as white
-            chessmove = chess.Move.from_uci("b1c2")
-            #chessmove = chess.Move.from_uci("a1b3")
+            #chessmove = chess.Move.from_uci("b1c2")
+            chessmove = chess.Move.from_uci("a1b3")
             #chessmove = chess.Move.from_uci("d1b3")
             action = Action(chessmove)
             self.side = "white"
