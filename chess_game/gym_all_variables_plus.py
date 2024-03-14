@@ -16,12 +16,13 @@ from agents.random_agent import RandomAgent
 from agents.DLAgent import DLAgent
 from agents.testingAgent2 import TestingAgent2
 from agents.DellAgent import DellAgent
-from chess_game.agents.Obstacle4 import Agent
 from agents.Obstacle2 import Agent2
 from agents.LenovoAgent import LenovoAgent
 from agents.FishAgent import FishAgent
 from agents.testingAgent import TestingAgent
 from agents.custom_agent import CustomAgent
+from agents.minimax_agent import MinimaxAgent
+from agents.Obstacle1 import Agent
 
 
 from stable_baselines3 import PPO, A2C, DQN, TD3
@@ -257,7 +258,7 @@ class CustomEnv(gym.Env):
         self.agent.queen_pinned_value = self.queen_pin_value
         
         
-        opponent = TestingAgent2()
+        opponent = MinimaxAgent()
         players = [self.agent, opponent]
 
         results = [0, 0]
@@ -293,7 +294,7 @@ class CustomEnv(gym.Env):
             self.all_scores[1] += results[1]
             return -1
                 
-        opponent = TestingAgent()
+        opponent = TestingAgent2()
         players = [self.agent, opponent]
         for i in range(2):
             initial_state = State([self.player_name(p) for p in players])
@@ -327,7 +328,7 @@ class CustomEnv(gym.Env):
             self.all_scores[1] += results[1]
             return -0.75
         
-        opponent = DLAgent()
+        opponent = TestingAgent()
         players = [self.agent, opponent]
         for i in range(2):
             initial_state = State([self.player_name(p) for p in players])
@@ -361,7 +362,7 @@ class CustomEnv(gym.Env):
             self.all_scores[1] += results[1]
             return -0.1
         
-        opponent = Agent2()
+        opponent = Agent()
         players = [self.agent, opponent]
         for i in range(2):
             initial_state = State([self.player_name(p) for p in players])
@@ -393,7 +394,7 @@ class CustomEnv(gym.Env):
             self.all_scores[1] += results[1]
             return 0.25
         
-        opponent = Agent()
+        opponent = DLAgent()
         players = [self.agent, opponent]
         for i in range(2):
             initial_state = State([self.player_name(p) for p in players])

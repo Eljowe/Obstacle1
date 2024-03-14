@@ -26,12 +26,12 @@ class MinimaxAgent(AgentInterface):
             COLOR = chess.WHITE
             otherCOLOR = chess.BLACK
         else:
-            COLOR = chess.WHITE
-            otherCOLOR = chess.BLACK
+            COLOR = chess.BLACK
+            otherCOLOR = chess.WHITE
 
         knights = state.board.pieces(chess.KNIGHT,COLOR)
         bishops = state.board.pieces(chess.BISHOP,COLOR)
-        queens = state.board.pieces(chess.QUEEN,otherCOLOR)
+        queens = state.board.pieces(chess.QUEEN,COLOR)
 
         Oknights = state.board.pieces(chess.KNIGHT,otherCOLOR)
         Obishops = state.board.pieces(chess.BISHOP,otherCOLOR)

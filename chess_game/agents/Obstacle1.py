@@ -34,6 +34,7 @@ Results:
 With time limit 2.0 seconds, agent searches usually as deep as depths 5-8 depending on the number of possible moves,
 sometimes even up to 12, while minimax can do something like 5 most of the times.
 With time limit 2.0 seconds, the agent can beat the provided minimax agent in 20 games with 19-1 record.
+At higher time limits, the games are more balanced, but the agent still has a slight advantage.
 """
 
 tables = [
