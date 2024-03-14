@@ -39,6 +39,24 @@ With 6x6 board and 2.0s limit, the agent is easily able to beat minimax (16-4 in
 I suppose we'll see the final results during the tournament.
 """
 
+tables = {
+    "score": [5, 0],
+    "all_scores": [15, 5],
+    "bishopweight": 723.5667018890381,
+    "knightweight": 636.6385307312012,
+    "queenweight": 1574.5610809326172,
+    "kingweight": 75.55226135253906,
+    "knight_attacking_value": [-279.09769439697266, 304.9807777404785, -0.9197940826416016],
+    "black_knight_attacking_value": [-653.2774238586426, 14.853343963623047, -175.9599151611328],
+    "bishop_attacking_value": [-584.2226734161377, -79.62968444824219, 99.28949737548828],
+    "black_bishop_attacking_value": [163.3222427368164, -166.52964401245117, 174.70190238952637],
+    "queen_attacking_value": [-314.4085273742676, -16.178770065307617, 270.4558334350586],
+    "black_queen_attacking_value": [83.51497650146484, -5.511262893676758, 17.36613655090332],
+    "knight_pin_value": 424.9740695953369,
+    "bishop_pin_value": 296.96722412109375,
+    "queen_pin_value": 502.3064727783203
+  }
+
 
 class Agent(AgentInterface):
     def __init__(self, max_depth: int = 20):
@@ -46,26 +64,26 @@ class Agent(AgentInterface):
         self.__player = None
         self.side = None
         
-        self.knightweight = 550
-        self.bishopweight = 700
-        self.queenweight = 1500
-        self.kingweight = 65
+        self.knightweight = tables["knightweight"]
+        self.bishopweight = tables["bishopweight"]
+        self.queenweight = tables["queenweight"]
+        self.kingweight = tables["kingweight"]
         self.rookweight = 1000
         self.pawnweight = 100
         
-        self.knight_attacking_value = [-238.59667587280273, 304.9807777404785, -0.9197940826416016]
-        self.black_knight_attacking_value = [-622.676628112793, 14.853343963623047, -175.9599151611328]
-        self.bishop_attacking_value = [-551.1478519439697, -79.62968444824219, 99.28949737548828]
-        self.black_bishop_attacking_value = [193.36382484436035, -166.52964401245117, 174.70190238952637]
-        self.queen_attacking_value = [-269.04955101013184, -16.178770065307617, 270.4558334350586]
-        self.black_queen_attacking_value = [85.59513092041016, -5.511262893676758, 17.36613655090332]
+        self.knight_attacking_value = tables["knight_attacking_value"]
+        self.black_knight_attacking_value = tables["black_knight_attacking_value"]
+        self.bishop_attacking_value = tables["bishop_attacking_value"]
+        self.black_bishop_attacking_value = tables["black_bishop_attacking_value"]
+        self.queen_attacking_value = tables["queen_attacking_value"]
+        self.black_queen_attacking_value = tables["black_queen_attacking_value"]
         
         self.transposition_table = {}
         self.zobrist_table = self.initialize_zobrist_table()
         
-        self.knight_pinned_value = 373.37774658203125
-        self.bishop_pinned_value = 250.1067581176758
-        self.queen_pinned_value = 478.7397708892822
+        self.knight_pinned_value = tables["knight_pin_value"]
+        self.bishop_pinned_value = tables["bishop_pin_value"]
+        self.queen_pinned_value = tables["queen_pin_value"]
         
         self.mobility_multiplier = 0.1
     
