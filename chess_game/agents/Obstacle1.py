@@ -5,7 +5,7 @@ from envs.game import State, ID, Action
 from agent_interface import AgentInterface
 
 """
-This chess agent uses the minimax algorithm with alpha-beta pruning and quiescence search.
+This chess agent uses the minimax algorithm with alpha-beta pruning (negamax) and quiescence search.
 
 The algorithm uses a custom evaluation function to evaluate the board state.
 The evaluation function is based on the material difference and the piece-square tables,
@@ -103,6 +103,8 @@ class Agent(AgentInterface):
         self.queen_attacking_value = tables[-1]['queen_attacking_value']
         self.black_queen_attacking_value = tables[-1]['black_queen_attacking_value']
         
+        self.transposition_table = {}
+        
         self.knight_pinned_value = tables[-1]['knight_pin_value']
         self.bishop_pinned_value = tables[-1]['bishop_pin_value']
         self.queen_pinned_value = tables[-1]['queen_pin_value']
@@ -126,6 +128,9 @@ class Agent(AgentInterface):
             "agent name": "Obstacle1",
         }
     
+    def hash_board(self, state):
+        return hash(state.board.fen())
+    
     def order_moves(self, moves, state):
         # Prioritize moves based on a simple heuristic: captures, then checks
         captures = [move for move in moves if state.board.is_capture(move.chessmove)]
@@ -134,6 +139,11 @@ class Agent(AgentInterface):
         return captures + checks + others
     
     def alphabeta(self, alpha, beta, depthleft, state):
+        board_hash = self.hash_board(state)
+        if board_hash in self.transposition_table:
+            entry = self.transposition_table[board_hash]
+            if entry['depth'] >= depthleft:
+                return entry['score']
         if depthleft == 0:
             return self.quiesce(alpha, beta, state)
         bestscore = -9999
@@ -148,6 +158,7 @@ class Agent(AgentInterface):
                 bestscore = score
             if score > alpha:
                 alpha = score
+        self.transposition_table[board_hash] = {'score': bestscore, 'depth': depthleft}
         return bestscore
     
     def quiesce(self, alpha, beta, state: State):
