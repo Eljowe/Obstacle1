@@ -138,9 +138,8 @@ class TestingAgent_dell():
         return alpha
     
     def custom_evaluate_board(self, state: State):
-        my_turn = state.board.turn
         id = state.current_player()
-        is_white = id == 0 
+        is_white = id == 0
         if state.is_winner() == 1:
             return 9999
         if state.is_winner() == -1:
