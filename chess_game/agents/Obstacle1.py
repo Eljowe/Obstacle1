@@ -2,8 +2,7 @@ from envs.environment import AbstractState
 import chess
 import random
 from envs.game import State, ID, Action
-import numpy as np
-import json
+from agent_interface import AgentInterface
 
 """
 This agent is a chess agent using the minimax algorithm with alpha-beta pruning and quiescence search.
@@ -123,7 +122,7 @@ tables = [{
     "queen_pin_value": 418.7050437927246
   }]
 
-class Agent():
+class Agent(AgentInterface):
     def __init__(self, max_depth: int = 20):
         self.max_depth = max_depth
         self.__player = None
@@ -297,8 +296,7 @@ class Agent():
         bestValue = -99999
         alpha = -100000
         beta = 100000
-        moves = state.applicable_moves()
-        random.shuffle(moves)
+        moves = self.order_moves(state.applicable_moves(), state)
         best_action = moves[0]
         while depth < self.max_depth + 1:
             for action in moves:

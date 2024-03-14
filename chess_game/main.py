@@ -29,7 +29,7 @@ from agents.Obstacle1 import Agent
 def main():
     ############### Set the players ###############
     #players = [Agent, MinimaxAgent]
-    players = [Agent, TestingAgent2]
+    players = [Agent, FishAgent]
     #players = [Agent, DLAgent]
     #players = [Agent, RandomAgent]
     #players = [Agent, FishAgent]
@@ -61,7 +61,7 @@ def main():
             players_instances = [p() for p in players]
             # Timeout for each move. Don't rely on the value of it. This
             # value might be changed during the tournament.
-            timeouts = [3, 3]
+            timeouts = [2, 2]
             game = Game(players_instances)
             new_round = initial_state.clone()
             turn_duration_estimate = sum([t
