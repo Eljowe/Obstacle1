@@ -16,7 +16,7 @@ from agents.random_agent import RandomAgent
 from agents.Obstacle2 import Agent2
 from agents.custom_agent import CustomAgent
 from agents.minimax_agent import MinimaxAgent
-from chess_game.agents.Obstacle1 import Agent
+from agents.Obstacle1 import Agent
 
 
 from stable_baselines3 import PPO, A2C, DQN, TD3

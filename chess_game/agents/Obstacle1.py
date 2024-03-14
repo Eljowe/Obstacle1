@@ -228,6 +228,7 @@ class Agent(AgentInterface):
         
         if state.current_player() == 0 and state.board.fullmove_number == 1:
             # First move as white
+            # But sadly we don't know the tournament board setup, so we can't hardcode the first move to start funny lines :(
             self.side = "white"
             """
             chessmove = chess.Move.from_uci("b1c2")
