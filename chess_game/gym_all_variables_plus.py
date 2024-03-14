@@ -22,8 +22,7 @@ from agents.FishAgent import FishAgent
 from agents.testingAgent import TestingAgent
 from agents.custom_agent import CustomAgent
 from agents.minimax_agent import MinimaxAgent
-from agents.Obstacle1 import Agent
-from agents.Obstacle4 import Agent4
+from chess_game.agents.Obstacle1 import Agent
 
 
 from stable_baselines3 import PPO, A2C, DQN, TD3
@@ -55,12 +54,12 @@ class CustomEnv(gym.Env):
     def __init__(self):
         super().__init__()
         
-        self.agent = Agent4()
+        self.agent = Agent()
         
         self.games_played = 0
         
         self.score = [0, 0]
-        self.all_scores = [0,0 ]
+        self.all_scores = [0,0]
         
         self.bishopweight = self.agent.bishopweight
         self.knightweight = self.agent.knightweight
@@ -169,10 +168,9 @@ class CustomEnv(gym.Env):
 
         # Initialize the observation with a meaningful value
         # For example, you can set the observation to a zero vector with the correct shape
-        initial_observation = np.zeros((NUM_CPU, 1), dtype=np.float32)
-
-        reset_info = {"score": self.score}  # Add any reset information you need here
-        return initial_observation, reset_info
+        terminal_observation = np.array(self.all_scores, dtype=np.float32).reshape(-1, 1)
+        info = {"terminal_observation": terminal_observation, "score": self.score, "games_played": self.games_played}
+        return terminal_observation, info
     
     def close(self):
         return super().close()

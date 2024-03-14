@@ -22,7 +22,6 @@ from agents.FishAgent import FishAgent
 from agents.testingAgent import TestingAgent
 from agents.custom_agent import CustomAgent
 from agents.minimax_agent import MinimaxAgent
-from agents.Obstacle1 import Agent
 
 
 from stable_baselines3 import PPO, A2C, DQN, TD3

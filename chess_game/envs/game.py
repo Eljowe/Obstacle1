@@ -40,7 +40,9 @@ class Action(AbstractAction):
         return self.chessmove == other.chessmove
 
 
-FIRSTROW = [chess.Piece(chess.KNIGHT,chess.WHITE),
+FIRSTROW = [
+    chess.Piece(chess.ROOK,chess.WHITE),
+    chess.Piece(chess.KNIGHT,chess.WHITE),
             chess.Piece(chess.QUEEN,chess.WHITE),
             chess.Piece(chess.KING,chess.WHITE),
             chess.Piece(chess.BISHOP,chess.WHITE),
@@ -49,7 +51,9 @@ LASTROW = [chess.Piece(chess.KNIGHT,chess.BLACK),
            chess.Piece(chess.BISHOP,chess.BLACK),
            chess.Piece(chess.KING,chess.BLACK),
            chess.Piece(chess.QUEEN,chess.BLACK),
-           chess.Piece(chess.KNIGHT,chess.BLACK)]
+           chess.Piece(chess.KNIGHT,chess.BLACK),
+           chess.Piece(chess.ROOK,chess.BLACK)
+           ]
 
 class State(AbstractState):
 
@@ -58,7 +62,7 @@ class State(AbstractState):
     # maxX = index of last file (column), when first column is 0
     # maxY = index of last rank (row), when first row is 0
 
-    def __init__(self,players,maxX=4,maxY=4):
+    def __init__(self,players,maxX=5,maxY=5):
         self.__players = players
         self.board = chess.Board()
         self.board.clear_board()
