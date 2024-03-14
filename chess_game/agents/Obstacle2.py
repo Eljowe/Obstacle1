@@ -41,20 +41,20 @@ I suppose we'll see the final results during the tournament.
 
 tables = {
     "score": [5, 0],
-    "all_scores": [16, 4],
-    "bishopweight": 693.4657783508301,
-    "knightweight": 597.9791717529297,
-    "queenweight": 1501.6541786193848,
-    "kingweight": 62.86098098754883,
-    "knight_attacking_value": [-269.0314655303955, 304.9807777404785, -0.9197940826416016],
-    "black_knight_attacking_value": [-574.049934387207, 14.853343963623047, -175.9599151611328],
-    "bishop_attacking_value": [-568.0453510284424, -79.62968444824219, 99.28949737548828],
-    "black_bishop_attacking_value": [203.59427070617676, -166.52964401245117, 174.70190238952637],
-    "queen_attacking_value": [-314.23600578308105, -16.178770065307617, 270.4558334350586],
-    "black_queen_attacking_value": [97.1945571899414, -5.511262893676758, 17.36613655090332],
-    "knight_pin_value": 361.06391525268555,
-    "bishop_pin_value": 203.7498588562012,
-    "queen_pin_value": 472.2055492401123
+    "all_scores": [15, 5],
+    "bishopweight": 723.5667018890381,
+    "knightweight": 636.6385307312012,
+    "queenweight": 1574.5610809326172,
+    "kingweight": 75.55226135253906,
+    "knight_attacking_value": [-279.09769439697266, 304.9807777404785, -0.9197940826416016],
+    "black_knight_attacking_value": [-653.2774238586426, 14.853343963623047, -175.9599151611328],
+    "bishop_attacking_value": [-584.2226734161377, -79.62968444824219, 99.28949737548828],
+    "black_bishop_attacking_value": [163.3222427368164, -166.52964401245117, 174.70190238952637],
+    "queen_attacking_value": [-314.4085273742676, -16.178770065307617, 270.4558334350586],
+    "black_queen_attacking_value": [83.51497650146484, -5.511262893676758, 17.36613655090332],
+    "knight_pin_value": 424.9740695953369,
+    "bishop_pin_value": 296.96722412109375,
+    "queen_pin_value": 502.3064727783203
   }
 
 class Agent2(AgentInterface):
