@@ -6,6 +6,52 @@ import numpy as np
 import json
 
 
+tables = [{
+    "score": [5, 0],
+    "all_scores": [17, 3],
+    "bishopstable": [
+            -20, -10, -10, -10, -20,
+            -10, 5, 0, 5, -5,
+            -10, 3, 10, 3, -10,
+            -10, 0, 0, 0, -10,
+            -20, -10, -10, -10, -20
+        ],
+    "knightstable": [
+            -20, -10, -10, -10, -20,
+            -10, 0, 10, 0, -10,
+            -10, 10, 20, 10, -10,
+            -10, 0, 10, 0, -10,
+            -20, -10, -10, -10, -20
+        ],
+    "queenstable": [
+            -20, -10, -10, -5, -20,
+            -10, 0, 0, 0, -10,
+            -10, 5, 5, 5, -10,
+            -5, 5, 5, 5, -5,
+            -20, -10, -10, -5, -20
+        ],
+    "kingstable": [
+            10, 20, 0, 20, 10,
+            -50, -45, -30, -45, -50,
+            -10, -50, -50, -50, -10,
+            -20, -50, -50, -50, -20,
+            -30, -40, -40, -40, -30
+        ],
+    "bishopweight": 815.1852226257324,
+    "knightweight": 555.9068088531494,
+    "queenweight": 1347.7687454223633,
+    "kingweight": 114.54794692993164,
+    "knight_attacking_value": [-210.14238929748535, 304.9807777404785, -0.9197940826416016],
+    "black_knight_attacking_value": [-586.4434356689453, 14.853343963623047, -175.9599151611328],
+    "bishop_attacking_value": [-646.1676158905029, -79.62968444824219, 99.28949737548828],
+    "black_bishop_attacking_value": [223.80562019348145, -166.52964401245117, 174.70190238952637],
+    "queen_attacking_value": [-247.5411777496338, -16.178770065307617, 270.4558334350586],
+    "black_queen_attacking_value": [40.173583984375, -5.511262893676758, 17.36613655090332],
+    "knight_pin_value": 257.6691703796387,
+    "bishop_pin_value": 277.67792320251465,
+    "queen_pin_value": 452.2002143859863
+  }]
+
 class TestingAgent2():
     def __init__(self, max_depth: int = 20):
         self.max_depth = max_depth
@@ -36,23 +82,11 @@ class TestingAgent2():
         self.queenstable = self.reverse_table_reshape(tables[-1]['queenstable'])
         self.kingstable = self.reverse_table_reshape(tables[-1]['kingstable'])
         
-    def table_reshape(self, table):
-        original_board_2d = [table[i:i+8] for i in range(0, len(table), 8)]
-
-        modified_board_2d = [row[:5] for row in original_board_2d[:5]]
-
-        # Flatten the modified 2D board back to a 1D list
-        modified_board = [cell for row in modified_board_2d for cell in row]
-        return modified_board
+        self.mobility_score = 0.1
 
     def reverse_table_reshape(self, table):
-        # Convert the 1D list to a 2D list
         board_2d = [table[i:i+5] for i in range(0, len(table), 5)]
-
-        # Expand the 2D list to an 8x8 board
         original_board_2d = [row + [0]*3 for row in board_2d] + [[0]*8]*3
-
-        # Flatten the 2D board back to a 1D list
         original_board = [cell for row in original_board_2d for cell in row]
         return original_board
 
@@ -61,56 +95,58 @@ class TestingAgent2():
         return {
             "agent name": "Testing agent2",
         }
-
+    
+    def order_moves(self, moves, state):
+        # Prioritize moves based on a simple heuristic: captures, then checks
+        captures = [move for move in moves if state.board.is_capture(move.chessmove)]
+        checks = [move for move in moves if state.board.gives_check(move.chessmove)]
+        others = [move for move in moves if move not in captures and move not in checks]
+        return captures + checks + others
+    
     def alphabeta(self, alpha, beta, depthleft, state):
-        if (depthleft == 0):
+        if depthleft == 0:
             return self.quiesce(alpha, beta, state)
         bestscore = -9999
-        for move in state.applicable_moves():
+        moves = self.order_moves(state.applicable_moves(), state)  # Order moves
+        for move in moves:
             state.execute_move(move)
             score = -self.alphabeta(-beta, -alpha, depthleft - 1, state)
             state.undo_last_move()
-            if (score >= beta):
+            if score >= beta:
                 return score
-            if (score > bestscore):
+            if score > bestscore:
                 bestscore = score
-            if (score > alpha):
+            if score > alpha:
                 alpha = score
         return bestscore
     
     def quiesce(self, alpha, beta, state: State):
         stand_pat = self.custom_evaluate_board(state)
-        if (stand_pat >= beta):
+        if stand_pat >= beta:
             return beta
-        if (alpha < stand_pat):
+        if alpha < stand_pat:
             alpha = stand_pat
-        
+
         for move in state.applicable_moves():
             if state.board.is_capture(move.chessmove):
-                    state.execute_move(move)
-                    score = -self.quiesce(-beta, -alpha, state)
-                    state.undo_last_move()
-                    if (score >= beta):
-                        return beta
-                    if (score > alpha):
-                        alpha = score
-        
+                state.execute_move(move)
+                score = -self.quiesce(-beta, -alpha, state)
+                state.undo_last_move()
+                if score >= beta:
+                    return beta
+                if score > alpha:
+                    alpha = score
+
         return alpha
     
     def custom_evaluate_board(self, state: State):
-        #id = state.current_player_id
         id = state.current_player()
-        winning = state.board.is_checkmate() & (id == 0)
-        losing = state.board.is_checkmate() & (id == 1)
-        if state.is_winner() == 1 | winning:
+        is_white = id == 0
+        if state.is_winner() == 1:
             return 9999
-        if state.is_winner() == -1 | losing:
+        if state.is_winner() == -1:
             return -9999
-        if state.board.is_stalemate():
-            return 0
-        if state.board.is_insufficient_material():
-            return 0
-        
+            
         white_knight = len(state.board.pieces(chess.KNIGHT, chess.WHITE))
         black_knight = len(state.board.pieces(chess.KNIGHT, chess.BLACK))
         white_bishop = len(state.board.pieces(chess.BISHOP, chess.WHITE))
@@ -122,7 +158,6 @@ class TestingAgent2():
 
         material = self.knightweight * (white_knight - black_knight) + self.bishopweight * (white_bishop - black_bishop) + self.queenweight * (white_queen - black_queen) + self.kingweight * (white_king - black_king)
             
-        
         knight_eval = sum([self.knightstable[i] for i in state.board.pieces(chess.KNIGHT, chess.WHITE)])
         knight_eval = knight_eval + sum([-self.knightstable[chess.square_mirror(i)]
                                 for i in state.board.pieces(chess.KNIGHT, chess.BLACK)])
@@ -145,8 +180,7 @@ class TestingAgent2():
         
         pinned_val = evaluate_pinned(state.board.pieces(chess.KNIGHT, chess.WHITE), chess.WHITE, self.knight_pinned_value) + evaluate_pinned(state.board.pieces(chess.KNIGHT, chess.WHITE), chess.BLACK, -self.knight_pinned_value) +\
                         evaluate_pinned(state.board.pieces(chess.BISHOP, chess.WHITE),chess.WHITE, self.bishop_pinned_value) + evaluate_pinned(state.board.pieces(chess.BISHOP, chess.BLACK),chess.BLACK, -self.bishop_pinned_value) +\
-                        evaluate_pinned(state.board.pieces(chess.QUEEN, chess.WHITE),chess.WHITE, self.queen_pinned_value) + evaluate_pinned(state.board.pieces(chess.QUEEN, chess.BLACK),chess.BLACK, -self.queen_pinned_value)
-                            
+                        evaluate_pinned(state.board.pieces(chess.QUEEN, chess.WHITE),chess.WHITE, self.queen_pinned_value) + evaluate_pinned(state.board.pieces(chess.QUEEN, chess.BLACK),chess.BLACK, -self.queen_pinned_value)                 
 
         def attacking_value(pieces, attacking_pieces, attacked_pieces):
             eval = 0
@@ -164,23 +198,33 @@ class TestingAgent2():
                         attacking_value(state.board.pieces(chess.QUEEN, chess.WHITE), [state.board.pieces(chess.KNIGHT, chess.BLACK), state.board.pieces(chess.BISHOP, chess.BLACK), state.board.pieces(chess.QUEEN, chess.BLACK)], self.queen_attacking_value) +\
                         attacking_value(state.board.pieces(chess.QUEEN, chess.BLACK), [state.board.pieces(chess.KNIGHT, chess.WHITE), state.board.pieces(chess.BISHOP, chess.WHITE), state.board.pieces(chess.QUEEN, chess.WHITE)], self.black_queen_attacking_value)
                         
+        def mobility_evaluation(state: State, color):
+            legal_moves = list(state.board.legal_moves)
+            mobility = sum(1 for move in legal_moves if state.board.piece_at(move.from_square).color == color)
+            return mobility
         
-        eval = material + knight_eval + bishop_eval + queens_eval + kings_eval + pinned_val + attacking_val
-        if id == 0:
-            return eval
-        else:
-            return -eval
+        white_mobility = mobility_evaluation(state, chess.WHITE)
+        black_mobility = mobility_evaluation(state, chess.BLACK)
+        mobility_score = (white_mobility - black_mobility)
+        
+        eval = material + knight_eval + bishop_eval + queens_eval + kings_eval + pinned_val * 0.1 + attacking_val * 0.1 + mobility_score * self.mobility_score
+        if not is_white:
+            eval = -eval
 
+        return eval
 
     def decide(self, state: AbstractState):
         if state.current_player() == 0 and state.board.fullmove_number == 1:
-            #When white, play same starting move
-            chessmove = chess.Move.from_uci("d1b3")
+            # First move as white
+            chessmove = chess.Move.from_uci("b1c2")
+            #chessmove = chess.Move.from_uci("a1b3")
+            #chessmove = chess.Move.from_uci("d1b3")
             action = Action(chessmove)
-
+            self.side = "white"
             yield action
             return
-            
+        if state.current_player() == 1 and state.board.fullmove_number == 1:
+            self.side = "black"
         depth = 1
         bestValue = -99999
         alpha = -100000

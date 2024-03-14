@@ -257,7 +257,7 @@ class CustomEnv(gym.Env):
         self.agent.queen_pinned_value = self.queen_pin_value
         
         
-        opponent = DLAgent()
+        opponent = TestingAgent2()
         players = [self.agent, opponent]
 
         results = [0, 0]
@@ -293,7 +293,7 @@ class CustomEnv(gym.Env):
             self.all_scores[1] += results[1]
             return -1
                 
-        opponent = FishAgent()
+        opponent = TestingAgent()
         players = [self.agent, opponent]
         for i in range(2):
             initial_state = State([self.player_name(p) for p in players])
@@ -327,7 +327,7 @@ class CustomEnv(gym.Env):
             self.all_scores[1] += results[1]
             return -0.75
         
-        opponent = TestingAgent()
+        opponent = DLAgent()
         players = [self.agent, opponent]
         for i in range(2):
             initial_state = State([self.player_name(p) for p in players])

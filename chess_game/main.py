@@ -29,7 +29,7 @@ from agents.testingAgent_dell import TestingAgent_dell
 def main():
     ############### Set the players ###############
     #players = [Agent, MinimaxAgent]
-    players = [TestingAgent, DLAgent]
+    players = [TestingAgent, TestingAgent2]
     #players = [Agent, DLAgent]
     #players = [Agent, RandomAgent]
     #players = [Agent, FishAgent]
