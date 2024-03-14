@@ -229,8 +229,7 @@ class TestingAgent2():
         bestValue = -99999
         alpha = -100000
         beta = 100000
-        moves = state.applicable_moves()
-        random.shuffle(moves)
+        moves = self.order_moves(state.applicable_moves(), state)
         best_action = moves[0]
         while depth < self.max_depth + 1:
             #print(f"testing depth: {depth}")
