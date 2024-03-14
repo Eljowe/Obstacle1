@@ -25,7 +25,6 @@ from stable_baselines3.common.vec_env import SubprocVecEnv
 from stable_baselines3.common.vec_env import DummyVecEnv
 from stable_baselines3.common.vec_env import VecMonitor
 from stable_baselines3 import SAC
-from gym import spaces
 
 NUM_CPU = 16
 
