@@ -233,6 +233,7 @@ class TestingAgent2():
         random.shuffle(moves)
         best_action = moves[0]
         while depth < self.max_depth + 1:
+            #print(f"testing depth: {depth}")
             for action in moves:
                 state.execute_move(action)
                 action_value = -self.alphabeta(-beta, -alpha, depth, state)
