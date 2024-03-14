@@ -35,7 +35,7 @@ Results:
 With time limit 2.0 seconds, agent searches usually as deep as depths 5-8 depending on the number of possible moves, which is in similar range as minimax.
 With time limit 2.0 seconds and 5x5 board, the agent is pretty equal to minimax, but with larger boards and more possible moves,
 the difference is clear.
-Even with 6x6 board and 2.0s limit, the agent is easily able to beat minimax.
+With 6x6 board and 2.0s limit, the agent is easily able to beat minimax (16-4 in 20 matches).
 I suppose we'll see the final results during the tournament.
 """
 

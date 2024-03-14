@@ -10,7 +10,6 @@ from agents.custom_agent import CustomAgent
 from agents.random_agent import RandomAgent
 from agents.minimax_agent import MinimaxAgent
 from agents.Obstacle2 import Agent2
-from agents.Obstacle3 import Agent3
 from agents.Obstacle1 import Agent
 # from agent import Agent    # After completing your agent, you can uncomment this line
 
@@ -22,7 +21,7 @@ from agents.Obstacle1 import Agent
 def main():
     ############### Set the players ###############
     #players = [Agent, MinimaxAgent]
-    players = [Agent, MinimaxAgent]
+    players = [Agent, Agent2]
     #players = [Agent, DLAgent]
     #players = [Agent, RandomAgent]
     #players = [Agent, FishAgent]
