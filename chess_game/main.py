@@ -29,7 +29,7 @@ from agents.testingAgent_dell import TestingAgent_dell
 def main():
     ############### Set the players ###############
     #players = [Agent, MinimaxAgent]
-    players = [TestingAgent, TestingAgent_dell]
+    players = [TestingAgent, DLAgent]
     #players = [Agent, DLAgent]
     #players = [Agent, RandomAgent]
     #players = [Agent, FishAgent]
@@ -49,7 +49,7 @@ def main():
     # The rest of the file is not important; you can skip reading it. #
     ###################################################################
     results = [0, 0]
-    for i in range(10):
+    for i in range(2):
         initial_state = State([player_name(p) for p in players])
 
         for round in range(len(players)):
