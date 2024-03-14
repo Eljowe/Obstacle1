@@ -23,17 +23,6 @@ def main():
     #players = [Agent, MinimaxAgent]
     players = [Agent, Agent2]
     #players = [Agent, DLAgent]
-    #players = [Agent, RandomAgent]
-    #players = [Agent, FishAgent]
-    #players = [Agent, DellAgent]
-    #players = [Agent, TestingAgent]
-    #players = [Agent, CustomAgent]
-    #players = [TestingAgent2, DellAgent]
-    #players = [RandomAgent, MinimaxAgent]
-    #players = [RandomAgent, RandomAgent]
-    #players = [MCSAgent, RandomAgent]
-
-    # players = [Agent, IDMinimaxAgent]   <-- Uncomment this to test your agent
     ###############################################
 
     RENDER = True

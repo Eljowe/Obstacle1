@@ -202,10 +202,18 @@ class Agent2(AgentInterface):
         
         id = state.current_player()
         is_white = id == 0
-        if state.is_winner() == 1:
-            return 9999
-        if state.is_winner() == -1:
-            return -9999
+
+        winner = state.is_winner()
+        if winner == 1:
+            if is_white:
+                return 9999  # White wins
+            else:
+                return -9999  # Black wins
+        elif winner == -1:
+            if is_white:
+                return -9999  # Black wins
+            else:
+                return 9999
             
         white_knight = len(state.board.pieces(chess.KNIGHT, chess.WHITE))
         black_knight = len(state.board.pieces(chess.KNIGHT, chess.BLACK))
