@@ -16,7 +16,7 @@ from agents.random_agent import RandomAgent
 from agents.DLAgent import DLAgent
 from agents.testingAgent2 import TestingAgent2
 from agents.DellAgent import DellAgent
-from agents.Obstacle1 import Agent
+from chess_game.agents.Obstacle1 import Agent
 from agents.Obstacle2 import Agent2
 from agents.LenovoAgent import LenovoAgent
 from agents.FishAgent import FishAgent

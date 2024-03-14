@@ -4,7 +4,7 @@ from agents.testingAgent import TestingAgent
 from agents.DLAgent import DLAgent
 from agents.FishAgent import FishAgent
 from agents.DellAgent import DellAgent
-from agents.Obstacle1 import Agent
+from chess_game.agents.Obstacle4 import Agent
 from agents.Obstacle2 import Agent2
 from agents.Obstacle3 import Agent3
 from agents.LenovoAgent import LenovoAgent

@@ -14,11 +14,11 @@ from agents.DLAgent import DLAgent
 from agents.testingAgent2 import TestingAgent2
 from agents.FishAgent import FishAgent
 from agents.DellAgent import DellAgent
-from agents.Obstacle1 import Agent
 from agents.Obstacle2 import Agent2
 from agents.Obstacle3 import Agent3
 from agents.LenovoAgent import LenovoAgent
 from agents.testingAgent_dell import TestingAgent_dell
+from agents.Obstacle1 import Agent
 # from agent import Agent    # After completing your agent, you can uncomment this line
 
 
@@ -29,7 +29,7 @@ from agents.testingAgent_dell import TestingAgent_dell
 def main():
     ############### Set the players ###############
     #players = [Agent, MinimaxAgent]
-    players = [TestingAgent2, TestingAgent]
+    players = [TestingAgent2, Agent]
     #players = [Agent, DLAgent]
     #players = [Agent, RandomAgent]
     #players = [Agent, FishAgent]

@@ -1,7 +1,7 @@
 from envs.environment import AbstractState
 import chess
 import random
-from envs.game import State, ID, Action
+from envs.game import State, ID
 import numpy as np
 import json
 
@@ -32,50 +32,51 @@ The agent building process was following:
 7. Finally implement iterative deepening.
 """
 
-tables = [{
+tables = [
+  {
     "score": [5, 0],
     "all_scores": [16, 4],
     "bishopstable": [
-      -51.182992935180664, -1.7476825714111328, 46.43898010253906, 12.648191452026367, -55.61294364929199,
-      52.30827713012695, -16.684200286865234, -17.831205368041992, 151.28887939453125, -97.32185363769531,
-      -136.08827781677246, -50.65030097961426, -52.60519790649414, 93.2355842590332, -124.21957397460938,
-      -109.00154495239258, -31.653881072998047, -172.32038116455078, -118.63798713684082, 25.27335548400879,
-      55.17155838012695, -29.44881820678711, -1.421600341796875, -59.15744400024414, 10.75021743774414
+      -61.444271087646484, 123.10508918762207, 254.3679084777832, -20.015260696411133, -95.16713523864746,
+      -98.51394844055176, 79.54877662658691, -88.04710006713867, 163.38217735290527, 126.15629959106445,
+      111.07785987854004, 10.534055709838867, -44.88747978210449, -91.62784957885742, 114.00455856323242,
+      -176.81085014343262, -66.11296653747559, -5.185941696166992, -160.82894134521484, 115.51505661010742,
+      122.67306327819824, -92.05524444580078, 145.58502960205078, -4.3147125244140625, -28.040071487426758
     ],
     "knightstable": [
-      -38.47623825073242, -40.71133232116699, -163.22057342529297, -33.68818473815918, -70.75001907348633,
-      -106.98736572265625, -8.808258056640625, -9.292903900146484, 115.08987426757812, 0.7227039337158203,
-      -49.0362663269043, 68.66166305541992, -8.634727478027344, 73.476806640625, -109.4018726348877, -44.53090476989746,
-      37.30809783935547, -48.15319633483887, 85.27354049682617, -4.872142791748047, -23.497644424438477,
-      -0.24064064025878906, 84.48682403564453, -58.586830139160156, 45.01608467102051
+      -49.54918670654297, 193.47443389892578, 55.4119758605957, -173.27583694458008, -119.58640098571777,
+      23.998178482055664, 307.05345153808594, 80.86419677734375, -43.38534164428711, -56.83611297607422,
+      1.3827285766601562, -114.55190849304199, -66.33901023864746, 51.23000717163086, -89.0375919342041,
+      -183.65888786315918, -199.28526306152344, 8.137279510498047, 105.10784339904785, -271.2826728820801,
+      122.17691993713379, -16.641014099121094, 27.087940216064453, 254.4002799987793, 40.51296424865723
     ],
     "queenstable": [
-      -71.90188217163086, -155.840482711792, 52.362918853759766, 51.187583923339844, -126.14651107788086,
-      -91.06593894958496, -61.069711685180664, 69.84841346740723, -12.182289123535156, 44.211673736572266,
-      -120.44488906860352, -9.752304077148438, 178.83996200561523, -48.309173583984375, -129.3368682861328,
-      -33.7310791015625, 92.22743606567383, -4.937110900878906, 52.9549446105957, -8.869367599487305,
-      -7.807590484619141, -20.756324768066406, -66.64042282104492, 118.31249237060547, -140.98806381225586
+      66.9882698059082, 198.40968132019043, -118.23304557800293, -47.969594955444336, -76.99618721008301,
+      -207.26029014587402, -37.03543472290039, 22.399593353271484, 34.66428184509277, -46.66103172302246,
+      120.79934120178223, 158.99305725097656, 127.71424865722656, -243.0108985900879, 133.45537948608398,
+      17.19075584411621, -71.79636001586914, -1.4033946990966797, 187.86106872558594, -115.3154067993164,
+      -65.08479690551758, -61.34915542602539, -7.149360656738281, 96.9693431854248, 34.14897346496582
     ],
     "kingstable": [
-      -5.045932769775391, -108.47115325927734, -104.09737014770508, -100.4869613647461, 208.50881958007812,
-      29.56167221069336, -86.16036415100098, -90.46796035766602, -91.71567153930664, -150.64514923095703,
-      51.38481903076172, 21.5694522857666, -17.330154418945312, 0.26157379150390625, 41.43181610107422,
-      -40.35156440734863, 34.86475372314453, -154.97924613952637, -67.46304893493652, -39.727108001708984,
-      -58.30867958068848, -46.809213638305664, 68.77614974975586, -52.12245178222656, -20.02324676513672
+      99.6574535369873, 115.20727920532227, 206.03719329833984, 124.34683418273926, 91.02803039550781,
+      -48.2618293762207, 71.84325790405273, -29.234046936035156, 161.61266708374023, -19.46817970275879,
+      -29.997936248779297, -220.73376083374023, -33.93663215637207, 64.2703857421875, -232.02350044250488,
+      30.364910125732422, -105.18952560424805, -289.1743927001953, -184.8231086730957, 181.16796493530273,
+      27.900129318237305, -157.78423309326172, -30.467918395996094, 37.48873329162598, -55.71624755859375
     ],
-    "bishopweight": 715.0804100036621,
-    "knightweight": 510.97457122802734,
-    "queenweight": 1367.3216075897217,
-    "kingweight": 203.93130493164062,
-    "knight_attacking_value": [-223.29395866394043, 304.9807777404785, -0.9197940826416016],
-    "black_knight_attacking_value": [-605.4166603088379, 14.853343963623047, -175.9599151611328],
-    "bishop_attacking_value": [-631.5181217193604, -79.62968444824219, 99.28949737548828],
-    "black_bishop_attacking_value": [374.3793830871582, -166.52964401245117, 174.70190238952637],
-    "queen_attacking_value": [-310.60948181152344, -16.178770065307617, 270.4558334350586],
-    "black_queen_attacking_value": [0.5370368957519531, -5.511262893676758, 17.36613655090332],
-    "knight_pin_value": 178.52394485473633,
-    "bishop_pin_value": 244.79023551940918,
-    "queen_pin_value": 352.095401763916
+    "bishopweight": 346.4844493865967,
+    "knightweight": 358.1819610595703,
+    "queenweight": 1074.2935523986816,
+    "kingweight": 212.93856239318848,
+    "knight_attacking_value": [-21.675813674926758, 200.68230819702148, -75.40661430358887],
+    "black_knight_attacking_value": [29.28223991394043, 154.0067253112793, 23.229398727416992],
+    "bishop_attacking_value": [38.508235931396484, 18.292619705200195, -11.061483383178711],
+    "black_bishop_attacking_value": [-81.30745506286621, -33.98246192932129, -21.426347732543945],
+    "queen_attacking_value": [-109.90028762817383, 85.59332656860352, -26.703746795654297],
+    "black_queen_attacking_value": [75.53731346130371, -94.14887046813965, -8.749160766601562],
+    "knight_pin_value": -56.952415466308594,
+    "bishop_pin_value": -284.9441032409668,
+    "queen_pin_value": 26.48444938659668
   }]
 
 class Agent():
@@ -83,6 +84,9 @@ class Agent():
         self.max_depth = max_depth
         self.__player = None
         self.side = None
+        
+        with open('tables.json', 'r') as f:
+            tables = json.load(f)
         
         self.knightweight = tables[-1]['knightweight']
         self.bishopweight = tables[-1]['bishopweight']
@@ -104,8 +108,6 @@ class Agent():
         self.knightstable = self.reverse_table_reshape(tables[-1]['knightstable'])
         self.queenstable = self.reverse_table_reshape(tables[-1]['queenstable'])
         self.kingstable = self.reverse_table_reshape(tables[-1]['kingstable'])
-        
-        self.mobility_score = 0.1
 
     def reverse_table_reshape(self, table):
         board_2d = [table[i:i+5] for i in range(0, len(table), 5)]
@@ -116,7 +118,7 @@ class Agent():
     @staticmethod
     def info():
         return {
-            "agent name": "Testing agent2",
+            "agent name": "Obstacle1",
         }
     
     def order_moves(self, moves, state):
@@ -129,7 +131,7 @@ class Agent():
     def alphabeta(self, alpha, beta, depthleft, state):
         if depthleft == 0:
             return self.quiesce(alpha, beta, state)
-        bestscore = -9999
+        bestscore = float('-inf')
         moves = self.order_moves(state.applicable_moves(), state)  # Order moves
         for move in moves:
             state.execute_move(move)
@@ -163,13 +165,21 @@ class Agent():
         return alpha
     
     def custom_evaluate_board(self, state: State):
+        #id = state.current_player_id
         id = state.current_player()
-        is_white = id == 0
         if state.is_winner() == 1:
             return 9999
         if state.is_winner() == -1:
             return -9999
-            
+        if state.board.is_stalemate() and state.board.turn == chess.WHITE and id == 0:
+            return -9998
+        if state.board.is_stalemate() and state.board.turn == chess.BLACK and id == 1:
+            return 9998
+        if state.board.is_insufficient_material() and id == 0 and state.board.turn == chess.WHITE:
+            return -9998
+        if state.board.is_insufficient_material() and id == 1 and state.board.turn == chess.BLACK:
+            return 9998
+        
         white_knight = len(state.board.pieces(chess.KNIGHT, chess.WHITE))
         black_knight = len(state.board.pieces(chess.KNIGHT, chess.BLACK))
         white_bishop = len(state.board.pieces(chess.BISHOP, chess.WHITE))
@@ -225,29 +235,17 @@ class Agent():
             legal_moves = list(state.board.legal_moves)
             mobility = sum(1 for move in legal_moves if state.board.piece_at(move.from_square).color == color)
             return mobility
-        
         white_mobility = mobility_evaluation(state, chess.WHITE)
         black_mobility = mobility_evaluation(state, chess.BLACK)
-        mobility_score = (white_mobility - black_mobility)
+        mobility_score = (white_mobility - black_mobility) * 10
         
-        eval = material + knight_eval + bishop_eval + queens_eval + kings_eval + pinned_val * 0.1 + attacking_val * 0.1 + mobility_score * self.mobility_score
-        if not is_white:
-            eval = -eval
-
-        return eval
+        eval = material + knight_eval + bishop_eval + queens_eval + kings_eval + pinned_val + attacking_val + mobility_score
+        if id == 0:
+            return eval
+        else:
+            return -eval
 
     def decide(self, state: AbstractState):
-        if state.current_player() == 0 and state.board.fullmove_number == 1:
-            # First move as white
-            chessmove = chess.Move.from_uci("b1c2")
-            #chessmove = chess.Move.from_uci("a1b3")
-            #chessmove = chess.Move.from_uci("d1b3")
-            action = Action(chessmove)
-            self.side = "white"
-            yield action
-            return
-        if state.current_player() == 1 and state.board.fullmove_number == 1:
-            self.side = "black"
         depth = 1
         bestValue = -99999
         alpha = -100000
@@ -267,6 +265,10 @@ class Agent():
                 if action_value > alpha:
                     alpha = action_value
                 state.undo_last_move()
+            #print("best value: ", bestValue)
+            #print("side: ", self.side)
+            #print("best action: ", best_action)
+            #print("custom evaluate: ", self.custom_evaluate_board(state))
             yield best_action
             depth += 1
 
