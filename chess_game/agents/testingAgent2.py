@@ -59,7 +59,7 @@ class TestingAgent2():
         self.side = None
         
         with open('tables.json', 'r') as f:
-            tables2 = json.load(f)
+            tables = json.load(f)
         
         self.knightweight = tables[-1]['knightweight']
         self.bishopweight = tables[-1]['bishopweight']

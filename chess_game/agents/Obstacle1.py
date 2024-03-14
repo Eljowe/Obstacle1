@@ -116,7 +116,7 @@ class Agent():
     @staticmethod
     def info():
         return {
-            "agent name": "Testing agent2",
+            "agent name": "Obstacle1",
         }
     
     def order_moves(self, moves, state):
