@@ -23,6 +23,7 @@ from agents.testingAgent import TestingAgent
 from agents.custom_agent import CustomAgent
 from agents.minimax_agent import MinimaxAgent
 from agents.Obstacle1 import Agent
+from agents.Obstacle4 import Agent4
 
 
 from stable_baselines3 import PPO, A2C, DQN, TD3
@@ -54,17 +55,12 @@ class CustomEnv(gym.Env):
     def __init__(self):
         super().__init__()
         
-        self.agent = Agent()
+        self.agent = Agent4()
         
         self.games_played = 0
         
         self.score = [0, 0]
         self.all_scores = [0,0 ]
-        
-        self.bishopstable = self.table_reshape(self.agent.bishopstable)
-        self.knightstable = self.table_reshape(self.agent.knightstable)
-        self.queenstable = self.table_reshape(self.agent.queenstable)
-        self.kingstable = self.table_reshape(self.agent.kingstable)
         
         self.bishopweight = self.agent.bishopweight
         self.knightweight = self.agent.knightweight
@@ -85,10 +81,9 @@ class CustomEnv(gym.Env):
         self.queen_pin_value = self.agent.queen_pinned_value
         
         self.num_tables = 4
-        self.table_size = 25
         self.score = 0
-        self.action_space = spaces.Box(low=-50, high=50, shape=(4 * 25 + 4 + 6 * 3 + 3,), dtype=np.float32)
-        self.observation_space = spaces.Box(low=-1, high=1, shape=(NUM_CPU,1), dtype=np.float32)
+        self.action_space = spaces.Box(low=-50, high=50, shape=(4 + 6 * 3 + 3,), dtype=np.float32)
+        self.observation_space = spaces.Box(low=0, high=20, shape=(2,1))
 
 
     def table_reshape(self, table):
@@ -112,29 +107,13 @@ class CustomEnv(gym.Env):
         return original_board
     
     def step(self, action):
-        expected_shape = (4 * 25 + 4 + 6 * 3 + 3,)
+        expected_shape = (4 + 6 * 3 + 3,)
         if action.shape != expected_shape:
             print(f"Invalid action shape: {action.shape}, expected: {expected_shape}")
-        num_cells_per_table = self.table_size
         
-        action = np.array([action][-1], dtype=np.float32)
-        for i in range(self.num_tables):
-            table = None
-            if i == 0:
-                table = self.bishopstable
-            elif i == 1:
-                table = self.knightstable
-            elif i == 2:
-                table = self.queenstable
-            elif i == 3:
-                table = self.kingstable
-
-            for j in range(num_cells_per_table):
-                action_value = action[i * num_cells_per_table + j]
-                table[j] += action_value
                 
         for i in range(6):
-            action_value = action[4 * 25 + i]
+            action_value = action[i]
             if i == 0:
                 table = self.knight_attacking_value
             elif i == 1:
@@ -148,7 +127,7 @@ class CustomEnv(gym.Env):
             elif i == 5:
                 table = self.black_queen_attacking_value
             for j in range(3):
-                action_value = action[4 * 25 + i * 3 + j]
+                action_value = action[i * 3 + j]
                 table[j] += action_value
                 table = np.array(table)
         
@@ -164,8 +143,8 @@ class CustomEnv(gym.Env):
 
         reward = self.calculate_reward()
         done = self.calculate_done()
-        observation = np.float32(reward)
-        observation = np.reshape(observation, (1, 1))  # Reshape to (1, 1) for a single environment
+        observation = np.array(self.all_scores, dtype=np.float32)
+        observation = observation.reshape(-1, 1)
         truncated = False
         info = {"score": self.score, "games_played": self.games_played}
 
@@ -212,10 +191,6 @@ class CustomEnv(gym.Env):
                     data.append({
                         'score': self.score,
                         'all_scores': self.all_scores,
-                        'bishopstable': self.bishopstable,
-                        'knightstable': self.knightstable,
-                        'queenstable': self.queenstable,
-                        'kingstable': self.kingstable,
                         'bishopweight': self.bishopweight,
                         'knightweight': self.knightweight,
                         'queenweight': self.queenweight,
@@ -238,10 +213,6 @@ class CustomEnv(gym.Env):
     
     def play_game(self):
         ############### Set the players ###############
-        self.agent.bishopstable = self.reverse_table_reshape(self.bishopstable)
-        self.agent.knightstable = self.reverse_table_reshape(self.knightstable)
-        self.agent.queenstable = self.reverse_table_reshape(self.queenstable)
-        self.agent.kingstable = self.reverse_table_reshape(self.kingstable)
         self.agent.bishopweight = self.bishopweight
         self.agent.knightweight = self.knightweight
         self.agent.queenweight = self.queenweight
@@ -253,6 +224,7 @@ class CustomEnv(gym.Env):
         self.agent.black_knight_attacking_value = self.black_knight_attacking_value
         self.agent.queen_attacking_value = self.queen_attacking_value
         self.agent.black_queen_attacking_value = self.black_queen_attacking_value
+        
         self.agent.knight_pinned_value = self.knight_pin_value
         self.agent.bishop_pinned_value = self.bishop_pin_value
         self.agent.queen_pinned_value = self.queen_pin_value

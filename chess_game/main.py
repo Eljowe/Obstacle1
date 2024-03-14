@@ -31,7 +31,7 @@ from agents.Obstacle4 import Agent4
 def main():
     ############### Set the players ###############
     #players = [Agent, MinimaxAgent]
-    players = [Agent, MinimaxAgent]
+    players = [MinimaxAgent, Agent4]
     #players = [Agent, DLAgent]
     #players = [Agent, RandomAgent]
     #players = [Agent, FishAgent]
