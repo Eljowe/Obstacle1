@@ -147,6 +147,10 @@ class TestingAgent():
             return 9999
         if state.is_winner() == -1:
             return -9999
+        if id == 0 and state.board.has_insufficient_material(chess.WHITE):
+            return -9999
+        if id == 0 and state.board.is_stalemate():
+            return -9999
             
         white_knight = len(state.board.pieces(chess.KNIGHT, chess.WHITE))
         black_knight = len(state.board.pieces(chess.KNIGHT, chess.BLACK))
