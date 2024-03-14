@@ -239,16 +239,9 @@ class Agent(AgentInterface):
                         attacking_value(state.board.pieces(chess.QUEEN, chess.WHITE), [state.board.pieces(chess.KNIGHT, chess.BLACK), state.board.pieces(chess.BISHOP, chess.BLACK), state.board.pieces(chess.QUEEN, chess.BLACK)], self.queen_attacking_value) +\
                         attacking_value(state.board.pieces(chess.QUEEN, chess.BLACK), [state.board.pieces(chess.KNIGHT, chess.WHITE), state.board.pieces(chess.BISHOP, chess.WHITE), state.board.pieces(chess.QUEEN, chess.WHITE)], self.black_queen_attacking_value)
                         
-        def mobility_evaluation(state: State, color):
-            legal_moves = list(state.board.legal_moves)
-            mobility = sum(1 for move in legal_moves if state.board.piece_at(move.from_square).color == color)
-            return mobility
         
-        white_mobility = mobility_evaluation(state, chess.WHITE)
-        black_mobility = mobility_evaluation(state, chess.BLACK)
-        mobility_score = (white_mobility - black_mobility)
         
-        eval = material + knight_eval + bishop_eval + queens_eval + kings_eval + pinned_val * 0.1 + attacking_val * 0.1 + mobility_score * self.mobility_score
+        eval = material + knight_eval + bishop_eval + queens_eval + kings_eval + pinned_val * 0.1 + attacking_val * self.mobility_score
         if not is_white:
             eval = -eval
 

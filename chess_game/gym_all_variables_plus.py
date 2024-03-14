@@ -54,7 +54,7 @@ class CustomEnv(gym.Env):
     def __init__(self):
         super().__init__()
         
-        self.agent = TestingAgent()
+        self.agent = Agent()
         
         self.games_played = 0
         
@@ -294,7 +294,7 @@ class CustomEnv(gym.Env):
             self.all_scores[1] += results[1]
             return -1
                 
-        opponent = TestingAgent2()
+        opponent = MinimaxAgent()
         players = [self.agent, opponent]
         for i in range(2):
             initial_state = State([self.player_name(p) for p in players])
@@ -328,7 +328,7 @@ class CustomEnv(gym.Env):
             self.all_scores[1] += results[1]
             return -0.75
         
-        opponent = TestingAgent()
+        opponent = MinimaxAgent()
         players = [self.agent, opponent]
         for i in range(2):
             initial_state = State([self.player_name(p) for p in players])
@@ -362,7 +362,7 @@ class CustomEnv(gym.Env):
             self.all_scores[1] += results[1]
             return -0.1
         
-        opponent = Agent()
+        opponent = MinimaxAgent()
         players = [self.agent, opponent]
         for i in range(2):
             initial_state = State([self.player_name(p) for p in players])
@@ -394,7 +394,7 @@ class CustomEnv(gym.Env):
             self.all_scores[1] += results[1]
             return 0.25
         
-        opponent = DLAgent()
+        opponent = MinimaxAgent()
         players = [self.agent, opponent]
         for i in range(2):
             initial_state = State([self.player_name(p) for p in players])
