@@ -201,7 +201,7 @@ class CustomEnv(gym.Env):
         if self.games_played >= 1:
             print(f"All scores: {self.all_scores}")
             print("\n")
-            if self.all_scores[0] >= 14:
+            if self.all_scores[0] >= 15:
                 print("Saving the tables to tables.json")
                 with open('tables.json', 'r') as f:
                     try:

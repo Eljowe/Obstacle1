@@ -29,7 +29,7 @@ from agents.testingAgent_dell import TestingAgent_dell
 def main():
     ############### Set the players ###############
     #players = [Agent, MinimaxAgent]
-    players = [TestingAgent, TestingAgent2]
+    players = [TestingAgent2, TestingAgent]
     #players = [Agent, DLAgent]
     #players = [Agent, RandomAgent]
     #players = [Agent, FishAgent]
@@ -49,7 +49,7 @@ def main():
     # The rest of the file is not important; you can skip reading it. #
     ###################################################################
     results = [0, 0]
-    for i in range(2):
+    for i in range(10):
         initial_state = State([player_name(p) for p in players])
 
         for round in range(len(players)):
@@ -61,7 +61,7 @@ def main():
             players_instances = [p() for p in players]
             # Timeout for each move. Don't rely on the value of it. This
             # value might be changed during the tournament.
-            timeouts = [2, 2]
+            timeouts = [3, 3]
             game = Game(players_instances)
             new_round = initial_state.clone()
             turn_duration_estimate = sum([t
