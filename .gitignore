@@ -13,3 +13,21 @@ chess_game/envs/__pycache__/*
 chess_game/envs/** */
 logs/** */
 **/logs/** */
+
+# Ignore all .pyc files
+*.pyc
+**/*.pyc
+**/__pycache__/
+**/__pycache__/*
+**/__pycache__/*.*
+**/__pycache__/*/*.*
+**/__pycache__/*/*/*.*
+**/__pycache__/*/*/*/*.*
+
+**/chess_game/__pycache__/
+**/chess_game/envs/__pycache__/
+**/chess_game/envs/__pycache__/*
+**/chess_game/envs/__pycache__/*.*
+chess_game/__pycache__/
+chess_game/envs/__pycache__/
+chess_game/envs/__pycache__/*
