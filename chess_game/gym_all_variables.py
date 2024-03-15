@@ -10,7 +10,7 @@ from typing import Type
 from random import seed
 
 from game import Game
-from envs.game import State
+from chess_game.envs.game_b import State
 from agent_interface import AgentInterface
 from custom_agent import CustomAgent
 from random_agent import RandomAgent

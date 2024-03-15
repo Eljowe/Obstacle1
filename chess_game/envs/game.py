@@ -40,9 +40,7 @@ class Action(AbstractAction):
         return self.chessmove == other.chessmove
 
 
-FIRSTROW = [
-    chess.Piece(chess.ROOK,chess.WHITE),
-    chess.Piece(chess.KNIGHT,chess.WHITE),
+FIRSTROW = [chess.Piece(chess.KNIGHT,chess.WHITE),
             chess.Piece(chess.QUEEN,chess.WHITE),
             chess.Piece(chess.KING,chess.WHITE),
             chess.Piece(chess.BISHOP,chess.WHITE),
@@ -51,9 +49,7 @@ LASTROW = [chess.Piece(chess.KNIGHT,chess.BLACK),
            chess.Piece(chess.BISHOP,chess.BLACK),
            chess.Piece(chess.KING,chess.BLACK),
            chess.Piece(chess.QUEEN,chess.BLACK),
-           chess.Piece(chess.KNIGHT,chess.BLACK),
-           chess.Piece(chess.ROOK,chess.BLACK)
-           ]
+           chess.Piece(chess.KNIGHT,chess.BLACK)]
 
 class State(AbstractState):
 
@@ -62,7 +58,7 @@ class State(AbstractState):
     # maxX = index of last file (column), when first column is 0
     # maxY = index of last rank (row), when first row is 0
 
-    def __init__(self,players,maxX=5,maxY=5):
+    def __init__(self,players,maxX=4,maxY=4):
         self.__players = players
         self.board = chess.Board()
         self.board.clear_board()
@@ -94,6 +90,18 @@ class State(AbstractState):
         # Return maxX prefixes of maxY rows/ranks
         return '\n'.join([ "  abcdefgh"[:(self.maxX)*2]] + [ str(self.maxX+2-i) + " " + s[:(self.maxX+1)*2] for i,s in visibleRanks ])
 
+    def __str2__(self) -> str:
+        # Empty board
+        board = [["." for x in range(0,self.maxX+1)] for y in range(0,self.maxY+1) ]
+        # Map Square -> Piece
+        pieces = self.board.piece_map()
+        # Set all pieces on board
+        for s in pieces:
+            x = chess.square_file(s)
+            y = chess.square_rank(s)
+            board[y][x] = pieces.get(s).symbol()
+        sboard = [ "".join(l) for l in board ]
+        return '\n'.join(sboard)
 
     # Is somebody the winner? 1 for current player, -1 for opponent
 

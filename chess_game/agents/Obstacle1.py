@@ -131,13 +131,35 @@ class Agent(AgentInterface):
                 return entry['score']
         if depthleft == 0:
             return self.quiesce(alpha, beta, state)
+        
+        # Null move pruning
+        R = 5
+        if depthleft >= R and not state.board.is_check():
+            null_move = chess.Move.null()
+            state.board.push(null_move)
+            
+            score = -self.alphabeta(-beta, -beta + 1, depthleft - R, state)
+            state.undo_last_move()
+            if score >= beta:
+                return beta
+        
         bestscore = -9999
         bestmove = None
         moves = self.order_moves(state.applicable_moves(), state)  # Order moves
-        for move in moves:
+        for i, move in enumerate(moves):
             state.execute_move(move)
-            score = -self.alphabeta(-beta, -alpha, depthleft - 1, state)
+
+            if i == 0:
+                score = -self.alphabeta(-beta, -alpha, depthleft - 1, state)
+            else:
+                reduction = 1 if depthleft >= 3 and i >= 2 else 0
+                score = -self.alphabeta(-alpha - 1, -alpha, depthleft - 1 - reduction, state)
+
+                if score > alpha:
+                    score = -self.alphabeta(-beta, -alpha, depthleft - 1, state)
+
             state.undo_last_move()
+
             if score >= beta:
                 self.transposition_table[board_hash] = {'score': score, 'depth': depthleft, 'bestmove': move}
                 return score
@@ -146,6 +168,7 @@ class Agent(AgentInterface):
                 bestmove = move
             if score > alpha:
                 alpha = score
+
         self.transposition_table[board_hash] = {'score': bestscore, 'depth': depthleft, 'bestmove': bestmove}
         return bestscore
     
@@ -258,7 +281,7 @@ class Agent(AgentInterface):
             """
         if state.current_player() == 1 and state.board.fullmove_number == 1:
             self.side = "black"
-        depth = 2
+        depth = 4
         bestValue = -99999
         alpha = -100000
         beta = 100000

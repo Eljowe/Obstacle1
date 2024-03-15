@@ -51,15 +51,19 @@ class MinimaxAgent(AgentInterface):
         random.shuffle(moves)
         best_action = moves[0]
         max_value = float('-inf')
-        for action in moves:
-            state.execute_move(action)
-            action_value = self.min_value(state, self.depth - 1)
-            state.undo_last_move()
-            if action_value > max_value:
-                max_value = action_value
-                best_action = action
-                yield best_action
-        yield best_action
+        depth = 2
+        while depth < 20:
+            print(f"Depth minimax: {depth}")
+            for action in moves:
+                state.execute_move(action)
+                action_value = self.min_value(state, depth - 1)
+                state.undo_last_move()
+                if action_value > max_value:
+                    max_value = action_value
+                    best_action = action
+                    yield best_action
+            yield best_action
+            depth += 1
 
     def max_value(self, state: State, depth: int):
         """
