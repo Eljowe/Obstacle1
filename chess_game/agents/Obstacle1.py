@@ -214,6 +214,7 @@ class Agent(AgentInterface):
                     eval = eval + value_of_pin
             return eval
         
+        
         def attacking_value(pieces, attacking_pieces, attacked_pieces):
             eval = 0
             for piece in pieces:
@@ -275,9 +276,6 @@ class Agent(AgentInterface):
         
         eval = material + pinned_val * 0.1 + attacking_val * 0.1 + mobility_score * self.mobility_multiplier
         
-        #This chess variation has strange rules that need to be taken into account
-        
-        
         if state.board.is_checkmate():
             eval += 9998
         
@@ -285,6 +283,7 @@ class Agent(AgentInterface):
             eval = -eval
 
         return eval
+
 
     def decide(self, state: AbstractState):
         
@@ -322,6 +321,7 @@ class Agent(AgentInterface):
                 state.undo_last_move()
             yield best_action
             depth += 1
+
 
     def __str__(self):
         return self.info()["agent name"]
