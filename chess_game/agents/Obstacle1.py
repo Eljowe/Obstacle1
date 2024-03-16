@@ -50,8 +50,6 @@ The strength will be further determined in the upcoming tournament.
 """
 
 tables = {
-    "score": [5, 0],
-    "all_scores": [15, 5],
     "bishopweight": 723.5667018890381,
     "knightweight": 636.6385307312012,
     "queenweight": 1574.5610809326172,
