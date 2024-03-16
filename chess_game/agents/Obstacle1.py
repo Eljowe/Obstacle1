@@ -124,6 +124,9 @@ class Agent(AgentInterface):
         return captures + checks + others
     
     def alphabeta(self, alpha, beta, depthleft, state):
+        is_winner = state.is_winner()
+        if is_winner is not None:
+            return is_winner * float('inf')
         board_hash = self.hash_board(state)
         if board_hash in self.transposition_table:
             entry = self.transposition_table[board_hash]
@@ -143,9 +146,11 @@ class Agent(AgentInterface):
             if score >= beta:
                 return beta
         
-        bestscore = -9999
+        bestscore = -20000
         bestmove = None
-        moves = self.order_moves(state.applicable_moves(), state)  # Order moves
+        moves = self.order_moves(state.applicable_moves(), state)
+        
+        #Late move reduction
         for i, move in enumerate(moves):
             state.execute_move(move)
 
@@ -199,6 +204,7 @@ class Agent(AgentInterface):
         self.transposition_table[board_hash] = {'score': alpha, 'depth': 0}
         return alpha
     
+    
     def custom_evaluate_board(self, state: State):
         
         def evaluate_pinned(piece_set, color, value_of_pin):
@@ -224,10 +230,18 @@ class Agent(AgentInterface):
         
         id = state.current_player()
         is_white = id == 0
-        if state.is_winner() == 1:
-            return 9999
-        if state.is_winner() == -1:
-            return -9999
+
+        winner = state.is_winner()
+        if winner == 1:
+            if is_white:
+                return 9999  # White wins
+            else:
+                return -9999  # Black wins
+        elif winner == -1:
+            if is_white:
+                return -9999  # Black wins
+            else:
+                return 9999
             
         white_knight = len(state.board.pieces(chess.KNIGHT, chess.WHITE))
         black_knight = len(state.board.pieces(chess.KNIGHT, chess.BLACK))
@@ -260,6 +274,13 @@ class Agent(AgentInterface):
         mobility_score = (white_mobility - black_mobility)
         
         eval = material + pinned_val * 0.1 + attacking_val * 0.1 + mobility_score * self.mobility_multiplier
+        
+        #This chess variation has strange rules that need to be taken into account
+        
+        
+        if state.board.is_checkmate():
+            eval += 9998
+        
         if not is_white:
             eval = -eval
 

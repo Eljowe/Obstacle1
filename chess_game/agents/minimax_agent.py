@@ -53,7 +53,7 @@ class MinimaxAgent(AgentInterface):
         max_value = float('-inf')
         depth = 2
         while depth < 20:
-            print(f"Depth minimax: {depth}")
+            #print(f"Depth minimax: {depth}")
             for action in moves:
                 state.execute_move(action)
                 action_value = self.min_value(state, depth - 1)
