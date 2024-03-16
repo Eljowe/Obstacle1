@@ -67,7 +67,7 @@ tables = {
 
 
 class Agent(AgentInterface):
-    def __init__(self, max_depth: int = 20):
+    def __init__(self, max_depth: int = 1000):
         self.max_depth = max_depth
         self.__player = None
         self.side = None

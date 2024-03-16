@@ -42,7 +42,7 @@ def main():
             players_instances = [p() for p in players]
             # Timeout for each move. Don't rely on the value of it. This
             # value might be changed during the tournament.
-            timeouts = [2, 2]
+            timeouts = [5, 5]
             game = Game(players_instances)
             new_round = initial_state.clone()
             turn_duration_estimate = sum([t
