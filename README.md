@@ -32,7 +32,7 @@ The weights were trained using the SAC algorithm, and the agents played against 
 7. Finally implement iterative deepening.
 8. Adding move ordering to check captures and checks first.
 9. Adding null move pruning, Zobrist hashing, and late move reduction.
-10. Fixing the endgame bug where the agent would give up the queen to lose by insufficient material.
+10. Fixing the endgame bug where the agent would give up a queen to lose by insufficient material.
 
 ### Results
 
@@ -40,3 +40,10 @@ With 2.0 second time limits, the agent can search up to depth 8-20, depending on
 while the minimax agent with iterative deepening can search up to depths 4-7.
 While playing against a minimax agent with 2.0 second time limits, the agent wins 19-1, from 20 games.
 The strength will be further determined in the upcoming tournament.
+
+### Tournament results
+
+In the tournament, Obstacle1 scored 20 wins and 3 losses, winning 127 individual rounds, finishing 6th in a group of 31 agents.
+As there were 8 groups, this score would approximately translate in 40th-48th place out of 250 agents.
+The result was not enough to qualify for the next round (only two agents from each group qualified), but I'm happy with the result,
+having learned a lot, and having reached the top 20% of the agents in such skilled competition.

@@ -17,6 +17,7 @@ from agents.Obstacle2 import Agent2
 from agents.custom_agent import CustomAgent
 from agents.minimax_agent import MinimaxAgent
 from agents.Obstacle1 import Agent
+from agents.Obstacle1json import Agent as Agent1json
 
 
 from stable_baselines3 import PPO, A2C, DQN, TD3
@@ -57,24 +58,12 @@ class CustomEnv(gym.Env):
         self.bishopweight = self.agent.bishopweight
         self.knightweight = self.agent.knightweight
         self.queenweight = self.agent.queenweight
-        self.kingweight = self.agent.kingweight
         
-        self.knight_attacking_value = self.agent.knight_attacking_value
-        self.black_knight_attacking_value = self.agent.black_knight_attacking_value
+        self.opponent_bishopweight = self.agent.opponent_bishopweight
+        self.opponent_knightweight = self.agent.opponent_knightweight
+        self.opponent_queenweight = self.agent.opponent_queenweight
         
-        self.bishop_attacking_value = self.agent.bishop_attacking_value
-        self.black_bishop_attacking_value = self.agent.black_bishop_attacking_value
-        
-        self.queen_attacking_value = self.agent.queen_attacking_value
-        self.black_queen_attacking_value = self.agent.black_queen_attacking_value
-        
-        self.knight_pin_value = self.agent.knight_pinned_value
-        self.bishop_pin_value = self.agent.bishop_pinned_value
-        self.queen_pin_value = self.agent.queen_pinned_value
-        
-        self.num_tables = 4
-        self.score = 0
-        self.action_space = spaces.Box(low=-50, high=50, shape=(4 + 6 * 3 + 3,), dtype=np.float32)
+        self.action_space = spaces.Box(low=0, high=20, shape=(6,), dtype=np.float32)
         self.observation_space = spaces.Box(low=0, high=20, shape=(2,1))
 
 
@@ -99,39 +88,20 @@ class CustomEnv(gym.Env):
         return original_board
     
     def step(self, action):
-        expected_shape = (4 + 6 * 3 + 3,)
+        expected_shape = (6,)
         if action.shape != expected_shape:
             print(f"Invalid action shape: {action.shape}, expected: {expected_shape}")
         
-                
-        for i in range(6):
-            action_value = action[i]
-            if i == 0:
-                table = self.knight_attacking_value
-            elif i == 1:
-                table = self.black_knight_attacking_value
-            elif i == 2:
-                table = self.bishop_attacking_value
-            elif i == 3:
-                table = self.black_bishop_attacking_value
-            elif i == 4:
-                table = self.queen_attacking_value
-            elif i == 5:
-                table = self.black_queen_attacking_value
-            for j in range(3):
-                action_value = action[i * 3 + j]
-                table[j] += action_value
-                table = np.array(table)
         
-        self.knight_pin_value += action[-6]
-        self.bishop_pin_value += action[-5]
-        self.queen_pin_value += action[-4]
-
-        # Apply the last 4 actions to the weights
-        self.bishopweight += action[-4]
-        self.knightweight += action[-3]
-        self.queenweight += action[-2]
-        self.kingweight += action[-1]
+        
+        self.bishopweight = action[0]
+        self.knightweight = action[1]
+        self.queenweight = action[2]
+        
+        self.opponent_bishopweight = action[3]
+        self.opponent_knightweight = action[4]
+        self.opponent_queenweight = action[5]
+        
 
         reward = self.calculate_reward()
         done = self.calculate_done()
@@ -176,27 +146,21 @@ class CustomEnv(gym.Env):
             print("\n")
             if self.all_scores[0] >= 13:
                 print("Saving the tables to tables.json")
+                print({"score": self.score, "all_scores": self.all_scores, "bishopweight": self.bishopweight, "knightweight": self.knightweight, "queenweight": self.queenweight, "opponent_bishopweight": self.opponent_bishopweight, "opponent_knightweight": self.opponent_knightweight, "opponent_queenweight": self.opponent_queenweight})
                 with open('tables.json', 'r') as f:
                     try:
                         data = json.load(f)
                     except json.JSONDecodeError:  # If the file is empty, set data to an empty list
                         data = []
                     data.append({
-                        'score': self.score,
-                        'all_scores': self.all_scores,
-                        'bishopweight': self.bishopweight,
-                        'knightweight': self.knightweight,
-                        'queenweight': self.queenweight,
-                        'kingweight': self.kingweight,
-                        'knight_attacking_value': self.knight_attacking_value,
-                        'black_knight_attacking_value': self.black_knight_attacking_value,
-                        'bishop_attacking_value': self.bishop_attacking_value,
-                        'black_bishop_attacking_value': self.black_bishop_attacking_value,
-                        'queen_attacking_value': self.queen_attacking_value,
-                        'black_queen_attacking_value': self.black_queen_attacking_value,
-                        'knight_pin_value': self.knight_pin_value,
-                        'bishop_pin_value': self.bishop_pin_value,
-                        'queen_pin_value': self.queen_pin_value
+                        'score': [float(item) for item in self.score],
+                        'all_scores': [float(score) for score in self.all_scores],
+                        'bishopweight': float(self.bishopweight),
+                        'knightweight': float(self.knightweight),
+                        'queenweight': float(self.queenweight),
+                        'opponent_bishopweight': float(self.opponent_bishopweight),
+                        'opponent_knightweight': float(self.opponent_knightweight),
+                        'opponent_queenweight': float(self.opponent_queenweight)
                     })
 
                     with open('tables.json', 'w') as f:
@@ -209,18 +173,10 @@ class CustomEnv(gym.Env):
         self.agent.bishopweight = self.bishopweight
         self.agent.knightweight = self.knightweight
         self.agent.queenweight = self.queenweight
-        self.agent.kingweight = self.kingweight
         
-        self.agent.knight_attacking_value = self.knight_attacking_value
-        self.agent.black_knight_attacking_value = self.black_knight_attacking_value
-        self.agent.bishop_attacking_value = self.bishop_attacking_value
-        self.agent.black_knight_attacking_value = self.black_knight_attacking_value
-        self.agent.queen_attacking_value = self.queen_attacking_value
-        self.agent.black_queen_attacking_value = self.black_queen_attacking_value
-        
-        self.agent.knight_pinned_value = self.knight_pin_value
-        self.agent.bishop_pinned_value = self.bishop_pin_value
-        self.agent.queen_pinned_value = self.queen_pin_value
+        self.agent.opponent_bishopweight = self.opponent_bishopweight
+        self.agent.opponent_knightweight = self.opponent_knightweight
+        self.agent.opponent_queenweight = self.opponent_queenweight
         
         opponent = MinimaxAgent()
         players = [self.agent, opponent]
@@ -292,7 +248,7 @@ class CustomEnv(gym.Env):
             self.all_scores[1] += results[1]
             return -0.75
         
-        opponent = MinimaxAgent()
+        opponent = Agent1json()
         players = [self.agent, opponent]
         for i in range(2):
             initial_state = State([self.player_name(p) for p in players])

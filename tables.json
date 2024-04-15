@@ -1,1 +1,233 @@
-[{"score": [5, 0], "all_scores": [15, 5], "bishopweight": 723.5667018890381, "knightweight": 636.6385307312012, "queenweight": 1574.5610809326172, "kingweight": 75.55226135253906, "knight_attacking_value": [-279.09769439697266, 304.9807777404785, -0.9197940826416016], "black_knight_attacking_value": [-653.2774238586426, 14.853343963623047, -175.9599151611328], "bishop_attacking_value": [-584.2226734161377, -79.62968444824219, 99.28949737548828], "black_bishop_attacking_value": [163.3222427368164, -166.52964401245117, 174.70190238952637], "queen_attacking_value": [-314.4085273742676, -16.178770065307617, 270.4558334350586], "black_queen_attacking_value": [83.51497650146484, -5.511262893676758, 17.36613655090332], "knight_pin_value": 424.9740695953369, "bishop_pin_value": 296.96722412109375, "queen_pin_value": 502.3064727783203}, {"score": [5, 0], "all_scores": [16, 4], "bishopweight": 744.9320602416992, "knightweight": 685.8290710449219, "queenweight": 1496.3677768707275, "kingweight": -89.17343139648438, "knight_attacking_value": [-375.878625869751, 304.9807777404785, -0.9197940826416016], "black_knight_attacking_value": [-447.3705406188965, 14.853343963623047, -175.9599151611328], "bishop_attacking_value": [-555.3897228240967, -79.62968444824219, 99.28949737548828], "black_bishop_attacking_value": [141.43619537353516, -166.52964401245117, 174.70190238952637], "queen_attacking_value": [-195.62079048156738, -16.178770065307617, 270.4558334350586], "black_queen_attacking_value": [253.3421974182129, -5.511262893676758, 17.36613655090332], "knight_pin_value": 285.6018829345703, "bishop_pin_value": 220.19223594665527, "queen_pin_value": 523.6718311309814}, {"score": [5, 0], "all_scores": [14, 6], "bishopweight": 716.0880718231201, "knightweight": 605.1060752868652, "queenweight": 1550.120761871338, "kingweight": 42.14640808105469, "knight_attacking_value": [-244.61673736572266, 304.9807777404785, -0.9197940826416016], "black_knight_attacking_value": [-651.2229423522949, 14.853343963623047, -175.9599151611328], "bishop_attacking_value": [-544.7954807281494, -79.62968444824219, 99.28949737548828], "black_bishop_attacking_value": [135.33736991882324, -166.52964401245117, 174.70190238952637], "queen_attacking_value": [-303.29888916015625, -16.178770065307617, 270.4558334350586], "black_queen_attacking_value": [123.07624816894531, -5.511262893676758, 17.36613655090332], "knight_pin_value": 398.3755931854248, "bishop_pin_value": 313.8397750854492, "queen_pin_value": 494.82784271240234}]
+[
+  {
+    "score": [5, 0],
+    "all_scores": [15, 5],
+    "bishopweight": 723.5667018890381,
+    "knightweight": 636.6385307312012,
+    "queenweight": 1574.5610809326172,
+    "kingweight": 75.55226135253906,
+    "knight_attacking_value": [-279.09769439697266, 304.9807777404785, -0.9197940826416016],
+    "black_knight_attacking_value": [-653.2774238586426, 14.853343963623047, -175.9599151611328],
+    "bishop_attacking_value": [-584.2226734161377, -79.62968444824219, 99.28949737548828],
+    "black_bishop_attacking_value": [163.3222427368164, -166.52964401245117, 174.70190238952637],
+    "queen_attacking_value": [-314.4085273742676, -16.178770065307617, 270.4558334350586],
+    "black_queen_attacking_value": [83.51497650146484, -5.511262893676758, 17.36613655090332],
+    "knight_pin_value": 424.9740695953369,
+    "bishop_pin_value": 296.96722412109375,
+    "queen_pin_value": 502.3064727783203
+  },
+  {
+    "score": [5, 0],
+    "all_scores": [16, 4],
+    "bishopweight": 744.9320602416992,
+    "knightweight": 685.8290710449219,
+    "queenweight": 1496.3677768707275,
+    "kingweight": -89.17343139648438,
+    "knight_attacking_value": [-375.878625869751, 304.9807777404785, -0.9197940826416016],
+    "black_knight_attacking_value": [-447.3705406188965, 14.853343963623047, -175.9599151611328],
+    "bishop_attacking_value": [-555.3897228240967, -79.62968444824219, 99.28949737548828],
+    "black_bishop_attacking_value": [141.43619537353516, -166.52964401245117, 174.70190238952637],
+    "queen_attacking_value": [-195.62079048156738, -16.178770065307617, 270.4558334350586],
+    "black_queen_attacking_value": [253.3421974182129, -5.511262893676758, 17.36613655090332],
+    "knight_pin_value": 285.6018829345703,
+    "bishop_pin_value": 220.19223594665527,
+    "queen_pin_value": 523.6718311309814
+  },
+  {
+    "score": [5, 0],
+    "all_scores": [14, 6],
+    "bishopweight": 716.0880718231201,
+    "knightweight": 605.1060752868652,
+    "queenweight": 1550.120761871338,
+    "kingweight": 42.14640808105469,
+    "knight_attacking_value": [-244.61673736572266, 304.9807777404785, -0.9197940826416016],
+    "black_knight_attacking_value": [-651.2229423522949, 14.853343963623047, -175.9599151611328],
+    "bishop_attacking_value": [-544.7954807281494, -79.62968444824219, 99.28949737548828],
+    "black_bishop_attacking_value": [135.33736991882324, -166.52964401245117, 174.70190238952637],
+    "queen_attacking_value": [-303.29888916015625, -16.178770065307617, 270.4558334350586],
+    "black_queen_attacking_value": [123.07624816894531, -5.511262893676758, 17.36613655090332],
+    "knight_pin_value": 398.3755931854248,
+    "bishop_pin_value": 313.8397750854492,
+    "queen_pin_value": 494.82784271240234
+  },
+  {
+    "score": [5, 0],
+    "all_scores": [20, 0],
+    "bishopweight": 14.843112,
+    "knightweight": 15.90971,
+    "queenweight": 19.906565,
+    "opponent_bishopweight": 5.1676426,
+    "opponent_knightweight": 6.579087,
+    "opponent_queenweight": 4.368473
+  },
+  {
+    "score": [5.0, 0.0],
+    "all_scores": [18.0, 2.0],
+    "bishopweight": 7.925406455993652,
+    "knightweight": 11.96259880065918,
+    "queenweight": 18.161376953125,
+    "opponent_bishopweight": 9.561450958251953,
+    "opponent_knightweight": 6.414366722106934,
+    "opponent_queenweight": 8.399310111999512
+  },
+  {
+    "score": [5.0, 0.0],
+    "all_scores": [15.0, 3.0],
+    "bishopweight": 14.219298362731934,
+    "knightweight": 9.091193199157715,
+    "queenweight": 17.983224868774414,
+    "opponent_bishopweight": 10.510024070739746,
+    "opponent_knightweight": 6.5806145668029785,
+    "opponent_queenweight": 11.228331565856934
+  },
+  {
+    "score": [5.0, 0.0],
+    "all_scores": [15.0, 3.0],
+    "bishopweight": 4.807681083679199,
+    "knightweight": 16.1121883392334,
+    "queenweight": 7.220034122467041,
+    "opponent_bishopweight": 0.48423051834106445,
+    "opponent_knightweight": 3.539524555206299,
+    "opponent_queenweight": 8.85357666015625
+  },
+  {
+    "score": [5.0, 0.0],
+    "all_scores": [19.0, 1.0],
+    "bishopweight": 14.696401596069336,
+    "knightweight": 7.860385894775391,
+    "queenweight": 18.915922164916992,
+    "opponent_bishopweight": 6.098633766174316,
+    "opponent_knightweight": 6.179858207702637,
+    "opponent_queenweight": 15.111985206604004
+  },
+  {
+    "score": [5.0, 0.0],
+    "all_scores": [14.0, 6.0],
+    "bishopweight": 18.389516830444336,
+    "knightweight": 8.5487642288208,
+    "queenweight": 3.6319005489349365,
+    "opponent_bishopweight": 5.1531877517700195,
+    "opponent_knightweight": 6.895003795623779,
+    "opponent_queenweight": 16.818931579589844
+  },
+  {
+    "score": [5.0, 0.0],
+    "all_scores": [17.0, 3.0],
+    "bishopweight": 19.10736846923828,
+    "knightweight": 16.015047073364258,
+    "queenweight": 17.95779037475586,
+    "opponent_bishopweight": 0.799897313117981,
+    "opponent_knightweight": 3.686314821243286,
+    "opponent_queenweight": 5.565824031829834
+  },
+  {
+    "score": [5.0, 0.0],
+    "all_scores": [16.0, 3.0],
+    "bishopweight": 19.64283561706543,
+    "knightweight": 8.333379745483398,
+    "queenweight": 16.03777313232422,
+    "opponent_bishopweight": 8.145730018615723,
+    "opponent_knightweight": 4.182515621185303,
+    "opponent_queenweight": 17.296703338623047
+  },
+  {
+    "score": [5.0, 0.0],
+    "all_scores": [17.0, 3.0],
+    "bishopweight": 7.723535537719727,
+    "knightweight": 15.447265625,
+    "queenweight": 16.693126678466797,
+    "opponent_bishopweight": 2.947862148284912,
+    "opponent_knightweight": 4.161713600158691,
+    "opponent_queenweight": 1.450963020324707
+  },
+  {
+    "score": [5.0, 0.0],
+    "all_scores": [13.0, 6.0],
+    "bishopweight": 12.210612297058105,
+    "knightweight": 3.335188627243042,
+    "queenweight": 14.065241813659668,
+    "opponent_bishopweight": 2.6695609092712402,
+    "opponent_knightweight": 2.825819253921509,
+    "opponent_queenweight": 9.672893524169922
+  },
+  {
+    "score": [5.0, 0.0],
+    "all_scores": [16.0, 3.0],
+    "bishopweight": 15.924356460571289,
+    "knightweight": 19.088336944580078,
+    "queenweight": 17.749771118164062,
+    "opponent_bishopweight": 11.442190170288086,
+    "opponent_knightweight": 0.6807875633239746,
+    "opponent_queenweight": 1.4137297868728638
+  },
+  {
+    "score": [4.0, 0.0],
+    "all_scores": [15.0, 3.0],
+    "bishopweight": 4.882723808288574,
+    "knightweight": 10.38485336303711,
+    "queenweight": 5.403339862823486,
+    "opponent_bishopweight": 4.2567057609558105,
+    "opponent_knightweight": 3.4726428985595703,
+    "opponent_queenweight": 12.538233757019043
+  },
+  {
+    "score": [5.0, 0.0],
+    "all_scores": [16.0, 3.0],
+    "bishopweight": 1.2263113260269165,
+    "knightweight": 17.813669204711914,
+    "queenweight": 19.140270233154297,
+    "opponent_bishopweight": 10.445758819580078,
+    "opponent_knightweight": 6.456540107727051,
+    "opponent_queenweight": 19.537656784057617
+  },
+  {
+    "score": [5.0, 0.0],
+    "all_scores": [18.0, 2.0],
+    "bishopweight": 11.640974044799805,
+    "knightweight": 7.057533264160156,
+    "queenweight": 11.326845169067383,
+    "opponent_bishopweight": 2.872236967086792,
+    "opponent_knightweight": 6.356874465942383,
+    "opponent_queenweight": 10.235577583312988
+  },
+  {
+    "score": [5.0, 0.0],
+    "all_scores": [18.0, 1.0],
+    "bishopweight": 18.25653839111328,
+    "knightweight": 14.068405151367188,
+    "queenweight": 19.925586700439453,
+    "opponent_bishopweight": 9.996325492858887,
+    "opponent_knightweight": 11.62775993347168,
+    "opponent_queenweight": 16.21533966064453
+  },
+  {
+    "score": [5.0, 0.0],
+    "all_scores": [14.0, 2.0],
+    "bishopweight": 0.9780776500701904,
+    "knightweight": 10.784321784973145,
+    "queenweight": 14.069853782653809,
+    "opponent_bishopweight": 13.623467445373535,
+    "opponent_knightweight": 2.4067907333374023,
+    "opponent_queenweight": 13.771862030029297
+  },
+  {
+    "score": [5.0, 0.0],
+    "all_scores": [20.0, 0.0],
+    "bishopweight": 13.81645679473877,
+    "knightweight": 7.172911167144775,
+    "queenweight": 17.633243560791016,
+    "opponent_bishopweight": 1.0175037384033203,
+    "opponent_knightweight": 9.122513771057129,
+    "opponent_queenweight": 0.7355648279190063
+  },
+  {
+    "score": [5.0, 0.0],
+    "all_scores": [20.0, 0.0],
+    "bishopweight": 10.538169860839844,
+    "knightweight": 6.774399757385254,
+    "queenweight": 18.58382225036621,
+    "opponent_bishopweight": 15.367226600646973,
+    "opponent_knightweight": 2.212393283843994,
+    "opponent_queenweight": 0.4205894470214844
+  }
+]
